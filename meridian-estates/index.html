@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0c0c0e" />
+  <title>Meridian — Architectural Residences</title>
+  <meta name="description" content="Meridian curates a private collection of architect-designed residences across the world's most considered places — sited for light, built for stillness." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="vendor/lenis.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Three.js resolved via import map from vendored files (no build step, no CDN) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.js",
+      "three/addons/": "./vendor/addons/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <span class="loader__mark">M</span>
+      <span class="loader__bar"><span class="loader__fill" id="loaderFill"></span></span>
+    </div>
+  </div>
+
+  <!-- Custom cursor (desktop, fine-pointer only) -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"></div>
+  </div>
+
+  <!-- Persistent 3D backdrop -->
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__brand" href="#top" data-cursor="link">
+        <span class="nav__brand-mark">M</span>
+        <span class="nav__brand-word">MERIDIAN</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#residences" data-cursor="link">Residences</a>
+        <a href="#approach" data-cursor="link">Approach</a>
+        <a href="#experience" data-cursor="link">Experience</a>
+        <a href="#voices" data-cursor="link">Voices</a>
+      </nav>
+      <a href="#contact" class="btn btn--ghost nav__cta" data-cursor="link">Arrange a viewing</a>
+      <button class="nav__toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="page" id="top">
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero__veil"></div>
+      <div class="hero__inner">
+        <p class="eyebrow hero__eyebrow" data-reveal>Architectural Residences · Est. 1998</p>
+        <h1 class="hero__title">
+          <span class="line" data-reveal data-reveal-delay="0.05">Living, in its</span>
+          <span class="line" data-reveal data-reveal-delay="0.12">most <em>refined</em> form.</span>
+        </h1>
+        <p class="hero__lede" data-reveal data-reveal-delay="0.2">
+          A private collection of architect-designed homes — sited for light,
+          built for stillness, and offered to a discerning few.
+        </p>
+        <div class="hero__actions" data-reveal data-reveal-delay="0.28">
+          <a href="#residences" class="btn btn--solid" data-cursor="link">Explore residences</a>
+          <a href="#contact" class="btn btn--ghost" data-cursor="link">Arrange a viewing</a>
+        </div>
+      </div>
+      <a href="#approach" class="hero__scroll" data-cursor="link" aria-label="Scroll to explore">
+        <span>Scroll</span>
+        <span class="hero__scroll-line"></span>
+      </a>
+    </section>
+
+    <!-- Stats / positioning -->
+    <section class="band" id="approach">
+      <div class="band__intro" data-reveal>
+        <p class="eyebrow">The Meridian standard</p>
+        <p class="band__statement">
+          We do not list homes. We place them — quietly, and only when the
+          architecture, the light, and the moment are right.
+        </p>
+      </div>
+      <div class="stats">
+        <div class="stat" data-reveal>
+          <span class="stat__num" data-count="4.2" data-prefix="$" data-suffix="B" data-decimals="1">$0B</span>
+          <span class="stat__label">Residences placed</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.06">
+          <span class="stat__num" data-count="320" data-suffix="+">0</span>
+          <span class="stat__label">Architectural homes</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.12">
+          <span class="stat__num" data-count="18">0</span>
+          <span class="stat__label">Cities &amp; coastlines</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.18">
+          <span class="stat__num" data-count="26" data-suffix=" yrs">0</span>
+          <span class="stat__label">Of quiet expertise</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured residences -->
+    <section class="residences" id="residences">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>The current collection</p>
+          <h2 class="section-title" data-reveal>Featured residences</h2>
+        </div>
+        <p class="section-head__note" data-reveal>
+          Six homes from a portfolio that is never fully public. Enquire for the
+          rest.
+        </p>
+      </div>
+      <div class="grid" id="residenceGrid"><!-- cards injected by js/data.js --></div>
+    </section>
+
+    <!-- Immersive 3D showcase (reveals the persistent model) -->
+    <section class="showcase" id="showcase">
+      <div class="showcase__head" data-reveal>
+        <p class="eyebrow">How we work</p>
+        <h2 class="section-title">A model of considered placement.</h2>
+      </div>
+      <div class="showcase__steps">
+        <article class="showcase__step" data-reveal>
+          <span class="showcase__index">01</span>
+          <h3>Sited for light</h3>
+          <p>Every residence is read against the sun's daily arc before a single
+             viewing is arranged.</p>
+        </article>
+        <article class="showcase__step" data-reveal data-reveal-delay="0.08">
+          <span class="showcase__index">02</span>
+          <h3>Built to endure</h3>
+          <p>We favour materials that age with grace — stone, board-formed
+             concrete, oiled timber, patinated brass.</p>
+        </article>
+        <article class="showcase__step" data-reveal data-reveal-delay="0.16">
+          <span class="showcase__index">03</span>
+          <h3>Placed with discretion</h3>
+          <p>Homes are matched privately to the right custodian. Most never
+             reach an open market.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Experience / approach split rows -->
+    <section class="experience" id="experience">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>The difference</p>
+          <h2 class="section-title" data-reveal>An experience, end to end.</h2>
+        </div>
+      </div>
+
+      <div class="split" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1100&q=80" alt="Light-filled architectural interior" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">i.</span>
+          <h3>Private acquisition</h3>
+          <p>Before a residence is ever shown, our team studies its orientation,
+             provenance, and the life it is built to hold. You see only what truly
+             fits.</p>
+          <a href="#contact" class="link-arrow" data-cursor="link">Begin a search <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="split split--reverse" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1100&q=80" alt="Detail of a refined material palette" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">ii.</span>
+          <h3>Architectural due diligence</h3>
+          <p>Independent architects and engineers assess every home — structure,
+             light, materials, and the years ahead — so nothing is left to the
+             surface.</p>
+          <a href="#contact" class="link-arrow" data-cursor="link">Meet the team <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="split" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1100&q=80" alt="Coastal residence at dusk" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">iii.</span>
+          <h3>A discreet global network</h3>
+          <p>From the Côte d'Azur to the high desert, our relationships open doors
+             that listings cannot. Discretion is the whole point.</p>
+          <a href="#contact" class="link-arrow" data-cursor="link">Where we work <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Locations marquee -->
+    <section class="marquee" aria-hidden="true">
+      <div class="marquee__track" id="marqueeTrack">
+        <span>Côte d'Azur</span><span class="marquee__dot">·</span>
+        <span>Hollywood Hills</span><span class="marquee__dot">·</span>
+        <span>Costa Smeralda</span><span class="marquee__dot">·</span>
+        <span>Paris</span><span class="marquee__dot">·</span>
+        <span>TriBeCa</span><span class="marquee__dot">·</span>
+        <span>Joshua Tree</span><span class="marquee__dot">·</span>
+        <span>Lake Como</span><span class="marquee__dot">·</span>
+        <span>Kyoto</span><span class="marquee__dot">·</span>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="voices" id="voices">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>In their words</p>
+          <h2 class="section-title" data-reveal>Voices of our custodians.</h2>
+        </div>
+      </div>
+      <div class="voices__grid">
+        <figure class="quote" data-reveal>
+          <blockquote>"They understood the house before we did — its light, its
+            silences, the way it would hold a family."</blockquote>
+          <figcaption>A. &amp; M. Laurent <span>Geneva</span></figcaption>
+        </figure>
+        <figure class="quote" data-reveal data-reveal-delay="0.08">
+          <blockquote>"Discreet, exacting, and quietly brilliant. We were never
+            sold to — only guided."</blockquote>
+          <figcaption>Private Collector <span>New York</span></figcaption>
+        </figure>
+        <figure class="quote" data-reveal data-reveal-delay="0.16">
+          <blockquote>"Three residences over twelve years. I would not consider
+            anyone else."</blockquote>
+          <figcaption>H. Nakamura <span>Kyoto</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Contact / CTA -->
+    <section class="contact" id="contact">
+      <div class="contact__inner">
+        <div class="contact__intro" data-reveal>
+          <p class="eyebrow">Private enquiry</p>
+          <h2 class="contact__title">Arrange a private viewing.</h2>
+          <p class="contact__lede">
+            Tell us what you are looking for. A Meridian advisor will respond
+            within two working days — in confidence.
+          </p>
+          <ul class="contact__meta">
+            <li><span>Email</span> advisory@meridian.estate</li>
+            <li><span>Telephone</span> +33 4 93 00 11 98</li>
+            <li><span>Offices</span> Nice · Paris · New York</li>
+          </ul>
+        </div>
+        <form class="form" id="enquiryForm" novalidate data-reveal data-reveal-delay="0.1">
+          <div class="form__row">
+            <label class="field">
+              <span>Full name</span>
+              <input type="text" name="name" autocomplete="name" required placeholder="Your name" />
+            </label>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+            </label>
+          </div>
+          <label class="field">
+            <span>I am interested in</span>
+            <select name="interest">
+              <option>Acquiring a residence</option>
+              <option>A confidential valuation</option>
+              <option>Joining the private list</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>A few words</span>
+            <textarea name="message" rows="3" placeholder="Location, budget, the life you imagine..."></textarea>
+          </label>
+          <button type="submit" class="btn btn--solid form__submit" data-cursor="link">
+            <span>Request invitation</span>
+          </button>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <a class="footer__brand" href="#top" data-cursor="link">
+        <span class="nav__brand-mark">M</span> MERIDIAN
+      </a>
+      <nav class="footer__cols" aria-label="Footer">
+        <div>
+          <h4>Residences</h4>
+          <a href="#residences" data-cursor="link">The collection</a>
+          <a href="#contact" data-cursor="link">Private list</a>
+          <a href="#contact" data-cursor="link">Valuations</a>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <a href="#approach" data-cursor="link">Our standard</a>
+          <a href="#experience" data-cursor="link">Experience</a>
+          <a href="#voices" data-cursor="link">Voices</a>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <a href="#contact" data-cursor="link">Enquire</a>
+          <a href="#" data-cursor="link">Instagram</a>
+          <a href="#" data-cursor="link">Journal</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer__base">
+      <p>© <span id="year">2026</span> Meridian Estates. A fictional design showcase.</p>
+      <p class="footer__credit">Imagery via Unsplash · Built with Three.js</p>
+    </div>
+  </footer>
+
+  <!-- Motion libraries (vendored UMD globals) -->
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+
+  <!-- App -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
