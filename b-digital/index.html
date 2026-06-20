@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>B Digital — Websites, Ads &amp; Branding for Namibian Businesses</title>
+  <meta name="description" content="B Digital builds affordable, mobile-friendly websites and runs the ads that bring Namibian businesses more customers. Starter sites from N$1,500, live in about two weeks. Windhoek, Namibia." />
+  <link rel="canonical" href="https://bdigital.na/" />
+
+  <!-- Open Graph / social -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="B Digital — Websites, Ads &amp; Branding in Namibia" />
+  <meta property="og:description" content="Affordable, mobile-friendly websites that win Namibian businesses more customers. From N$1,500." />
+  <meta property="og:locale" content="en_NA" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="vendor/lenis.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ff7a59'/%3E%3Cstop offset='0.5' stop-color='%23b06cff'/%3E%3Cstop offset='1' stop-color='%235b8cff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='16' fill='url(%23g)'/%3E%3Ctext x='32' y='45' font-family='Arial,sans-serif' font-size='40' font-weight='700' fill='%230a0a0f' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E" />
+
+  <!-- Three.js resolved via import map from vendored files (no build step, no CDN) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.js",
+      "three/addons/": "./vendor/addons/"
+    }
+  }
+  </script>
+
+  <!-- Structured data — helps B Digital itself get found on Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "B Digital",
+    "description": "Web design, online advertising and branding for small businesses in Namibia.",
+    "areaServed": "Namibia",
+    "telephone": "+264814794693",
+    "priceRange": "N$1,500+",
+    "image": "https://bdigital.na/",
+    "address": { "@type": "PostalAddress", "addressLocality": "Windhoek", "addressCountry": "NA" },
+    "knowsAbout": ["Web design", "Website development", "Online advertising", "Branding", "Logo design"],
+    "makesOffer": {
+      "@type": "Offer",
+      "name": "Starter Website",
+      "priceCurrency": "NAD",
+      "price": "1500",
+      "description": "3-page mobile-friendly website with contact form, WhatsApp button and Google Business listing."
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <span class="loader__mark">B</span>
+      <span class="loader__bar"><span class="loader__fill" id="loaderFill"></span></span>
+    </div>
+  </div>
+
+  <!-- Custom cursor (desktop, fine-pointer only) -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"></div>
+  </div>
+
+  <!-- Persistent 3D backdrop -->
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <!-- Floating WhatsApp button (primary channel in Namibia) -->
+  <a class="wa-float" id="waFloat"
+     href="https://wa.me/264814794693?text=Hi%20B%20Digital%21%20I%20have%20a%20question%20about%20a%20website."
+     target="_blank" rel="noopener" aria-label="Chat with B Digital on WhatsApp" data-cursor="link">
+    <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+      <path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.6c1.8.9 3.7 1.4 5.8 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3zm0 21.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-4.3.8.8-4.2-.3-.4c-1-1.6-1.5-3.4-1.5-5.4C5.3 9.5 10 5 16 5s10.7 4.5 10.7 10-4.8 9.8-10.7 9.8zm5.9-7.4c-.3-.2-1.9-.9-2.2-1-.3-.1-.5-.2-.7.2-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-.9-.8-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7.1-.1.3-.4.5-.6.1-.2.2-.3.3-.5.1-.2 0-.4 0-.6-.1-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.2-1.2 2.8s1.2 3.3 1.4 3.5c.2.2 2.4 3.7 5.8 5.1.8.3 1.4.5 1.9.7.8.3 1.5.2 2.1.1.6-.1 1.9-.8 2.2-1.5.3-.7.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/>
+    </svg>
+  </a>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__brand" href="#top" data-cursor="link" aria-label="B Digital home">
+        <span class="nav__brand-mark">B</span>
+        <span class="nav__brand-word">B Digital</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#services" data-cursor="link">Services</a>
+        <a href="#work" data-cursor="link">Work</a>
+        <a href="#process" data-cursor="link">Process</a>
+        <a href="#pricing" data-cursor="link">Pricing</a>
+        <a href="#faq" data-cursor="link">FAQ</a>
+      </nav>
+      <a href="https://wa.me/264814794693?text=Hi%20B%20Digital%21%20I%27d%20like%20a%20website%20for%20my%20business.%20Can%20you%20send%20me%20a%20quick%20example%3F"
+         target="_blank" rel="noopener" class="btn btn--solid nav__cta" data-cursor="link">Start a project</a>
+      <button class="nav__toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="page" id="top">
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero__veil"></div>
+      <div class="hero__inner">
+        <p class="eyebrow hero__eyebrow" data-reveal>Web · Ads · Branding — Windhoek, Namibia</p>
+        <h1 class="hero__title">
+          <span class="line" data-reveal data-reveal-delay="0.05">More customers,</span>
+          <span class="line" data-reveal data-reveal-delay="0.12">from a site that <span class="grad-text">works</span>.</span>
+        </h1>
+        <p class="hero__lede" data-reveal data-reveal-delay="0.2">
+          B Digital builds affordable, mobile-friendly websites — and runs the ads
+          that bring Namibian businesses more customers. Starter sites from
+          <strong>N$1,500</strong>, live in about two weeks.
+        </p>
+        <div class="hero__actions" data-reveal data-reveal-delay="0.28">
+          <a href="https://wa.me/264814794693?text=Hi%20B%20Digital%21%20I%27d%20like%20a%20website%20for%20my%20business.%20Can%20you%20send%20me%20a%20quick%20example%3F"
+             target="_blank" rel="noopener" class="btn btn--solid" data-cursor="link">Start your website</a>
+          <a href="#work" class="btn btn--ghost" data-cursor="link">See our work</a>
+        </div>
+        <p class="hero__assure" data-reveal data-reveal-delay="0.34">
+          <span>From N$1,500</span><i>·</i><span>50% deposit to start</span><i>·</i><span>Live in ~2 weeks</span>
+        </p>
+      </div>
+      <a href="#services" class="hero__scroll" data-cursor="link" aria-label="Scroll to explore">
+        <span>Scroll</span>
+        <span class="hero__scroll-line"></span>
+      </a>
+    </section>
+
+    <!-- Trust marquee: who we build for -->
+    <section class="marquee" aria-label="Businesses we build for">
+      <div class="marquee__track" id="marqueeTrack" aria-hidden="true">
+        <span>Restaurants</span><span class="marquee__dot">·</span>
+        <span>Salons &amp; Barbers</span><span class="marquee__dot">·</span>
+        <span>Lodges &amp; Guesthouses</span><span class="marquee__dot">·</span>
+        <span>Plumbers &amp; Electricians</span><span class="marquee__dot">·</span>
+        <span>Tour Operators</span><span class="marquee__dot">·</span>
+        <span>Retail Shops</span><span class="marquee__dot">·</span>
+        <span>Gyms</span><span class="marquee__dot">·</span>
+        <span>Cafés</span><span class="marquee__dot">·</span>
+        <span>Dentists</span><span class="marquee__dot">·</span>
+        <span>Accountants</span><span class="marquee__dot">·</span>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services" id="services">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>What we do</p>
+          <h2 class="section-title" data-reveal>Three ways to grow online.</h2>
+        </div>
+        <p class="section-head__note" data-reveal>
+          Everything a small business needs to get found, look professional, and
+          win more customers — under one roof.
+        </p>
+      </div>
+      <div class="services__grid">
+        <article class="service" data-reveal data-tilt data-cursor="link">
+          <span class="service__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 8h18"/><path d="M9 21h6"/><path d="M12 18v3"/>
+            </svg>
+          </span>
+          <h3>Websites</h3>
+          <p>Fast, mobile-friendly websites that turn visitors into customers — with
+             a contact form, WhatsApp button and Google listing built in.</p>
+          <ul class="service__list">
+            <li>Mobile-first &amp; fast</li>
+            <li>WhatsApp + contact form</li>
+            <li>Google Business listing</li>
+          </ul>
+        </article>
+        <article class="service" data-reveal data-reveal-delay="0.08" data-tilt data-cursor="link">
+          <span class="service__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <path d="M3 11l16-7-4 16-4-6-8-3z"/><path d="M11 14l8-10"/>
+            </svg>
+          </span>
+          <h3>Ads</h3>
+          <p>Facebook and Google ads that put your business in front of local
+             customers who are ready to buy — without wasting your budget.</p>
+          <ul class="service__list">
+            <li>Facebook &amp; Instagram</li>
+            <li>Google Search</li>
+            <li>Clear monthly reports</li>
+          </ul>
+        </article>
+        <article class="service" data-reveal data-reveal-delay="0.16" data-tilt data-cursor="link">
+          <span class="service__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+              <circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </span>
+          <h3>Branding</h3>
+          <p>Logos, colours and a consistent look that make your business
+             memorable — and easy for customers to trust.</p>
+          <ul class="service__list">
+            <li>Logo design</li>
+            <li>Colour &amp; type system</li>
+            <li>Social media kit</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- Stats band -->
+    <section class="band" id="band">
+      <div class="band__intro" data-reveal>
+        <p class="eyebrow">Why B Digital</p>
+        <p class="band__statement">
+          Lean prices, quick turnarounds, and websites built to actually bring
+          you business — not just sit there.
+        </p>
+      </div>
+      <div class="stats">
+        <div class="stat" data-reveal>
+          <span class="stat__num" data-count="1500" data-prefix="N$">N$0</span>
+          <span class="stat__label">Starter websites, from</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.06">
+          <span class="stat__num" data-count="2" data-prefix="~" data-suffix=" wks">0</span>
+          <span class="stat__label">From deposit to live</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.12">
+          <span class="stat__num" data-count="2" data-suffix="×">0</span>
+          <span class="stat__label">Revision rounds included</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.18">
+          <span class="stat__num" data-count="100" data-suffix="%">0</span>
+          <span class="stat__label">Built for phones first</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Work: self-contained website concepts (swap for real screenshots) -->
+    <section class="work" id="work">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>Recent work</p>
+          <h2 class="section-title" data-reveal>The kind of sites we build.</h2>
+        </div>
+        <p class="section-head__note" data-reveal>
+          A taste of the clean, mobile-ready sites we create for local
+          businesses. Yours could be next.
+        </p>
+      </div>
+      <div class="work__grid">
+
+        <article class="mock mock--sunset" data-reveal data-tilt data-cursor="link">
+          <div class="mock__chrome">
+            <span class="mock__dots"><i></i><i></i><i></i></span>
+            <span class="mock__url">kapanakitchen.com.na</span>
+          </div>
+          <div class="mock__screen">
+            <div class="mock__hero">
+              <span class="mock__tag">Restaurant · Windhoek</span>
+              <h3>Kapana Kitchen</h3>
+              <p>Namibian flame-grilled, done right.</p>
+              <span class="mock__btn">Order on WhatsApp</span>
+            </div>
+            <div class="mock__rows"><span></span><span></span><span></span></div>
+          </div>
+        </article>
+
+        <article class="mock mock--sand" data-reveal data-reveal-delay="0.06" data-tilt data-cursor="link">
+          <div class="mock__chrome">
+            <span class="mock__dots"><i></i><i></i><i></i></span>
+            <span class="mock__url">namibedge.com.na</span>
+          </div>
+          <div class="mock__screen">
+            <div class="mock__hero">
+              <span class="mock__tag">Lodge · Sesriem</span>
+              <h3>Namib Edge Lodge</h3>
+              <p>Sleep under the desert sky.</p>
+              <span class="mock__btn">Check availability</span>
+            </div>
+            <div class="mock__rows"><span></span><span></span><span></span></div>
+          </div>
+        </article>
+
+        <article class="mock mock--violet" data-reveal data-reveal-delay="0.12" data-tilt data-cursor="link">
+          <div class="mock__chrome">
+            <span class="mock__dots"><i></i><i></i><i></i></span>
+            <span class="mock__url">freshcuts.na</span>
+          </div>
+          <div class="mock__screen">
+            <div class="mock__hero">
+              <span class="mock__tag">Barber · Katutura</span>
+              <h3>Fresh Cuts</h3>
+              <p>Walk in. Look sharp.</p>
+              <span class="mock__btn">Book a chair</span>
+            </div>
+            <div class="mock__rows"><span></span><span></span><span></span></div>
+          </div>
+        </article>
+
+        <article class="mock mock--azure" data-reveal data-tilt data-cursor="link">
+          <div class="mock__chrome">
+            <span class="mock__dots"><i></i><i></i><i></i></span>
+            <span class="mock__url">brightline.na</span>
+          </div>
+          <div class="mock__screen">
+            <div class="mock__hero">
+              <span class="mock__tag">Plumbing · Windhoek</span>
+              <h3>Brightline Plumbing</h3>
+              <p>Leaks fixed, fast.</p>
+              <span class="mock__btn">Call now</span>
+            </div>
+            <div class="mock__rows"><span></span><span></span><span></span></div>
+          </div>
+        </article>
+
+        <article class="mock mock--rose" data-reveal data-reveal-delay="0.06" data-tilt data-cursor="link">
+          <div class="mock__chrome">
+            <span class="mock__dots"><i></i><i></i><i></i></span>
+            <span class="mock__url">lumoskin.com.na</span>
+          </div>
+          <div class="mock__screen">
+            <div class="mock__hero">
+              <span class="mock__tag">Salon &amp; Spa · Swakopmund</span>
+              <h3>Lumo Skin</h3>
+              <p>Glow, the natural way.</p>
+              <span class="mock__btn">Book a treatment</span>
+            </div>
+            <div class="mock__rows"><span></span><span></span><span></span></div>
+          </div>
+        </article>
+
+        <article class="mock mock--teal" data-reveal data-reveal-delay="0.12" data-tilt data-cursor="link">
+          <div class="mock__chrome">
+            <span class="mock__dots"><i></i><i></i><i></i></span>
+            <span class="mock__url">dunetours.na</span>
+          </div>
+          <div class="mock__screen">
+            <div class="mock__hero">
+              <span class="mock__tag">Tours · Walvis Bay</span>
+              <h3>Dune Tours</h3>
+              <p>See Namibia your way.</p>
+              <span class="mock__btn">Plan a trip</span>
+            </div>
+            <div class="mock__rows"><span></span><span></span><span></span></div>
+          </div>
+        </article>
+
+      </div>
+      <p class="work__note" data-reveal>
+        Concept designs shown. Real client projects replace these as we launch them —
+        <a href="https://wa.me/264814794693?text=Hi%20B%20Digital%21%20I%27d%20like%20to%20be%20one%20of%20your%20first%20clients."
+           target="_blank" rel="noopener" class="link-arrow" data-cursor="link">become a founding client <span>→</span></a>
+      </p>
+    </section>
+
+    <!-- The difference: split rows -->
+    <section class="experience" id="difference">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>The difference</p>
+          <h2 class="section-title" data-reveal>Why a real website wins.</h2>
+        </div>
+      </div>
+
+      <div class="split" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1100&q=80" alt="A business owner managing their shop on a laptop" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">01</span>
+          <h3>A home you own — not just a Facebook page.</h3>
+          <p>Facebook is great for posts, but you don't own it, and customers
+             struggle to find your hours, prices and location. A website is yours,
+             shows up on Google, and makes you look the part — they work best
+             together.</p>
+          <a href="#pricing" class="link-arrow" data-cursor="link">See packages <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="split split--reverse" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1100&q=80" alt="A customer browsing a business on their phone" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">02</span>
+          <h3>Built for phones — where your customers already are.</h3>
+          <p>Most Namibians browse on their phones. Every site we build is fast and
+             easy to use on mobile first, so you never lose a customer to a slow or
+             clunky page.</p>
+          <a href="#contact" class="link-arrow" data-cursor="link">Get a free example <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process (over the live 3D model) -->
+    <section class="showcase" id="process">
+      <div class="showcase__head" data-reveal>
+        <p class="eyebrow">How it works</p>
+        <h2 class="section-title">Three simple steps to live.</h2>
+      </div>
+      <div class="showcase__steps">
+        <article class="showcase__step" data-reveal>
+          <span class="showcase__index">01</span>
+          <h3>Chat &amp; free example</h3>
+          <p>Message us on WhatsApp and tell us about your business. We send a free
+             example and a clear, all-in quote.</p>
+        </article>
+        <article class="showcase__step" data-reveal data-reveal-delay="0.08">
+          <span class="showcase__index">02</span>
+          <h3>Design &amp; build</h3>
+          <p>Pay a 50% deposit and we get to work — your mobile-friendly site, with
+             two rounds of revisions included.</p>
+        </article>
+        <article class="showcase__step" data-reveal data-reveal-delay="0.16">
+          <span class="showcase__index">03</span>
+          <h3>Launch &amp; grow</h3>
+          <p>Live in about two weeks. Then we can add pages, set up your domain, and
+             run ads to bring in more customers.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="pricing" id="pricing">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>Simple pricing</p>
+          <h2 class="section-title" data-reveal>Clear prices, no surprises.</h2>
+        </div>
+        <p class="section-head__note" data-reveal>
+          One-off prices. 50% deposit to start, 50% on launch. Pick a package or
+          ask for something in between.
+        </p>
+      </div>
+
+      <div class="plans">
+        <!-- EDIT PRICES HERE: change the numbers in .plan__price to suit you. -->
+        <article class="plan" data-reveal>
+          <header class="plan__head">
+            <h3>One-Page</h3>
+            <p class="plan__for">For a tight budget or a quick launch.</p>
+          </header>
+          <p class="plan__price"><span class="plan__cur">from N$</span>900</p>
+          <ul class="plan__list">
+            <li>Single mobile-friendly page</li>
+            <li>WhatsApp + contact button</li>
+            <li>Google Maps location</li>
+            <li>Live in about 1 week</li>
+          </ul>
+          <a href="https://wa.me/264814794693?text=Hi%20B%20Digital%21%20I%27m%20interested%20in%20the%20One-Page%20website."
+             target="_blank" rel="noopener" class="btn btn--ghost plan__cta" data-cursor="link">Choose One-Page</a>
+        </article>
+
+        <article class="plan plan--featured" data-reveal data-reveal-delay="0.08">
+          <span class="plan__badge">Most popular</span>
+          <header class="plan__head">
+            <h3>Starter</h3>
+            <p class="plan__for">The sweet spot for most small businesses.</p>
+          </header>
+          <p class="plan__price"><span class="plan__cur">N$</span>1,500</p>
+          <ul class="plan__list">
+            <li>3 mobile-friendly pages</li>
+            <li>Contact form + WhatsApp button</li>
+            <li>Google Business listing</li>
+            <li>2 rounds of revisions</li>
+            <li>Live in about 2 weeks</li>
+          </ul>
+          <a href="https://wa.me/264814794693?text=Hi%20B%20Digital%21%20I%27m%20interested%20in%20the%20Starter%20website%20%28N%241%2C500%29."
+             target="_blank" rel="noopener" class="btn btn--solid plan__cta" data-cursor="link">Choose Starter</a>
+        </article>
+
+        <article class="plan" data-reveal data-reveal-delay="0.16">
+          <header class="plan__head">
+            <h3>Business</h3>
+            <p class="plan__for">More pages, gallery and basic SEO.</p>
+          </header>
+          <p class="plan__price"><span class="plan__cur">from N$</span>2,900</p>
+          <ul class="plan__list">
+            <li>5+ pages &amp; photo gallery</li>
+            <li>Copywriting + basic SEO</li>
+            <li>Logo touch-up included</li>
+            <li>2 rounds of revisions</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="https://wa.me/264814794693?text=Hi%20B%20Digital%21%20I%27m%20interested%20in%20the%20Business%20website."
+             target="_blank" rel="noopener" class="btn btn--ghost plan__cta" data-cursor="link">Choose Business</a>
+        </article>
+      </div>
+
+      <ul class="terms" data-reveal>
+        <li><span>Add-ons</span> Extra pages, logo design, photo gallery — quoted on request.</li>
+        <li><span>Hosting &amp; domain</span> Start free on a shared address; your own .com.na is ~N$1,500/year, billed separately.</li>
+        <li><span>Payment</span> FNB eWallet, MTC Mobile Money, or cash. No bank card needed.</li>
+      </ul>
+    </section>
+
+    <!-- FAQ (native, accessible accordion) -->
+    <section class="faq" id="faq">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>Good questions</p>
+          <h2 class="section-title" data-reveal>Things people ask.</h2>
+        </div>
+      </div>
+      <div class="faq__list">
+        <details class="faq__item" data-reveal>
+          <summary data-cursor="link">How much does a website cost?<span class="faq__plus" aria-hidden="true"></span></summary>
+          <div class="faq__body"><p>Starter sites are a one-off <strong>N$1,500</strong> for three mobile-friendly pages. Need something smaller or bigger? There's a budget One-Page option and a larger Business package too — and you only pay a 50% deposit to begin.</p></div>
+        </details>
+        <details class="faq__item" data-reveal>
+          <summary data-cursor="link">I already have a Facebook page — why a website?<span class="faq__plus" aria-hidden="true"></span></summary>
+          <div class="faq__body"><p>Facebook is great for posts, but you don't own it and customers struggle to find your hours, location and prices. A website pulls everything together, shows up on Google, and works alongside your Facebook — they're best together.</p></div>
+        </details>
+        <details class="faq__item" data-reveal>
+          <summary data-cursor="link">How long does it take?<span class="faq__plus" aria-hidden="true"></span></summary>
+          <div class="faq__body"><p>Most Starter sites go live in about <strong>1–2 weeks</strong>, once we have your deposit and your content (logo, photos, business details). Got a deadline? Tell us and we'll work to it.</p></div>
+        </details>
+        <details class="faq__item" data-reveal>
+          <summary data-cursor="link">How do I pay?<span class="faq__plus" aria-hidden="true"></span></summary>
+          <div class="faq__body"><p>Simple: <strong>FNB eWallet, MTC Mobile Money, or cash</strong> — no bank card needed on your side. 50% to start, 50% when your site goes live.</p></div>
+        </details>
+        <details class="faq__item" data-reveal>
+          <summary data-cursor="link">What about hosting and a domain name?<span class="faq__plus" aria-hidden="true"></span></summary>
+          <div class="faq__body"><p>You can start free on a shared web address. When you're ready, a custom <strong>.com.na</strong> domain is about N$1,500/year (billed separately) — we set it all up for you.</p></div>
+        </details>
+        <details class="faq__item" data-reveal>
+          <summary data-cursor="link">Can you make it cheaper?<span class="faq__plus" aria-hidden="true"></span></summary>
+          <div class="faq__body"><p>Yes — we can start with a single-page site to fit your budget, then add pages later as your business grows.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+      <div class="contact__inner">
+        <div class="contact__intro" data-reveal>
+          <p class="eyebrow">Let's talk</p>
+          <h2 class="contact__title">Let's get your business online.</h2>
+          <p class="contact__lede">
+            Tell us what you do and we'll send a free example plus a quick quote —
+            usually the same day, on WhatsApp.
+          </p>
+          <ul class="contact__meta">
+            <li><span>WhatsApp</span> +264 81 479 4693</li>
+            <li><span>Phone</span> +264 81 479 4693</li>
+            <li><span>Based in</span> Windhoek, Namibia</li>
+            <li><span>Payments</span> FNB eWallet · MTC Mobile Money · Cash</li>
+          </ul>
+        </div>
+        <form class="form" id="enquiryForm" novalidate data-reveal data-reveal-delay="0.1">
+          <div class="form__row">
+            <label class="field">
+              <span>Your name</span>
+              <input type="text" name="name" autocomplete="name" required placeholder="Your name" />
+            </label>
+            <label class="field">
+              <span>Business name</span>
+              <input type="text" name="business" autocomplete="organization" placeholder="Your business" />
+            </label>
+          </div>
+          <label class="field">
+            <span>What do you need?</span>
+            <select name="interest">
+              <option>A new website</option>
+              <option>Facebook / Google ads</option>
+              <option>Branding &amp; logo</option>
+              <option>Not sure yet — help me decide</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>A few words</span>
+            <textarea name="message" rows="3" placeholder="What does your business do? Any links or ideas?"></textarea>
+          </label>
+          <button type="submit" class="btn btn--solid form__submit" data-cursor="link">
+            <svg viewBox="0 0 32 32" width="18" height="18" aria-hidden="true" style="fill:currentColor">
+              <path d="M16 3C9.4 3 4 8.4 4 15c0 2.1.6 4.2 1.6 6L4 29l8.2-1.6c1.8.9 3.7 1.4 5.8 1.4 6.6 0 12-5.4 12-12S22.6 3 16 3z"/>
+            </svg>
+            <span>Send on WhatsApp</span>
+          </button>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <a class="footer__brand" href="#top" data-cursor="link">
+        <span class="nav__brand-mark">B</span> B Digital
+      </a>
+      <nav class="footer__cols" aria-label="Footer">
+        <div>
+          <h4>Services</h4>
+          <a href="#services" data-cursor="link">Websites</a>
+          <a href="#services" data-cursor="link">Ads</a>
+          <a href="#services" data-cursor="link">Branding</a>
+        </div>
+        <div>
+          <h4>Studio</h4>
+          <a href="#work" data-cursor="link">Work</a>
+          <a href="#pricing" data-cursor="link">Pricing</a>
+          <a href="#process" data-cursor="link">Process</a>
+          <a href="#faq" data-cursor="link">FAQ</a>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <a href="https://wa.me/264814794693" target="_blank" rel="noopener" data-cursor="link">WhatsApp</a>
+          <a href="tel:+264814794693" data-cursor="link">Call us</a>
+          <a href="#contact" data-cursor="link">Get a quote</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer__base">
+      <p>© <span id="year">2026</span> B Digital. Web · Ads · Branding.</p>
+      <p class="footer__credit">Built in Windhoek, Namibia 🇳🇦</p>
+    </div>
+  </footer>
+
+  <!-- Motion libraries (vendored UMD globals) -->
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+
+  <!-- App -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
