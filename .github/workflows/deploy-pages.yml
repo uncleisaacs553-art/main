@@ -1,10 +1,10 @@
-name: Deploy Meridian (GitHub Pages)
+name: Deploy B Digital site (GitHub Pages)
 
 on:
   push:
-    branches: ["claude/happy-rubin-wjr5nk"]
+    branches: ["claude/optimistic-shannon-j18yvp", "main"]
     paths:
-      - "meridian-estates/**"
+      - "site/**"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
@@ -36,7 +36,7 @@ jobs:
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: meridian-estates
+          path: site
 
       - name: Deploy to GitHub Pages
         id: deployment

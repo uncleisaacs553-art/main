@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#06070b" />
+  <title>B Digital — Software, Web & AI Automation Studio</title>
+  <meta name="description" content="B Digital builds SaaS products, high-craft websites, and AI automations — then runs a fleet of agents that keep them working around the clock." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="vendor/lenis.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- Three.js resolved via import map from vendored files (no build step, no CDN) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three.module.js",
+      "three/addons/": "./vendor/addons/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <!-- Loader -->
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__inner">
+      <span class="loader__mark">B</span>
+      <span class="loader__bar"><span class="loader__fill" id="loaderFill"></span></span>
+    </div>
+  </div>
+
+  <!-- Custom cursor (desktop, fine-pointer only) -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"></div>
+  </div>
+
+  <!-- Persistent 3D backdrop -->
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <!-- Navigation -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a class="nav__brand" href="#top" data-cursor="link">
+        <span class="nav__brand-mark">B</span>
+        <span class="nav__brand-word">B DIGITAL</span>
+      </a>
+      <nav class="nav__links" aria-label="Primary">
+        <a href="#services" data-cursor="link">Services</a>
+        <a href="#process" data-cursor="link">How it works</a>
+        <a href="#work" data-cursor="link">Work</a>
+        <a href="command-center.html" data-cursor="link">Command Center</a>
+      </nav>
+      <a href="#contact" class="btn btn--ghost nav__cta" data-cursor="link">Start a project</a>
+      <button class="nav__toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="page" id="top">
+
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero__veil"></div>
+      <div class="hero__inner">
+        <p class="eyebrow hero__eyebrow" data-reveal>Software · Web · AI Automation</p>
+        <h1 class="hero__title">
+          <span class="line" data-reveal data-reveal-delay="0.05">Software &amp; AI agents</span>
+          <span class="line" data-reveal data-reveal-delay="0.12">that <em>run your business.</em></span>
+        </h1>
+        <p class="hero__lede" data-reveal data-reveal-delay="0.2">
+          B Digital designs SaaS products, high-craft websites, and AI automations —
+          then runs a fleet of agents that keep them working around the clock.
+          You focus on the business; our agents handle the busywork.
+        </p>
+        <div class="hero__actions" data-reveal data-reveal-delay="0.28">
+          <a href="#contact" class="btn btn--solid" data-cursor="link">Start a project</a>
+          <a href="command-center.html" class="btn btn--ghost" data-cursor="link">
+            <span class="live-dot" aria-hidden="true"></span> View live agents
+          </a>
+        </div>
+      </div>
+      <a href="#services" class="hero__scroll" data-cursor="link" aria-label="Scroll to explore">
+        <span>Scroll</span>
+        <span class="hero__scroll-line"></span>
+      </a>
+    </section>
+
+    <!-- Positioning + stats -->
+    <section class="band" id="approach">
+      <div class="band__intro" data-reveal>
+        <p class="eyebrow">What we stand for</p>
+        <p class="band__statement">
+          We don't just ship projects. We deploy systems — and a fleet of agents
+          that keep them running.
+        </p>
+      </div>
+      <!-- Numbers are illustrative placeholders — edit freely in index.html -->
+      <div class="stats">
+        <div class="stat" data-reveal>
+          <span class="stat__num" data-count="40" data-suffix="+">0</span>
+          <span class="stat__label">Automations live</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.06">
+          <span class="stat__num" data-count="18">0</span>
+          <span class="stat__label">Products shipped</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.12">
+          <span class="stat__num" data-count="99.9" data-suffix="%" data-decimals="1">0</span>
+          <span class="stat__label">Uptime watched</span>
+        </div>
+        <div class="stat" data-reveal data-reveal-delay="0.18">
+          <span class="stat__num" data-count="24" data-suffix="/7">0</span>
+          <span class="stat__label">Agents on watch</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service pillars -->
+    <section class="pillars" id="services">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>What we do</p>
+          <h2 class="section-title" data-reveal>Three ways we move<br />your business forward.</h2>
+        </div>
+        <p class="section-head__note" data-reveal>
+          One studio for the product, the website, and the automations that tie it
+          all together — built to work, then built to run itself.
+        </p>
+      </div>
+      <div class="pillars__grid">
+        <article class="pillar" data-reveal data-cursor="link">
+          <div class="pillar__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8"/></svg>
+          </div>
+          <h3>SaaS Products</h3>
+          <p>From idea to launched product — auth, billing, dashboards, and the
+             whole app, shipped fast and built to scale.</p>
+          <div class="pillar__tags">
+            <span>Web apps</span><span>Dashboards</span><span>Billing</span><span>APIs</span>
+          </div>
+        </article>
+        <article class="pillar" data-reveal data-reveal-delay="0.08" data-cursor="link">
+          <div class="pillar__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="M4 9h16M8 13h6M8 16h4"/></svg>
+          </div>
+          <h3>Web &amp; Digital</h3>
+          <p>High-craft marketing sites and landing pages — immersive, fast, and
+             clear, with motion that means something.</p>
+          <div class="pillar__tags">
+            <span>Sites</span><span>Landing pages</span><span>Brand</span><span>SEO</span>
+          </div>
+        </article>
+        <article class="pillar" data-reveal data-reveal-delay="0.16" data-cursor="link">
+          <div class="pillar__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l2.5 2.5M16.5 16.5L19 19M19 5l-2.5 2.5M7.5 16.5L5 19"/></svg>
+          </div>
+          <h3>AI Automation</h3>
+          <p>Agents and workflows that handle the repetitive work — research,
+             outreach, ops, and monitoring — running 24/7 so you don't have to.</p>
+          <div class="pillar__tags">
+            <span>Agents</span><span>Workflows</span><span>Integrations</span><span>Monitoring</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- How it works — over the live 3D model -->
+    <section class="showcase" id="process">
+      <div class="showcase__head" data-reveal>
+        <p class="eyebrow">How it works</p>
+        <h2 class="section-title">From idea to a system that runs itself.</h2>
+      </div>
+      <div class="showcase__steps">
+        <article class="showcase__step" data-reveal>
+          <span class="showcase__index">01</span>
+          <h3>Discover</h3>
+          <p>We map your workflows and find exactly what's worth building and
+             automating first.</p>
+        </article>
+        <article class="showcase__step" data-reveal data-reveal-delay="0.06">
+          <span class="showcase__index">02</span>
+          <h3>Design</h3>
+          <p>We shape the product, site, or system around how people actually use
+             it — clear and considered.</p>
+        </article>
+        <article class="showcase__step" data-reveal data-reveal-delay="0.12">
+          <span class="showcase__index">03</span>
+          <h3>Build</h3>
+          <p>We ship fast with modern, maintainable tech — and you watch it come
+             together in real time.</p>
+        </article>
+        <article class="showcase__step" data-reveal data-reveal-delay="0.18">
+          <span class="showcase__index">04</span>
+          <h3>Automate</h3>
+          <p>We deploy agents that run and monitor it around the clock — visible
+             live in your Command Center.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Selected work -->
+    <section class="work" id="work">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>Selected work</p>
+          <h2 class="section-title" data-reveal>Things we've built &amp; automated.</h2>
+        </div>
+        <p class="section-head__note" data-reveal>
+          A sample of products, sites, and automation systems. Yours could be next.
+        </p>
+      </div>
+      <div class="grid" id="workGrid"><!-- cards injected by js/data.js --></div>
+    </section>
+
+    <!-- Differentiators -->
+    <section class="experience" id="why">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>Why B Digital</p>
+          <h2 class="section-title" data-reveal>Built to ship. Built to run.</h2>
+        </div>
+      </div>
+
+      <div class="split" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1100&q=80" alt="Analytics dashboard on a screen" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">i.</span>
+          <h3>Ship in weeks, not quarters</h3>
+          <p>We move fast without cutting corners — modern stacks, tight scope, and
+             agents that take the grunt work off the critical path. You see progress
+             every week.</p>
+          <a href="#contact" class="link-arrow" data-cursor="link">Start a project <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="split split--reverse" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1100&q=80" alt="Close-up of circuitry and automation hardware" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">ii.</span>
+          <h3>Agents that watch your stack</h3>
+          <p>Every build ships with automations that monitor, deploy, and report —
+             so problems get caught and handled before you'd even notice them.</p>
+          <a href="command-center.html" class="link-arrow" data-cursor="link">See the Command Center <span>→</span></a>
+        </div>
+      </div>
+
+      <div class="split" data-reveal>
+        <div class="split__media" data-parallax>
+          <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1100&q=80" alt="Developer workspace with code on screen" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
+        </div>
+        <div class="split__body">
+          <span class="split__num">iii.</span>
+          <h3>Built to scale &amp; maintain</h3>
+          <p>Clean, documented, ownable code — no black boxes. When you grow, the
+             system grows with you, and you keep the keys.</p>
+          <a href="#contact" class="link-arrow" data-cursor="link">Talk to us <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Capabilities marquee -->
+    <section class="marquee" aria-hidden="true">
+      <div class="marquee__track" id="marqueeTrack">
+        <span>SaaS</span><span class="marquee__dot">·</span>
+        <span>Web Apps</span><span class="marquee__dot">·</span>
+        <span>AI Agents</span><span class="marquee__dot">·</span>
+        <span>Automations</span><span class="marquee__dot">·</span>
+        <span>Integrations</span><span class="marquee__dot">·</span>
+        <span>Dashboards</span><span class="marquee__dot">·</span>
+        <span>Landing Pages</span><span class="marquee__dot">·</span>
+        <span>APIs</span><span class="marquee__dot">·</span>
+      </div>
+    </section>
+
+    <!-- Live ops teaser -->
+    <section class="liveteaser" id="live">
+      <div class="liveteaser__inner">
+        <div data-reveal>
+          <p class="eyebrow">Live operations</p>
+          <h2 class="liveteaser__title">Watch the agents work — in real time.</h2>
+          <p class="liveteaser__lede">
+            Every project we run reports into one place: a live Command Center wired
+            straight to our build pipeline. Open runs, recent activity, success
+            rates — all updating as it happens.
+          </p>
+          <a href="command-center.html" class="btn btn--solid" data-cursor="link" style="margin-top:1.8rem;">Open the Command Center</a>
+        </div>
+        <div class="liveteaser__panel" data-reveal data-reveal-delay="0.1">
+          <div class="liveteaser__head"><span class="live-dot" aria-hidden="true"></span> Live · GitHub pipeline</div>
+          <div class="liveteaser__row">
+            <span>Active agents</span>
+            <b id="liveAgents">—</b>
+          </div>
+          <div class="liveteaser__row">
+            <span>Pipeline events (24h)</span>
+            <b id="liveEvents">—</b>
+          </div>
+          <div class="liveteaser__row">
+            <span>Active repositories</span>
+            <b id="liveRepos">—</b>
+          </div>
+          <div class="liveteaser__row">
+            <span id="liveStatus" style="font-size:0.72rem;color:var(--ink-faint);">Connecting to live feed…</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="voices" id="voices">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow" data-reveal>In their words</p>
+          <h2 class="section-title" data-reveal>Teams that let us run it.</h2>
+        </div>
+      </div>
+      <div class="voices__grid">
+        <figure class="quote" data-reveal>
+          <blockquote>"They shipped our product in six weeks, then handed us a
+            dashboard where we can literally watch the automations working."</blockquote>
+          <figcaption>Founder, SaaS startup <span>Remote</span></figcaption>
+        </figure>
+        <figure class="quote" data-reveal data-reveal-delay="0.08">
+          <blockquote>"The agents quietly handle work that used to eat a whole role.
+            We just check the Command Center."</blockquote>
+          <figcaption>Operations lead <span>E-commerce</span></figcaption>
+        </figure>
+        <figure class="quote" data-reveal data-reveal-delay="0.16">
+          <blockquote>"Fast, clear, and no black boxes. We own every line — and it
+            keeps running without us."</blockquote>
+          <figcaption>CTO, fintech <span>New York</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- Contact / CTA -->
+    <section class="contact" id="contact">
+      <div class="contact__inner">
+        <div class="contact__intro" data-reveal>
+          <p class="eyebrow">Start a project</p>
+          <h2 class="contact__title">Tell us what you want to build.</h2>
+          <p class="contact__lede">
+            A product, a site, an automation — or all three. Tell us the goal and
+            we'll reply within one working day with a clear next step.
+          </p>
+          <ul class="contact__meta">
+            <li><span>Email</span> hello@bdigital.studio</li>
+            <li><span>Build with us</span> Remote-first · Worldwide</li>
+            <li><span>Live status</span> See the Command Center</li>
+          </ul>
+        </div>
+        <form class="form" id="enquiryForm" novalidate data-reveal data-reveal-delay="0.1">
+          <div class="form__row">
+            <label class="field">
+              <span>Full name</span>
+              <input type="text" name="name" autocomplete="name" required placeholder="Your name" />
+            </label>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" autocomplete="email" required placeholder="you@example.com" />
+            </label>
+          </div>
+          <label class="field">
+            <span>I'm interested in</span>
+            <select name="interest">
+              <option>A SaaS product / web app</option>
+              <option>A website or landing page</option>
+              <option>AI automations / agents</option>
+              <option>Something else</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>A few words</span>
+            <textarea name="message" rows="3" placeholder="What are you trying to build or automate?"></textarea>
+          </label>
+          <button type="submit" class="btn btn--solid form__submit" data-cursor="link">
+            <span>Send the brief</span>
+          </button>
+          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__top">
+      <a class="footer__brand" href="#top" data-cursor="link">
+        <span class="nav__brand-mark">B</span> B DIGITAL
+      </a>
+      <nav class="footer__cols" aria-label="Footer">
+        <div>
+          <h4>Studio</h4>
+          <a href="#services" data-cursor="link">Services</a>
+          <a href="#work" data-cursor="link">Work</a>
+          <a href="#process" data-cursor="link">How it works</a>
+        </div>
+        <div>
+          <h4>Live</h4>
+          <a href="command-center.html" data-cursor="link">Command Center</a>
+          <a href="#live" data-cursor="link">Operations</a>
+          <a href="#contact" data-cursor="link">Start a project</a>
+        </div>
+        <div>
+          <h4>Connect</h4>
+          <a href="#contact" data-cursor="link">Email us</a>
+          <a href="https://github.com/uncleisaacs553-art" data-cursor="link" target="_blank" rel="noopener">GitHub</a>
+          <a href="#top" data-cursor="link">Back to top</a>
+        </div>
+      </nav>
+    </div>
+    <div class="footer__base">
+      <p>© <span id="year">2026</span> B Digital — software, web &amp; AI automation studio.</p>
+      <p class="footer__credit">Built with Three.js · No build step</p>
+    </div>
+  </footer>
+
+  <!-- Motion libraries (vendored UMD globals) -->
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/lenis.min.js"></script>
+
+  <!-- App -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
