@@ -27,6 +27,18 @@ leadfinder:
   daily_email_cap: 20           # max gentle first-emails auto-sent per run (deliverability guard)
   email_channel_auto: true      # auto-send the gentle first email (the agreed "mix")
   whatsapp_channel_auto: false  # NEVER auto-send WhatsApp — draft only, Brian taps to send
+  # Optional public-directory scraper. OFF by default — the reliable source is the
+  # seed CSVs in data/seeds/. To enable, verify the CSS selectors against a public
+  # directory you're allowed to scrape, then set enabled: true.
+  directory:
+    enabled: false
+    base_url: ""              # search URL; may contain {category}, {area}, {page}
+    list_selector: ""        # CSS selector for each listing card
+    name_selector: ""        # within a card
+    phone_selector: ""
+    website_selector: ""
+    max_pages: 2
+    request_delay_seconds: 2
 
 marketing:
   posts_per_run: 5

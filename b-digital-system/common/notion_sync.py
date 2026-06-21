@@ -60,10 +60,9 @@ def _norm(value: str) -> str:
     return "".join(ch for ch in (value or "").lower() if ch.isalnum())
 
 
-def get_existing_keys(db_id: str, key_props=("Phone", "Website", "Email")) -> set[str]:
-    """Return normalised dedupe keys already in the Leads DB."""
+def iter_pages(db_id: str):
+    """Yield every page in a database, handling pagination."""
     client = _get_client()
-    seen: set[str] = set()
     cursor = None
     while True:
         kwargs = {"database_id": db_id, "page_size": 100}
@@ -71,14 +70,30 @@ def get_existing_keys(db_id: str, key_props=("Phone", "Website", "Email")) -> se
             kwargs["start_cursor"] = cursor
         resp = client.databases.query(**kwargs)
         for page in resp.get("results", []):
-            props = page.get("properties", {})
-            for key in key_props:
-                val = _read_plain(props.get(key, {}))
-                if val:
-                    seen.add(_norm(val))
+            yield page
         if not resp.get("has_more"):
             break
         cursor = resp.get("next_cursor")
+
+
+def read_plain(prop: dict) -> str:
+    """Public reader for title/text/url/phone/email property values."""
+    return _read_plain(prop)
+
+
+def read_select(prop: dict) -> str:
+    return (prop.get("select") or {}).get("name", "") if prop else ""
+
+
+def get_existing_keys(db_id: str, key_props=("Phone", "Website", "Email")) -> set[str]:
+    """Return normalised dedupe keys already in the Leads DB."""
+    seen: set[str] = set()
+    for page in iter_pages(db_id):
+        props = page.get("properties", {})
+        for key in key_props:
+            val = _read_plain(props.get(key, {}))
+            if val:
+                seen.add(_norm(val))
     return seen
 
 
