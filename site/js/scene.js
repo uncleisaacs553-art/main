@@ -155,6 +155,7 @@ export default function initScene(onReady) {
     panel(-4.1, -0.6, 0.8, 0.6, 1.4, 0.9),
     panel(1.6, 3.1, -3.4, -0.2, 1.2, 0.8),
   ];
+  const panelBaseY = panels.map((p) => p.position.y);
 
   // ---- Atmospheric particles ------------------------------------------
   const COUNT = reduceMotion ? 60 : 260;
@@ -238,7 +239,7 @@ export default function initScene(onReady) {
       }
 
       // Panels bob
-      panels.forEach((pl, i) => { pl.position.y += Math.sin(t * 0.8 + i) * 0.0009; });
+      panels.forEach((pl, i) => { pl.position.y = panelBaseY[i] + Math.sin(t * 0.8 + i) * 0.06; });
 
       particles.rotation.y = t * 0.02;
       const arr = pgeo.attributes.position.array;

@@ -2,7 +2,7 @@ name: Deploy B Digital site (GitHub Pages)
 
 on:
   push:
-    branches: ["claude/optimistic-shannon-j18yvp", "main"]
+    branches: ["claude/optimistic-shannon-j18yvp", "claude/happy-rubin-wjr5nk", "main"]
     paths:
       - "site/**"
       - ".github/workflows/deploy-pages.yml"
