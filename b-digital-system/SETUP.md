@@ -11,44 +11,27 @@ GitHub. Do the steps in order. ✅ = you'll copy a value you need later.
 2. Make an **integration**: https://www.notion.so/my-integrations → **New integration** →
    name it `B Digital System` → submit → copy the **Internal Integration Secret**.
    ✅ This is `NOTION_TOKEN`.
-3. Create two databases (a new page → type `/table` → **Table - Full page**):
-
-   **Database A — "B Digital Leads"** with these properties (exact names + types):
-
-   | Property | Type |
-   |---|---|
-   | Name | Title (default) |
-   | Business | Text |
-   | Phone | Phone |
-   | Email | Email |
-   | WhatsApp | URL |
-   | Website | URL |
-   | Website Quality | Text |
-   | Source | Select (options: `Website`, `Lead Finder`) |
-   | Status | Select (options: `New`, `Emailed`, `Replied`, `Won`, `Lost`, `Not relevant`) |
-   | AI Score | Number |
-   | AI Notes | Text |
-   | Outreach Draft | Text |
-   | Date | Date |
-
-   **Database B — "B Digital Content Calendar"**:
-
-   | Property | Type |
-   |---|---|
-   | Name | Title (default) |
-   | Date | Date |
-   | Platform | Select (options: `Facebook`, `Instagram`) |
-   | Theme | Text |
-   | Caption | Text |
-   | Image | URL |
-   | Status | Select (options: `Idea`, `Ready`, `Posted`) |
-
-4. Share **both** databases with the integration: open each database → top-right
-   **•••** → **Connections** → add `B Digital System`.
-5. Get each database's ID: open the database as a full page, copy the URL. The ID is the
-   32-character string before `?`:
-   `https://notion.so/<workspace>/<THIS_IS_THE_ID>?v=...`
+3. Create **two blank databases** — for each: new page → type `/table` → **Table - Full
+   page**. Just name them; **don't add columns by hand** — the "Setup Notion schema"
+   button (step 6) builds every column for you. Name them:
+   - **`B Digital Leads`**
+   - **`B Digital Content Calendar`**
+4. Share **both** with the integration: open each → top-right **•••** → **Connections**
+   (or "Add connections") → add `B Digital System`. *(Do BOTH, or the system can't write.)*
+5. Get each database's ID: open it as a full page and copy the link. The ID is the
+   32-character chunk before `?`:
+   `notion.so/<workspace>/`**`THIS_32_CHAR_PART`**`?v=...`
    ✅ Leads ID = `NOTION_LEADS_DB`, Content ID = `NOTION_CONTENT_DB`.
+
+<details><summary>Columns the button creates (FYI — you don't add these manually)</summary>
+
+**B Digital Leads:** Name(title), Business(text), Phone(phone), Email(email),
+WhatsApp(url), Website(url), Website Quality(text), Source(select), Status(select),
+AI Score(number), AI Notes(text), Outreach Draft(text), Date(date).
+
+**B Digital Content Calendar:** Name(title), Date(date), Platform(select), Theme(text),
+Caption(text), Image(url), Status(select).
+</details>
 
 ---
 
@@ -112,9 +95,11 @@ auto-emailing if needed — optional.
 
 ## 6. Turn it on
 - **Actions**: repo → **Actions** tab → enable workflows if prompted.
+- **Build the Notion columns** (one tap): **Actions → "B Digital — Setup Notion schema" →
+  Run workflow**. When it finishes green, your two databases will have all their columns.
 - **Pages**: repo → **Settings → Pages** → Source = **GitHub Actions** (for the lead page).
-- Run a test: **Actions → "B Digital — Lead Finder" → Run workflow** (manual). Check your
-  Notion Leads database fills in.
+- **Test the lead finder**: **Actions → "B Digital — Lead Finder" → Run workflow** (manual).
+  Check that your Notion Leads database fills in.
 
 ---
 

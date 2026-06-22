@@ -1,0 +1,31 @@
+name: B Digital — Setup Notion schema
+
+# Run this ONCE (tap "Run workflow") after you've added the Notion secrets.
+# It builds all the columns on your two blank databases. Safe to re-run.
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: b-digital-system
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+          cache-dependency-path: b-digital-system/requirements.txt
+
+      - run: pip install -r requirements.txt
+
+      - name: Build Notion schema
+        env:
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_LEADS_DB: ${{ secrets.NOTION_LEADS_DB }}
+          NOTION_CONTENT_DB: ${{ secrets.NOTION_CONTENT_DB }}
+        run: python setup.py
