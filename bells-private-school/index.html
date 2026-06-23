@@ -3,28 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0b0f17" />
+  <meta name="theme-color" content="#16294a" />
   <title>Bells Private School — We Ring the Best Results</title>
-  <meta name="description" content="Bells Private School in Khomasdal, Windhoek — an accredited NSSCO Grade 11 tutorial centre delivering learner-centred support, qualified staff, and modern facilities. We Ring the Best Results." />
+  <meta name="description" content="Bells Private School in Khomasdal, Windhoek, is an accredited NSSCO Grade 11 tutorial centre offering learner-centred support, qualified staff, and modern facilities. Registered with the Ministry of Education (DNEA)." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="vendor/lenis.css" />
   <link rel="stylesheet" href="css/styles.css" />
 
-  <!-- Three.js resolved via import map from vendored files (no build step, no CDN) -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "./vendor/three.module.js",
-      "three/addons/": "./vendor/addons/"
-    }
-  }
-  </script>
-
-  <!-- Bell brand glyph, reused via <use> -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <symbol id="bellGlyph" viewBox="0 0 24 24">
       <path d="M12 2.2a1.3 1.3 0 0 1 1.3 1.3v.7a6.2 6.2 0 0 1 4.4 5.94v3.1l1.5 2.36a.9.9 0 0 1-.76 1.38H5.56a.9.9 0 0 1-.76-1.38l1.5-2.36v-3.1A6.2 6.2 0 0 1 10.7 4.2v-.7A1.3 1.3 0 0 1 12 2.2Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
@@ -32,367 +20,311 @@
     </symbol>
   </svg>
 </head>
-<body>
-  <!-- Loader -->
-  <div class="loader" id="loader" aria-hidden="true">
-    <div class="loader__inner">
-      <span class="loader__mark"><svg class="ico-bell"><use href="#bellGlyph"/></svg></span>
-      <span class="loader__bar"><span class="loader__fill" id="loaderFill"></span></span>
-      <span class="loader__word">Bells Private School</span>
+<body id="top">
+
+  <!-- Utility bar -->
+  <div class="topbar">
+    <div class="topbar__inner">
+      <div class="topbar__contact">
+        <a href="tel:+264812046275">+264 81 204 6275</a>
+        <span class="topbar__sep">·</span>
+        <a href="mailto:thebellsps@gmail.com">thebellsps@gmail.com</a>
+      </div>
+      <div class="topbar__hours">Mon–Fri 07:30–16:30 · Sat 08:00–12:00</div>
     </div>
   </div>
 
-  <!-- Custom cursor (desktop, fine-pointer only) -->
-  <div class="cursor" id="cursor" aria-hidden="true">
-    <div class="cursor__dot"></div>
-    <div class="cursor__ring"></div>
-  </div>
-
-  <!-- Persistent 3D backdrop -->
-  <canvas id="scene" aria-hidden="true"></canvas>
-
-  <!-- Navigation -->
-  <header class="nav" id="nav">
-    <div class="nav__inner">
-      <a class="nav__brand" href="#top" data-cursor="link" aria-label="Bells Private School — home">
-        <span class="nav__brand-mark"><svg class="ico-bell"><use href="#bellGlyph"/></svg></span>
-        <span class="nav__brand-word">BELLS<em>Private School</em></span>
+  <!-- Header / navigation -->
+  <header class="header" id="header">
+    <div class="header__inner">
+      <a class="brand" href="#top" aria-label="Bells Private School — home">
+        <span class="brand__mark"><svg class="ico-bell"><use href="#bellGlyph"/></svg></span>
+        <span class="brand__text">
+          <strong>Bells Private School</strong>
+          <em>We Ring the Best Results</em>
+        </span>
       </a>
-      <nav class="nav__links" aria-label="Primary">
-        <a href="#about" data-cursor="link">About</a>
-        <a href="#programmes" data-cursor="link">Programmes</a>
-        <a href="#approach" data-cursor="link">Why Bells</a>
-        <a href="#voices" data-cursor="link">Results</a>
-        <a href="#admissions" data-cursor="link">Admissions</a>
+      <nav class="nav" id="nav" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#programmes">Programmes</a>
+        <a href="#why">Why Bells</a>
+        <a href="#admissions">Admissions</a>
+        <a href="#contact">Contact</a>
+        <a href="#admissions" class="btn btn--solid nav__cta">Apply Now</a>
       </nav>
-      <a href="#admissions" class="btn btn--ghost nav__cta" data-cursor="link">Apply now</a>
       <button class="nav__toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
-        <span></span><span></span>
+        <span></span><span></span><span></span>
       </button>
     </div>
   </header>
 
-  <main class="page" id="top">
+  <main>
 
-    <!-- Hero -->
-    <section class="hero" id="hero">
-      <div class="hero__veil"></div>
+    <!-- Hero banner -->
+    <section class="hero">
       <div class="hero__inner">
-        <p class="eyebrow hero__eyebrow" data-reveal>Khomasdal · Windhoek, Namibia · Accredited NSSCO Centre</p>
-        <h1 class="hero__title">
-          <span class="line" data-reveal data-reveal-delay="0.05">We ring the</span>
-          <span class="line" data-reveal data-reveal-delay="0.12"><em>best</em> results.</span>
-        </h1>
-        <p class="hero__lede" data-reveal data-reveal-delay="0.2">
-          A focused Grade&nbsp;11 tutorial school built around qualified teachers,
-          learner-centred support, and the discipline that turns potential into a
-          pass. Every learner. Every subject. Every term.
-        </p>
-        <div class="hero__actions" data-reveal data-reveal-delay="0.28">
-          <a href="#admissions" class="btn btn--solid" data-cursor="link">Apply for 2026</a>
-          <a href="#programmes" class="btn btn--ghost" data-cursor="link">Explore programmes</a>
+        <div class="hero__text reveal">
+          <p class="eyebrow">Khomasdal · Windhoek, Namibia</p>
+          <h1>Quality NSSCO tutoring that gets results.</h1>
+          <p class="hero__lede">
+            Bells Private School is an accredited Grade 11 tutorial centre built
+            around qualified teachers, learner-centred support, and the discipline
+            that turns potential into a pass.
+          </p>
+          <div class="hero__actions">
+            <a href="#admissions" class="btn btn--solid">Apply for 2026</a>
+            <a href="#programmes" class="btn btn--outline">View programmes</a>
+          </div>
+          <ul class="hero__badges">
+            <li>Registered with the Ministry of Education</li>
+            <li>Official NSSCO examination centre (DNEA)</li>
+          </ul>
+        </div>
+        <div class="hero__media">
+          <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=1100&q=80"
+               alt="Students learning in a bright classroom"
+               onerror="this.closest('.hero__media').classList.add('media--fallback')" />
         </div>
       </div>
-      <a href="#about" class="hero__scroll" data-cursor="link" aria-label="Scroll to explore">
-        <span>Scroll</span>
-        <span class="hero__scroll-line"></span>
-      </a>
     </section>
 
-    <!-- About / positioning + stats -->
-    <section class="band" id="about">
-      <div class="band__intro" data-reveal>
-        <p class="eyebrow">The Bells standard</p>
-        <p class="band__statement">
-          We don't just prepare learners for an exam. We build the habits,
-          confidence, and clarity that carry them through it — and well beyond.
-        </p>
-        <p class="band__note">
-          Registered with the Ministry of Education and the Directorate of
-          National Examinations and Assessment (DNEA), Bells operates as an
-          official NSSCO examination centre on Dodge Street, Khomasdal.
-        </p>
+    <!-- Quick stats -->
+    <section class="stats" aria-label="At a glance">
+      <div class="stats__inner">
+        <div class="stat reveal"><span class="stat__num">75%</span><span class="stat__label">Student pass rate</span></div>
+        <div class="stat reveal"><span class="stat__num">14+</span><span class="stat__label">NSSCO subjects offered</span></div>
+        <div class="stat reveal"><span class="stat__num">6 days</span><span class="stat__label">Of teaching each week</span></div>
+        <div class="stat reveal"><span class="stat__num">DNEA</span><span class="stat__label">Accredited exam centre</span></div>
       </div>
-      <div class="stats">
-        <div class="stat" data-reveal>
-          <span class="stat__num" data-count="75" data-suffix="%">0%</span>
-          <span class="stat__label">Student pass rate</span>
-        </div>
-        <div class="stat" data-reveal data-reveal-delay="0.06">
-          <span class="stat__num" data-count="14" data-suffix="+">0</span>
-          <span class="stat__label">NSSCO subjects offered</span>
-        </div>
-        <div class="stat" data-reveal data-reveal-delay="0.12">
-          <span class="stat__num" data-count="6" data-suffix=" days">0</span>
-          <span class="stat__label">Of teaching every week</span>
-        </div>
-        <div class="stat" data-reveal data-reveal-delay="0.18">
-          <span class="stat__num stat__num--word">DNEA</span>
-          <span class="stat__label">Accredited exam centre</span>
+    </section>
+
+    <!-- About + values -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="about">
+          <div class="about__intro reveal">
+            <p class="eyebrow">About the school</p>
+            <h2>A focused place to do real academic work.</h2>
+            <p>
+              Bells Private School delivers quality education through focused
+              tutorial programmes, qualified staff, and learner-centred support
+              systems that empower students to reach their full academic
+              potential. We are registered with Namibia's Ministry of Education
+              under the Directorate of National Examinations and Assessment
+              (DNEA), and operate as an official NSSCO examination centre on Dodge
+              Street, Khomasdal.
+            </p>
+          </div>
+          <div class="values">
+            <div class="value reveal"><h3>Excellence</h3><p>High standards in teaching, learning, and results.</p></div>
+            <div class="value reveal"><h3>Integrity</h3><p>Honest, consistent, and accountable in all we do.</p></div>
+            <div class="value reveal"><h3>Discipline</h3><p>The steady habits that make strong results possible.</p></div>
+            <div class="value reveal"><h3>Innovation</h3><p>Modern facilities and methods that keep learners engaged.</p></div>
+            <div class="value reveal"><h3>Support</h3><p>Personal mentorship and progress monitoring for every learner.</p></div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Programmes -->
-    <section class="programmes" id="programmes">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow" data-reveal>What we offer</p>
-          <h2 class="section-title" data-reveal>Programmes &amp; pathways</h2>
+    <section class="section section--alt" id="programmes">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">What we offer</p>
+          <h2>Programmes &amp; pathways</h2>
+          <p class="section-head__lede">Flexible routes to a strong NSSCO result — full tutorial, part-time, or targeted support, with exam registration handled for you.</p>
         </div>
-        <p class="section-head__note" data-reveal>
-          Flexible routes to a strong NSSCO result — full tutorial, part-time, or
-          targeted support, with exam registration handled for you.
-        </p>
-      </div>
-      <div class="grid" id="programmeGrid"><!-- cards injected by js/data.js --></div>
-    </section>
-
-    <!-- Immersive 3D showcase (reveals the persistent bell) -->
-    <section class="showcase" id="showcase">
-      <div class="showcase__head" data-reveal>
-        <p class="eyebrow">How learning works at Bells</p>
-        <h2 class="section-title">A rhythm built for results.</h2>
-      </div>
-      <div class="showcase__steps">
-        <article class="showcase__step" data-reveal>
-          <span class="showcase__index">01</span>
-          <h3>Diagnose</h3>
-          <p>Every learner starts with a baseline assessment so teaching meets
-             them exactly where they are.</p>
-        </article>
-        <article class="showcase__step" data-reveal data-reveal-delay="0.08">
-          <span class="showcase__index">02</span>
-          <h3>Teach &amp; mentor</h3>
-          <p>Small, focused classes with qualified staff, personalised
-             mentorship, and steady progress monitoring.</p>
-        </article>
-        <article class="showcase__step" data-reveal data-reveal-delay="0.16">
-          <span class="showcase__index">03</span>
-          <h3>Prove it</h3>
-          <p>Past papers, mock exams, and holiday consolidation — then we sit the
-             real thing as a registered centre.</p>
-        </article>
+        <div class="grid" id="programmeGrid"><!-- cards injected by js/data.js --></div>
       </div>
     </section>
 
-    <!-- Why Bells split rows -->
-    <section class="experience" id="approach">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow" data-reveal>Why Bells</p>
-          <h2 class="section-title" data-reveal>Built around the learner.</h2>
+    <!-- Subjects -->
+    <section class="section" id="subjects">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Curriculum</p>
+          <h2>Subjects offered</h2>
+          <p class="section-head__lede">Core and elective NSSCO subjects, taught by experienced staff with full access to past examination papers.</p>
         </div>
-      </div>
-
-      <div class="split" data-reveal>
-        <div class="split__media" data-parallax>
-          <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1100&q=80" alt="Students focused in a bright classroom" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
-        </div>
-        <div class="split__body">
-          <span class="split__num">i.</span>
-          <h3>Qualified, dedicated staff</h3>
-          <p>Experienced teachers with ongoing professional development, who know
-             the NSSCO syllabus inside out and teach to understanding — not just
-             to the test.</p>
-          <a href="#admissions" class="link-arrow" data-cursor="link">Meet the approach <span>→</span></a>
-        </div>
-      </div>
-
-      <div class="split split--reverse" data-reveal>
-        <div class="split__media" data-parallax>
-          <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1100&q=80" alt="Modern, well-equipped classroom" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
-        </div>
-        <div class="split__body">
-          <span class="split__num">ii.</span>
-          <h3>Modern facilities</h3>
-          <p>Air-conditioned classrooms with projectors and audio-visual
-             technology, plus full access to past examination papers — a calm,
-             focused place to do real work.</p>
-          <a href="#admissions" class="link-arrow" data-cursor="link">See what's included <span>→</span></a>
-        </div>
-      </div>
-
-      <div class="split" data-reveal>
-        <div class="split__media" data-parallax>
-          <img src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1100&q=80" alt="Teacher mentoring a student one to one" loading="lazy" onerror="this.closest('.split__media').classList.add('media--fallback')" />
-        </div>
-        <div class="split__body">
-          <span class="split__num">iii.</span>
-          <h3>Personal mentorship</h3>
-          <p>Progress is monitored learner by learner. Mentors stay close, flag
-             what's slipping early, and keep families informed every step of the
-             way.</p>
-          <a href="#contact" class="link-arrow" data-cursor="link">Talk to us <span>→</span></a>
-        </div>
+        <ul class="subjects reveal">
+          <li>English</li>
+          <li>Mathematics</li>
+          <li>Physical Science</li>
+          <li>Biology</li>
+          <li>History</li>
+          <li>Geography</li>
+          <li>Accounting</li>
+          <li>Business Studies</li>
+        </ul>
       </div>
     </section>
 
-    <!-- Subjects marquee -->
-    <section class="marquee" aria-hidden="true">
-      <div class="marquee__track" id="marqueeTrack">
-        <span>English</span><span class="marquee__dot">·</span>
-        <span>Mathematics</span><span class="marquee__dot">·</span>
-        <span>Physical Science</span><span class="marquee__dot">·</span>
-        <span>Biology</span><span class="marquee__dot">·</span>
-        <span>History</span><span class="marquee__dot">·</span>
-        <span>Geography</span><span class="marquee__dot">·</span>
-        <span>Accounting</span><span class="marquee__dot">·</span>
-        <span>Business Studies</span><span class="marquee__dot">·</span>
-      </div>
-    </section>
-
-    <!-- Results / testimonials -->
-    <section class="voices" id="voices">
-      <div class="section-head">
-        <div>
-          <p class="eyebrow" data-reveal>In their words</p>
-          <h2 class="section-title" data-reveal>Results families remember.</h2>
+    <!-- Why Bells -->
+    <section class="section section--alt" id="why">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Why Bells</p>
+          <h2>Built around the learner.</h2>
         </div>
-      </div>
-      <div class="voices__grid">
-        <figure class="quote" data-reveal>
-          <blockquote>"My son came in unsure of a single subject and left with a
-            full set of passes. The teachers simply did not give up on him."</blockquote>
-          <figcaption>Parent of a Grade 11 learner <span>Khomasdal</span></figcaption>
-        </figure>
-        <figure class="quote" data-reveal data-reveal-delay="0.08">
-          <blockquote>"The mock exams and past papers made the real exam feel
-            familiar. I walked in calm and prepared."</blockquote>
-          <figcaption>NSSCO graduate <span>Windhoek</span></figcaption>
-        </figure>
-        <figure class="quote" data-reveal data-reveal-delay="0.16">
-          <blockquote>"Registering as a private candidate was painless — Bells
-            handled it and kept me on track the whole way."</blockquote>
-          <figcaption>Part-time candidate <span>Class of 2025</span></figcaption>
-        </figure>
+
+        <div class="feature reveal">
+          <div class="feature__media">
+            <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=1000&q=80" alt="Teacher working with focused students" onerror="this.closest('.feature__media').classList.add('media--fallback')" />
+          </div>
+          <div class="feature__body">
+            <h3>Qualified, dedicated staff</h3>
+            <p>Experienced teachers with ongoing professional development, who know the NSSCO syllabus inside out and teach to understanding — not just to the test.</p>
+          </div>
+        </div>
+
+        <div class="feature feature--reverse reveal">
+          <div class="feature__media">
+            <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1000&q=80" alt="A modern, well-equipped classroom" onerror="this.closest('.feature__media').classList.add('media--fallback')" />
+          </div>
+          <div class="feature__body">
+            <h3>Modern facilities</h3>
+            <p>Air-conditioned classrooms with projectors and audio-visual technology, plus full access to past examination papers — a calm, focused place to study.</p>
+          </div>
+        </div>
+
+        <div class="feature reveal">
+          <div class="feature__media">
+            <img src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1000&q=80" alt="A mentor guiding a student one to one" onerror="this.closest('.feature__media').classList.add('media--fallback')" />
+          </div>
+          <div class="feature__body">
+            <h3>Personal mentorship</h3>
+            <p>Progress is monitored learner by learner. Mentors stay close, flag what's slipping early, and keep families informed every step of the way.</p>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Admissions -->
-    <section class="admissions" id="admissions">
-      <div class="admissions__head" data-reveal>
-        <p class="eyebrow">Admissions</p>
-        <h2 class="section-title">Joining is straightforward.</h2>
+    <section class="section" id="admissions">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Admissions</p>
+          <h2>How to enrol</h2>
+          <p class="section-head__lede">Joining is straightforward. Most learners can start within a week of their first enquiry.</p>
+        </div>
+        <ol class="steps">
+          <li class="step reveal"><span class="step__num">1</span><h3>Enquire</h3><p>Call, message, or send the form below. Tell us the learner's grade and the subjects they need.</p></li>
+          <li class="step reveal"><span class="step__num">2</span><h3>Meet &amp; assess</h3><p>We meet the learner, talk through goals, and run a short baseline assessment to place them correctly.</p></li>
+          <li class="step reveal"><span class="step__num">3</span><h3>Enrol &amp; register</h3><p>Complete enrolment and, where needed, we register you for NSSCO or NAMCOL examinations as a centre.</p></li>
+          <li class="step reveal"><span class="step__num">4</span><h3>Begin classes</h3><p>Classes start, mentorship begins, and progress is tracked from day one through to the exam.</p></li>
+        </ol>
       </div>
-      <ol class="steps">
-        <li class="step" data-reveal>
-          <span class="step__num">01</span>
-          <h3>Enquire</h3>
-          <p>Call, message, or send the form below. Tell us the learner's grade
-             and the subjects they need.</p>
-        </li>
-        <li class="step" data-reveal data-reveal-delay="0.07">
-          <span class="step__num">02</span>
-          <h3>Meet &amp; assess</h3>
-          <p>We meet the learner, talk through goals, and run a short baseline so
-             we place them correctly.</p>
-        </li>
-        <li class="step" data-reveal data-reveal-delay="0.14">
-          <span class="step__num">03</span>
-          <h3>Enrol &amp; register</h3>
-          <p>Complete enrolment and, where needed, we register you for NSSCO or
-             NAMCOL examinations as a centre.</p>
-        </li>
-        <li class="step" data-reveal data-reveal-delay="0.21">
-          <span class="step__num">04</span>
-          <h3>Start ringing results</h3>
-          <p>Classes begin, mentorship kicks in, and progress is tracked from day
-             one through to the exam.</p>
-        </li>
-      </ol>
     </section>
 
-    <!-- Contact / CTA -->
-    <section class="contact" id="contact">
-      <div class="contact__inner">
-        <div class="contact__intro" data-reveal>
-          <p class="eyebrow">Get in touch</p>
-          <h2 class="contact__title">Let's plan a strong year.</h2>
-          <p class="contact__lede">
-            Send us a message and our team will get back to you — usually the same
-            day. You're welcome to visit the campus during office hours.
-          </p>
-          <ul class="contact__meta">
-            <li><span>Phone</span> +264 81 204 6275 · +264 61 258 702</li>
-            <li><span>Email</span> thebellsps@gmail.com</li>
-            <li><span>Campus</span> ERF 4474, Dodge Street, Khomasdal, Windhoek</li>
-            <li><span>Office hours</span> Mon–Fri 07:30–16:30 · Sat 08:00–12:00</li>
-          </ul>
+    <!-- Testimonials -->
+    <section class="section section--alt" id="testimonials">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">What families say</p>
+          <h2>Results families remember.</h2>
         </div>
-        <form class="form" id="enquiryForm" novalidate data-reveal data-reveal-delay="0.1">
-          <div class="form__row">
-            <label class="field">
-              <span>Full name</span>
-              <input type="text" name="name" autocomplete="name" required placeholder="Parent or learner name" />
-            </label>
-            <label class="field">
-              <span>Phone or email</span>
-              <input type="text" name="email" autocomplete="email" required placeholder="How we reach you" />
-            </label>
-          </div>
-          <label class="field">
-            <span>I'm enquiring about</span>
-            <select name="interest">
-              <option>NSSCO Grade 11 tutorial programme</option>
-              <option>Part-time learning</option>
-              <option>Subject coaching</option>
-              <option>Holiday classes</option>
-              <option>Exam registration (NSSCO / NAMCOL)</option>
-              <option>Something else</option>
-            </select>
-          </label>
-          <label class="field">
-            <span>A few words</span>
-            <textarea name="message" rows="3" placeholder="Learner's grade, subjects needed, and any goals..."></textarea>
-          </label>
-          <button type="submit" class="btn btn--solid form__submit" data-cursor="link">
-            <span>Send enquiry</span>
-          </button>
-          <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
-        </form>
+        <div class="quotes">
+          <figure class="quote reveal">
+            <blockquote>"My son came in unsure of a single subject and left with a full set of passes. The teachers simply did not give up on him."</blockquote>
+            <figcaption>Parent of a Grade 11 learner — Khomasdal</figcaption>
+          </figure>
+          <figure class="quote reveal">
+            <blockquote>"The mock exams and past papers made the real exam feel familiar. I walked in calm and prepared."</blockquote>
+            <figcaption>NSSCO graduate — Windhoek</figcaption>
+          </figure>
+          <figure class="quote reveal">
+            <blockquote>"Registering as a private candidate was painless — Bells handled it and kept me on track the whole way."</blockquote>
+            <figcaption>Part-time candidate — Class of 2025</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Get in touch</p>
+          <h2>Contact &amp; enrolment</h2>
+          <p class="section-head__lede">Send us a message and our team will respond — usually the same day. You are welcome to visit the campus during office hours.</p>
+        </div>
+        <div class="contact">
+          <div class="contact__details reveal">
+            <ul class="contact__list">
+              <li><span>Phone</span><a href="tel:+264812046275">+264 81 204 6275</a> · <a href="tel:+26461258702">+264 61 258 702</a></li>
+              <li><span>Email</span><a href="mailto:thebellsps@gmail.com">thebellsps@gmail.com</a></li>
+              <li><span>Address</span>ERF 4474, Dodge Street, Khomasdal, Windhoek, Namibia</li>
+              <li><span>Office hours</span>Mon–Fri 07:30–16:30 · Sat 08:00–12:00</li>
+            </ul>
+            <div class="contact__map">
+              <iframe
+                title="Map to Bells Private School, Dodge Street, Khomasdal"
+                src="https://www.google.com/maps?q=Dodge+Street,+Khomasdal,+Windhoek,+Namibia&output=embed"
+                loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            </div>
+          </div>
+          <form class="form reveal" id="enquiryForm" novalidate>
+            <div class="form__row">
+              <label class="field"><span>Full name</span><input type="text" name="name" autocomplete="name" required placeholder="Parent or learner name" /></label>
+              <label class="field"><span>Phone or email</span><input type="text" name="contact" autocomplete="email" required placeholder="How we can reach you" /></label>
+            </div>
+            <label class="field"><span>I'm enquiring about</span>
+              <select name="interest">
+                <option>NSSCO Grade 11 tutorial programme</option>
+                <option>Part-time learning</option>
+                <option>Subject coaching</option>
+                <option>Holiday classes</option>
+                <option>Exam registration (NSSCO / NAMCOL)</option>
+                <option>Something else</option>
+              </select>
+            </label>
+            <label class="field"><span>Message</span><textarea name="message" rows="4" placeholder="Learner's grade, subjects needed, and any goals..."></textarea></label>
+            <button type="submit" class="btn btn--solid">Send enquiry</button>
+            <p class="form__status" id="formStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer class="footer">
-    <div class="footer__top">
-      <a class="footer__brand" href="#top" data-cursor="link">
-        <span class="nav__brand-mark"><svg class="ico-bell"><use href="#bellGlyph"/></svg></span> BELLS PRIVATE SCHOOL
-      </a>
+    <div class="footer__inner">
+      <div class="footer__brand">
+        <a class="brand brand--footer" href="#top">
+          <span class="brand__mark"><svg class="ico-bell"><use href="#bellGlyph"/></svg></span>
+          <span class="brand__text"><strong>Bells Private School</strong><em>We Ring the Best Results</em></span>
+        </a>
+        <p>An accredited NSSCO Grade 11 tutorial centre in Khomasdal, Windhoek, Namibia.</p>
+      </div>
       <nav class="footer__cols" aria-label="Footer">
         <div>
           <h4>Programmes</h4>
-          <a href="#programmes" data-cursor="link">Grade 11 tutorial</a>
-          <a href="#programmes" data-cursor="link">Part-time learning</a>
-          <a href="#programmes" data-cursor="link">Holiday classes</a>
+          <a href="#programmes">Grade 11 tutorial</a>
+          <a href="#programmes">Part-time learning</a>
+          <a href="#programmes">Holiday classes</a>
         </div>
         <div>
           <h4>School</h4>
-          <a href="#about" data-cursor="link">About</a>
-          <a href="#approach" data-cursor="link">Why Bells</a>
-          <a href="#admissions" data-cursor="link">Admissions</a>
+          <a href="#about">About</a>
+          <a href="#why">Why Bells</a>
+          <a href="#admissions">Admissions</a>
         </div>
         <div>
-          <h4>Connect</h4>
-          <a href="#contact" data-cursor="link">Enquire</a>
-          <a href="https://www.facebook.com/" target="_blank" rel="noopener" data-cursor="link">Facebook</a>
-          <a href="https://www.instagram.com/" target="_blank" rel="noopener" data-cursor="link">Instagram</a>
+          <h4>Contact</h4>
+          <a href="tel:+264812046275">+264 81 204 6275</a>
+          <a href="mailto:thebellsps@gmail.com">thebellsps@gmail.com</a>
+          <a href="https://www.facebook.com/" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a>
         </div>
       </nav>
     </div>
     <div class="footer__base">
-      <p>© <span id="year">2026</span> Bells Private School · Khomasdal, Windhoek, Namibia.</p>
-      <p class="footer__credit">We Ring the Best Results · Accredited NSSCO Centre (DNEA)</p>
+      <p>© <span id="year">2026</span> Bells Private School. All rights reserved.</p>
+      <p>ERF 4474, Dodge Street, Khomasdal, Windhoek · Accredited NSSCO Centre (DNEA)</p>
     </div>
   </footer>
 
-  <!-- Motion libraries (vendored UMD globals) -->
-  <script src="vendor/gsap.min.js"></script>
-  <script src="vendor/ScrollTrigger.min.js"></script>
-  <script src="vendor/lenis.min.js"></script>
-
-  <!-- App -->
-  <script type="module" src="js/main.js"></script>
+  <script src="js/main.js" type="module"></script>
 </body>
 </html>

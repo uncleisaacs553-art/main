@@ -45,15 +45,12 @@ export function mountProgrammes(target) {
   target.innerHTML = programmes
     .map(
       (p, i) => `
-    <article class="card" data-reveal data-reveal-delay="${(i % 3) * 0.07}" data-tilt data-cursor="link">
-      <div class="card__inner">
-        <span class="card__icon" aria-hidden="true">${p.icon}</span>
-        <span class="card__index">${String(i + 1).padStart(2, "0")}</span>
-        <h3 class="card__name">${p.name}</h3>
-        <p class="card__desc">${p.desc}</p>
-        <div class="card__tags">
-          ${p.tags.map((t) => `<span>${t}</span>`).join("")}
-        </div>
+    <article class="card reveal">
+      <span class="card__icon" aria-hidden="true">${p.icon}</span>
+      <h3 class="card__name">${p.name}</h3>
+      <p class="card__desc">${p.desc}</p>
+      <div class="card__tags">
+        ${p.tags.map((t) => `<span>${t}</span>`).join("")}
       </div>
     </article>`
     )
