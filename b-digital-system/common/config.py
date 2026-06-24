@@ -34,8 +34,13 @@ def load_config() -> dict:
 
 
 def get_env(name: str, default: str | None = None, required: bool = False) -> str | None:
-    """Read an environment variable. Raises if required and absent/empty."""
+    """Read an environment variable (whitespace-trimmed). Raises if required and absent/empty.
+
+    Trimming tolerates trailing newlines/spaces that often sneak in when pasting secrets.
+    """
     val = os.environ.get(name, default)
+    if isinstance(val, str):
+        val = val.strip()
     if required and not val:
         raise RuntimeError(
             f"Missing required environment variable: {name}. "
