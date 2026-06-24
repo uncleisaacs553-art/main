@@ -61,18 +61,26 @@ def _setup_one(client: Client, db_id: str, label: str, desired: dict) -> bool:
     title_text = title[0]["plain_text"] if title else "(untitled)"
     print(f"\n{label}: '{title_text}'")
 
-    if not to_add:
-        print("  ok - already has all columns, nothing to add")
-        return True
-
+    # Send the FULL desired schema so existing columns are corrected to the right
+    # type/options and any missing ones are created. Safe on empty databases.
     try:
-        client.databases.update(database_id=db_id, properties={n: desired[n] for n in to_add})
+        client.databases.update(database_id=db_id, properties=desired)
+        if to_add:
+            print(f"  ok - added {len(to_add)} columns: {', '.join(to_add)}")
+        print(f"  ok - all {len(desired)} columns ensured with correct types")
+        return True
     except APIResponseError as exc:
-        print(f"  x failed to add columns: {exc}")
-        return False
+        print(f"  ! bulk update failed ({exc}); trying column-by-column...")
 
-    print(f"  ok - added {len(to_add)} columns: {', '.join(to_add)}")
-    return True
+    ok = True
+    for name, spec in desired.items():
+        try:
+            client.databases.update(database_id=db_id, properties={name: spec})
+        except APIResponseError as exc:
+            ok = False
+            print(f"    x could not set '{name}': {exc}")
+    print("  ok - finished column-by-column" if ok else "  ! some columns failed (see above)")
+    return ok
 
 
 def main() -> None:
