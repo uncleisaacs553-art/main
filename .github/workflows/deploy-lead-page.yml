@@ -1,0 +1,53 @@
+name: Deploy B Digital lead page (GitHub Pages)
+
+on:
+  push:
+    branches: ["claude/elegant-bardeen-379412"]
+    paths:
+      - "b-digital-lead/**"
+      - "meridian-estates/**"
+      - ".github/workflows/deploy-lead-page.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One Pages site per repo — serialise deployments.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assemble site (B Digital at root, Meridian demo under /meridian/)
+        run: |
+          mkdir -p _site
+          cp -r b-digital-lead/* _site/
+          if [ -d meridian-estates ]; then
+            mkdir -p _site/meridian
+            cp -r meridian-estates/* _site/meridian/
+          fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

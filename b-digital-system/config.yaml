@@ -1,0 +1,61 @@
+# B Digital automated system — all tunable settings live here.
+# Edit this file to change behaviour; no code changes needed.
+
+business:
+  name: "B Digital"
+  whatsapp_number: "+264814794693"      # E.164 format, used to build wa.me links
+  contact_email: "brianisaacs533@gmail.com"
+  location: "Windhoek, Namibia"
+  website: "https://bdigital-na.lovable.app"
+
+leadfinder:
+  # Business types worth targeting (used by sources + AI scoring).
+  target_categories:
+    - "restaurants and cafes"
+    - "guesthouses and lodges"
+    - "salons and barbershops"
+    - "plumbers, electricians and builders"
+    - "retail shops"
+    - "car dealers and mechanics"
+  # Towns to focus on.
+  target_areas:
+    - "Windhoek"
+    - "Swakopmund"
+    - "Walvis Bay"
+    - "Oshakati"
+  min_prospect_score: 40        # skip leads scored below this (0-100)
+  daily_email_cap: 20           # max gentle first-emails auto-sent per run (deliverability guard)
+  email_channel_auto: true      # auto-send the gentle first email (the agreed "mix")
+  whatsapp_channel_auto: false  # NEVER auto-send WhatsApp — draft only, Brian taps to send
+  # Optional public-directory scraper. OFF by default — the reliable source is the
+  # seed CSVs in data/seeds/. To enable, verify the CSS selectors against a public
+  # directory you're allowed to scrape, then set enabled: true.
+  directory:
+    enabled: false
+    base_url: ""              # search URL; may contain {category}, {area}, {page}
+    list_selector: ""        # CSS selector for each listing card
+    name_selector: ""        # within a card
+    phone_selector: ""
+    website_selector: ""
+    max_pages: 2
+    request_delay_seconds: 2
+
+marketing:
+  posts_per_run: 5
+  platforms: ["Facebook", "Instagram"]
+  themes:
+    - "tip: why your business needs a website"
+    - "before/after: a small business going online"
+    - "myth-busting: a good website is not expensive"
+    - "local spotlight: Namibian small businesses"
+    - "offer: starter website from N$1,500"
+
+ai:
+  model: "gemini-2.0-flash"     # fallback chain handled in code on quota errors
+  rate_limit_seconds: 7
+  batch_size: 5
+  max_output_tokens: 2048
+
+feedback:
+  positive_statuses: ["Replied", "Won"]
+  negative_statuses: ["Lost", "Not relevant"]

@@ -1,0 +1,124 @@
+/* B Digital — lead page styles. Mobile-first, brand-matched. */
+:root {
+  --charcoal: #16130F;
+  --cream: #FFFDF9;
+  --sand: #F7F2E9;
+  --amber: #F59E0B;
+  --orange: #EA580C;
+  --grad: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);
+  --ink: #16130F;
+  --muted: #6b6256;
+  --line: #ece4d6;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(22, 19, 15, 0.08);
+  --font-head: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--cream);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3 { font-family: var(--font-head); line-height: 1.15; margin: 0 0 .4em; }
+p { margin: 0 0 1em; }
+a { color: inherit; }
+.accent {
+  background: var(--grad);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  font-family: var(--font-head); font-weight: 600; font-size: 1rem;
+  padding: .8rem 1.4rem; border-radius: 999px; text-decoration: none;
+  border: 1.5px solid transparent; cursor: pointer; transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-primary { background: var(--grad); color: #fff; box-shadow: 0 8px 20px rgba(234, 88, 12, .3); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-wa { background: #25D366; color: #fff; }
+.btn-block { display: flex; width: 100%; justify-content: center; margin-bottom: .75rem; }
+.wa-icon { font-size: 1.1em; }
+
+/* ---------- Header ---------- */
+.site-header {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .75rem 1.1rem;
+  background: rgba(255, 253, 249, .85); backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: .6rem; text-decoration: none; }
+.brand-tile {
+  position: relative; width: 40px; height: 40px; border-radius: 11px;
+  background: var(--grad); display: grid; place-items: center; box-shadow: var(--shadow);
+}
+.brand-b { color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 1.3rem; }
+.brand-node { position: absolute; top: 7px; right: 7px; width: 6px; height: 6px; border-radius: 50%; background: #fff; }
+.brand-text { display: flex; flex-direction: column; }
+.brand-word { font-family: var(--font-head); font-weight: 700; font-size: 1.15rem; }
+.brand-tag { font-size: .55rem; letter-spacing: .18em; color: var(--muted); font-weight: 600; }
+.header-wa { padding: .5rem 1rem; font-size: .9rem; }
+
+/* ---------- Hero ---------- */
+.hero { max-width: 760px; margin: 0 auto; padding: 3rem 1.2rem 2rem; text-align: center; }
+.eyebrow { text-transform: uppercase; letter-spacing: .2em; font-size: .75rem; font-weight: 600; color: var(--orange); margin-bottom: 1rem; }
+.hero h1 { font-size: clamp(2rem, 8vw, 3.4rem); font-weight: 700; }
+.lede { font-size: clamp(1rem, 4vw, 1.2rem); color: var(--muted); max-width: 38ch; margin: 1rem auto 1.6rem; }
+.hero-cta { display: flex; gap: .8rem; justify-content: center; flex-wrap: wrap; }
+.hero-note { font-size: .85rem; color: var(--muted); margin-top: 1.4rem; }
+
+/* ---------- Services ---------- */
+.services { max-width: 1000px; margin: 1rem auto; padding: 1rem 1.2rem 2rem; display: grid; gap: 1rem; grid-template-columns: 1fr; }
+.card {
+  position: relative; background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 1.5rem; box-shadow: var(--shadow);
+}
+.card h3 { font-size: 1.25rem; }
+.card .price { font-family: var(--font-head); font-weight: 600; color: var(--orange); margin: 0 0 .6rem; }
+.card p:last-child { color: var(--muted); margin: 0; }
+.card-featured { border-color: var(--amber); box-shadow: 0 14px 34px rgba(234, 88, 12, .14); }
+.tag {
+  position: absolute; top: -.7rem; left: 1.5rem; background: var(--grad); color: #fff;
+  font-family: var(--font-head); font-size: .7rem; font-weight: 600; padding: .25rem .7rem; border-radius: 999px;
+}
+
+/* ---------- Quote ---------- */
+.quote { max-width: 640px; margin: 1rem auto 3rem; padding: 2rem 1.2rem; background: var(--sand); border-radius: 22px; }
+.quote h2 { font-size: clamp(1.5rem, 6vw, 2.1rem); text-align: center; }
+.quote-sub { text-align: center; color: var(--muted); margin-bottom: 1.6rem; }
+.form-wrap { background: #fff; border-radius: var(--radius); padding: 1.4rem; box-shadow: var(--shadow); }
+.form-fallback p { font-weight: 600; text-align: center; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: var(--charcoal); color: var(--cream); text-align: center; padding: 2.5rem 1.2rem; }
+.site-footer p { margin: .3rem 0; color: #d8cfbf; }
+.footer-brand { font-family: var(--font-head); font-weight: 700; font-size: 1.4rem; color: #fff; }
+.site-footer a { color: var(--amber); text-decoration: none; }
+.footer-small { font-size: .8rem; color: #9a907f !important; margin-top: 1rem; }
+
+/* ---------- Floating WhatsApp ---------- */
+.fab-wa {
+  position: fixed; bottom: 18px; right: 18px; z-index: 60;
+  width: 56px; height: 56px; border-radius: 50%; background: #25D366; color: #fff;
+  display: grid; place-items: center; font-size: 1.6rem; text-decoration: none;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, .45); transition: transform .15s ease;
+}
+.fab-wa:hover { transform: scale(1.08); }
+
+/* ---------- Larger screens ---------- */
+@media (min-width: 720px) {
+  .services { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}
