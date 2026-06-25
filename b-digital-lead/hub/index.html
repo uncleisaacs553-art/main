@@ -185,9 +185,12 @@
   <script>
     (function () {
       var LEADS_KEY = "bd_leads_url", CONTENT_KEY = "bd_content_url";
+      // Pre-filled for Brian. Anything saved in the setup box (localStorage) overrides these.
+      var DEFAULT_LEADS = "https://app.notion.com/p/b2130224f25c43d3b7c84ad3f1adfb9d?v=b8cd65a004e14d27ba8f13d2c1a1f450";
+      var DEFAULT_CONTENT = "";
       var $ = function (id) { return document.getElementById(id); };
 
-      function looksLikeNotion(u) { return /^https?:\/\/[^ ]*notion\.(so|site)\//i.test(u); }
+      function looksLikeNotion(u) { return /^https?:\/\/[^ ]*notion\.(so|site|com)\//i.test(u); }
 
       function setTile(id, url) {
         var t = $(id), sub = t.querySelector(".tile-sub");
@@ -201,8 +204,8 @@
       }
 
       function apply() {
-        var leads = localStorage.getItem(LEADS_KEY) || "";
-        var content = localStorage.getItem(CONTENT_KEY) || "";
+        var leads = localStorage.getItem(LEADS_KEY) || DEFAULT_LEADS;
+        var content = localStorage.getItem(CONTENT_KEY) || DEFAULT_CONTENT;
         setTile("leadsTile", leads); setTile("contentTile", content);
         $("leadsUrl").value = leads; $("contentUrl").value = content;
       }
