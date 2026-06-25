@@ -8,6 +8,10 @@ business:
   location: "Windhoek, Namibia"
   website: "https://bdigital-na.lovable.app"
 
+notifications:
+  new_lead_digest: true     # email Brian a summary when the Lead Finder finds new leads
+  recipient: ""             # blank = use business.contact_email above
+
 leadfinder:
   # Business types worth targeting (used by sources + AI scoring).
   target_categories:

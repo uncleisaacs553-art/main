@@ -11,7 +11,7 @@ from __future__ import annotations
 import sys
 from datetime import date
 
-from common import brevo, copywriter, notion_sync
+from common import brevo, copywriter, notion_sync, notify
 from common.config import get_env, load_config
 from common.links import wa_link
 from leadfinder import feedback, scoring, website_check
@@ -40,7 +40,8 @@ def _dedupe(leads: list[dict], existing_keys: set[str]) -> list[dict]:
 
 
 def main() -> None:
-    cfg = load_config().get("leadfinder", {})
+    full_cfg = load_config()
+    cfg = full_cfg.get("leadfinder", {})
     min_score = int(cfg.get("min_prospect_score", 40))
     email_cap = int(cfg.get("daily_email_cap", 20))
     email_auto = bool(cfg.get("email_channel_auto", True))
@@ -102,6 +103,10 @@ def main() -> None:
 
     suffix = "" if notion_on else "  (DRY RUN — nothing saved to Notion)"
     print(f"\nDone — {len(leads)} leads processed, {emails_sent} gentle emails sent.{suffix}")
+
+    # Phone alert: email Brian a one-glance summary of today's new leads.
+    if notion_on:
+        notify.new_leads_digest(leads, leads_db, full_cfg)
 
 
 def _append(notes: str, extra: str) -> str:

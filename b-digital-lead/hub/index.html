@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- Private admin page — keep it out of search results. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <title>B Digital — Command Centre</title>
+  <meta name="description" content="B Digital private command centre — quick access to leads, content and WhatsApp." />
+  <meta name="theme-color" content="#16130F" />
+
+  <!-- Add-to-home-screen / PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="icon" type="image/png" href="icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="B Digital" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --charcoal: #16130F; --cream: #FFFDF9; --sand: #F7F2E9;
+      --amber: #F59E0B; --orange: #EA580C;
+      --grad: linear-gradient(135deg, #F59E0B 0%, #EA580C 100%);
+      --ink: #16130F; --muted: #6b6256; --line: #ece4d6;
+      --wa: #25D366; --radius: 18px; --shadow: 0 10px 30px rgba(22,19,15,.10);
+      --font-head: "Space Grotesk", system-ui, sans-serif;
+      --font-body: "Inter", system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: var(--font-body); color: var(--ink);
+      background: var(--cream); line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    h1,h2,h3 { font-family: var(--font-head); line-height: 1.15; margin: 0; }
+    .accent {
+      background: var(--grad); -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Header */
+    .top { display: flex; align-items: center; gap: .7rem; padding: 1.2rem 1.2rem .4rem; }
+    .tile-mark {
+      width: 44px; height: 44px; border-radius: 12px; background: var(--grad);
+      display: grid; place-items: center; box-shadow: var(--shadow); flex: none;
+    }
+    .tile-mark span { color: #fff; font-family: var(--font-head); font-weight: 700; font-size: 1.4rem; }
+    .top h1 { font-size: 1.25rem; font-weight: 700; }
+    .top .sub { font-size: .68rem; letter-spacing: .16em; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+    .hello { color: var(--muted); padding: .2rem 1.3rem 1rem; margin: 0; font-size: .98rem; }
+
+    /* Tile grid */
+    .grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: .9rem;
+      padding: 0 1.1rem 1.4rem; max-width: 560px; margin: 0 auto;
+    }
+    .tile {
+      display: flex; flex-direction: column; gap: .5rem; text-decoration: none; color: var(--ink);
+      background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 1.1rem 1rem 1.15rem; box-shadow: var(--shadow);
+      min-height: 122px; transition: transform .12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .tile:active { transform: scale(.97); }
+    .tile .ic {
+      width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+      font-size: 1.4rem; color: #fff; background: var(--grad);
+    }
+    .tile .ti { font-family: var(--font-head); font-weight: 700; font-size: 1.06rem; }
+    .tile .tile-sub { font-size: .8rem; color: var(--muted); margin-top: auto; }
+    .tile.full { grid-column: 1 / -1; flex-direction: row; align-items: center; min-height: 0; }
+    .tile.full .ic { flex: none; }
+    .tile.full .tx { display: flex; flex-direction: column; }
+    .tile.full .tile-sub { margin-top: 0; }
+
+    .ic-wa { background: var(--wa) !important; }
+    .ic-page { background: var(--charcoal) !important; }
+    .ic-mail { background: #5b6470 !important; }
+
+    .tile.needs-setup { background: var(--sand); border-style: dashed; }
+    .tile.needs-setup .ic { background: #cdbfa6; }
+    .tile.needs-setup .tile-sub { color: var(--orange); font-weight: 600; }
+
+    /* Setup card */
+    .setup {
+      max-width: 560px; margin: 0 auto; padding: 1.3rem 1.2rem 2rem;
+    }
+    .setup-card { background: var(--sand); border-radius: var(--radius); padding: 1.2rem; }
+    .setup h2 { font-size: 1.15rem; margin-bottom: .3rem; }
+    .setup p { color: var(--muted); font-size: .9rem; margin: .2rem 0 1rem; }
+    .setup label { display: block; font-weight: 600; font-size: .85rem; margin: .8rem 0 .3rem; }
+    .setup input {
+      width: 100%; padding: .75rem .85rem; border: 1.5px solid var(--line); border-radius: 12px;
+      font-family: var(--font-body); font-size: .95rem; background: #fff;
+    }
+    .setup input:focus { outline: none; border-color: var(--amber); }
+    .btn-save {
+      margin-top: 1.1rem; width: 100%; border: none; cursor: pointer;
+      font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: #fff;
+      background: var(--grad); padding: .85rem; border-radius: 999px;
+      box-shadow: 0 8px 20px rgba(234,88,12,.3);
+    }
+    .save-msg { text-align: center; font-weight: 600; font-size: .9rem; min-height: 1.2em; margin: .7rem 0 0; }
+    .save-msg.ok { color: #15803d; } .save-msg.err { color: #b91c1c; }
+    .hint { font-size: .82rem; color: var(--muted); margin-top: .9rem; }
+    .hint b { color: var(--ink); }
+
+    footer { text-align: center; color: var(--muted); font-size: .8rem; padding: 0 1rem 2rem; }
+    footer a { color: var(--orange); }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <span class="tile-mark" aria-hidden="true"><span>B</span></span>
+    <div>
+      <h1>B&nbsp;<span class="accent">Digital</span></h1>
+      <div class="sub">Command Centre · Private</div>
+    </div>
+  </header>
+  <p class="hello">Everything in one tap. Add this page to your home screen and it works like an app.</p>
+
+  <main>
+    <div class="grid">
+      <!-- Notion links are filled in once on this phone (saved locally), so they stay private. -->
+      <a class="tile needs-setup" id="leadsTile" href="#setup" data-ready="Open in Notion">
+        <span class="ic">📋</span>
+        <span class="ti">Leads</span>
+        <span class="tile-sub">Tap to set up</span>
+      </a>
+      <a class="tile needs-setup" id="contentTile" href="#setup" data-ready="Open in Notion">
+        <span class="ic">🗓️</span>
+        <span class="ti">Content</span>
+        <span class="tile-sub">Tap to set up</span>
+      </a>
+
+      <a class="tile" href="https://wa.me/264814794693" target="_blank" rel="noopener">
+        <span class="ic ic-wa">✆</span>
+        <span class="ti">WhatsApp</span>
+        <span class="tile-sub">Open my chats</span>
+      </a>
+      <a class="tile" href="https://mail.google.com/" target="_blank" rel="noopener">
+        <span class="ic ic-mail">✉️</span>
+        <span class="ti">Quote emails</span>
+        <span class="tile-sub">New enquiries</span>
+      </a>
+
+      <a class="tile full" href="https://uncleisaacs553-art.github.io/main/" target="_blank" rel="noopener">
+        <span class="ic ic-page">🌐</span>
+        <span class="tx">
+          <span class="ti">My lead page</span>
+          <span class="tile-sub">The page customers fill in for a quote</span>
+        </span>
+      </a>
+    </div>
+
+    <section class="setup" id="setup">
+      <div class="setup-card">
+        <h2>Set up your Notion links</h2>
+        <p>Do this once. Your links are saved <b>only on this phone</b> — they're never put online.</p>
+
+        <label for="leadsUrl">Leads database link</label>
+        <input id="leadsUrl" type="url" inputmode="url" placeholder="https://www.notion.so/..." autocomplete="off" />
+
+        <label for="contentUrl">Content calendar link</label>
+        <input id="contentUrl" type="url" inputmode="url" placeholder="https://www.notion.so/..." autocomplete="off" />
+
+        <button class="btn-save" id="saveBtn" type="button">Save to this phone</button>
+        <p class="save-msg" id="saveMsg" role="status"></p>
+
+        <p class="hint">📎 <b>How to get a link:</b> open the database in the Notion app → tap <b>•••</b> (top-right) → <b>Copy link</b> → paste it here.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    B Digital · Windhoek, Namibia · <a href="https://uncleisaacs553-art.github.io/main/">lead page</a>
+  </footer>
+
+  <script>
+    (function () {
+      var LEADS_KEY = "bd_leads_url", CONTENT_KEY = "bd_content_url";
+      var $ = function (id) { return document.getElementById(id); };
+
+      function looksLikeNotion(u) { return /^https?:\/\/[^ ]*notion\.(so|site)\//i.test(u); }
+
+      function setTile(id, url) {
+        var t = $(id), sub = t.querySelector(".tile-sub");
+        if (url) {
+          t.href = url; t.target = "_blank"; t.rel = "noopener";
+          t.classList.remove("needs-setup"); sub.textContent = t.dataset.ready;
+        } else {
+          t.href = "#setup"; t.removeAttribute("target");
+          t.classList.add("needs-setup"); sub.textContent = "Tap to set up";
+        }
+      }
+
+      function apply() {
+        var leads = localStorage.getItem(LEADS_KEY) || "";
+        var content = localStorage.getItem(CONTENT_KEY) || "";
+        setTile("leadsTile", leads); setTile("contentTile", content);
+        $("leadsUrl").value = leads; $("contentUrl").value = content;
+      }
+
+      function msg(text, cls) {
+        var m = $("saveMsg"); m.textContent = text; m.className = "save-msg " + (cls || "");
+      }
+
+      // Not-yet-configured tiles jump to the setup form and focus it.
+      ["leadsTile", "contentTile"].forEach(function (id) {
+        $(id).addEventListener("click", function (e) {
+          if (this.classList.contains("needs-setup")) {
+            e.preventDefault();
+            $("setup").scrollIntoView({ behavior: "smooth" });
+            setTimeout(function () { $(id === "leadsTile" ? "leadsUrl" : "contentUrl").focus(); }, 350);
+          }
+        });
+      });
+
+      $("saveBtn").addEventListener("click", function () {
+        var l = $("leadsUrl").value.trim(), c = $("contentUrl").value.trim();
+        if ((l && !looksLikeNotion(l)) || (c && !looksLikeNotion(c))) {
+          msg("That doesn't look like a Notion link — it should start with https://www.notion.so/", "err");
+          return;
+        }
+        if (l) localStorage.setItem(LEADS_KEY, l); else localStorage.removeItem(LEADS_KEY);
+        if (c) localStorage.setItem(CONTENT_KEY, c); else localStorage.removeItem(CONTENT_KEY);
+        apply();
+        msg(l || c ? "Saved ✓ Your buttons are ready." : "Cleared.", "ok");
+      });
+
+      apply();
+    })();
+  </script>
+</body>
+</html>
