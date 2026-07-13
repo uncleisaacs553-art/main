@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Ellynes — flame-grilled burgers, pizza, chicken and more, made to order and delivered hot across Windhoek.">
+<title>Ellynes — Flame-Grilled Food Ordering</title>
+<style>
+  /* ============ Reset ============ */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+  img, svg { display: block; max-width: 100%; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  a { color: inherit; }
+
+  /* ============ Tokens ============ */
+  :root {
+    --ember: #C4351A;
+    --ember-solid: #E23B1D;
+    --gold: #B9730A;
+    --herb: #4E7D22;
+
+    --bg: #FCF7F0;
+    --bg-tint: #F6EADB;
+    --surface: #FFFFFF;
+    --surface-2: #FBF2E7;
+    --text: #241811;
+    --text-dim: #6E5B4C;
+    --border: rgba(36, 24, 17, 0.12);
+    --border-strong: rgba(36, 24, 17, 0.2);
+    --ink-on-accent: #FFFFFF;
+    --shadow: 0 18px 40px -20px rgba(60, 30, 10, 0.45);
+    --shadow-soft: 0 10px 30px -18px rgba(60, 30, 10, 0.35);
+    --glow-ember: rgba(226, 59, 29, 0.16);
+    --glow-gold: rgba(255, 176, 32, 0.18);
+
+    color-scheme: light;
+
+    --font-display: "Arial Black", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --container: 1180px;
+    --pad: clamp(1.1rem, 4vw, 2.5rem);
+    --section: clamp(3.6rem, 8vw, 6.5rem);
+    --radius: 18px;
+    --radius-sm: 12px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ember: #FF7A4D;
+      --ember-solid: #E8451F;
+      --gold: #FFB020;
+      --herb: #9CCC65;
+
+      --bg: #140E09;
+      --bg-tint: #1C130C;
+      --surface: #1F1712;
+      --surface-2: #271D16;
+      --text: #F7EFE6;
+      --text-dim: #B7A08C;
+      --border: rgba(255, 240, 225, 0.1);
+      --border-strong: rgba(255, 240, 225, 0.2);
+      --ink-on-accent: #FFFFFF;
+      --shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.75);
+      --shadow-soft: 0 14px 40px -22px rgba(0, 0, 0, 0.7);
+      --glow-ember: rgba(255, 90, 44, 0.22);
+      --glow-gold: rgba(255, 176, 32, 0.16);
+
+      color-scheme: dark;
+    }
+  }
+  /* Manual theme overrides (win in both directions) */
+  :root[data-theme="light"] {
+    --ember: #C4351A; --ember-solid: #E23B1D; --gold: #B9730A; --herb: #4E7D22;
+    --bg: #FCF7F0; --bg-tint: #F6EADB; --surface: #FFFFFF; --surface-2: #FBF2E7;
+    --text: #241811; --text-dim: #6E5B4C; --border: rgba(36,24,17,0.12); --border-strong: rgba(36,24,17,0.2);
+    --ink-on-accent: #FFFFFF; --shadow: 0 18px 40px -20px rgba(60,30,10,0.45); --shadow-soft: 0 10px 30px -18px rgba(60,30,10,0.35);
+    --glow-ember: rgba(226,59,29,0.16); --glow-gold: rgba(255,176,32,0.18); color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --ember: #FF7A4D; --ember-solid: #E8451F; --gold: #FFB020; --herb: #9CCC65;
+    --bg: #140E09; --bg-tint: #1C130C; --surface: #1F1712; --surface-2: #271D16;
+    --text: #F7EFE6; --text-dim: #B7A08C; --border: rgba(255,240,225,0.1); --border-strong: rgba(255,240,225,0.2);
+    --ink-on-accent: #FFFFFF; --shadow: 0 24px 60px -24px rgba(0,0,0,0.75); --shadow-soft: 0 14px 40px -22px rgba(0,0,0,0.7);
+    --glow-ember: rgba(255,90,44,0.22); --glow-gold: rgba(255,176,32,0.16); color-scheme: dark;
+  }
+
+  /* ============ Base ============ */
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3 { margin: 0; line-height: 1.02; text-wrap: balance; }
+  p { margin: 0; }
+  ::selection { background: var(--ember-solid); color: #fff; }
+
+  .container { width: 100%; max-width: var(--container); margin-inline: auto; padding-inline: var(--pad); }
+
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-family: var(--font-body); font-weight: 700;
+    font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ember);
+  }
+  .eyebrow::before { content: ""; width: 26px; height: 2px; background: currentColor; border-radius: 2px; }
+
+  .display {
+    font-family: var(--font-display); font-weight: 900;
+    letter-spacing: -0.02em; text-transform: uppercase;
+  }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ============ Buttons ============ */
+  .btn {
+    --_bg: transparent; --_fg: var(--text); --_bd: transparent;
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+    font-weight: 800; font-size: 0.95rem; letter-spacing: 0.01em;
+    padding: 0.8rem 1.35rem; border-radius: 999px;
+    background: var(--_bg); color: var(--_fg); border: 1.5px solid var(--_bd);
+    cursor: pointer; text-decoration: none; white-space: nowrap;
+    transition: transform 0.16s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn:active { transform: translateY(0); }
+  .btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .btn--primary { --_bg: var(--ember-solid); --_fg: var(--ink-on-accent); box-shadow: 0 10px 26px -12px var(--ember-solid); }
+  .btn--primary:hover { box-shadow: 0 16px 32px -12px var(--ember-solid); }
+  .btn--ghost { --_bd: var(--border-strong); --_fg: var(--text); }
+  .btn--ghost:hover { --_bd: var(--ember); color: var(--ember); }
+  .btn--gold { --_bg: var(--gold); --_fg: #1c1206; }
+  .btn--block { width: 100%; }
+  .btn--lg { padding: 1rem 1.7rem; font-size: 1.02rem; }
+
+  .icon-btn {
+    display: inline-grid; place-items: center; width: 44px; height: 44px;
+    border-radius: 999px; border: 1.5px solid var(--border-strong);
+    background: transparent; cursor: pointer; font-size: 1.15rem;
+    transition: border-color 0.2s ease, transform 0.16s ease, background 0.2s ease;
+  }
+  .icon-btn:hover { border-color: var(--ember); transform: translateY(-2px); }
+  .icon-btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  /* ============ Skip link ============ */
+  .skip {
+    position: fixed; top: 0.6rem; left: 0.6rem; z-index: 200;
+    background: var(--ember-solid); color: #fff; padding: 0.6rem 1rem; border-radius: 10px;
+    font-weight: 700; text-decoration: none; transform: translateY(-160%); transition: transform 0.2s ease;
+  }
+  .skip:focus { transform: translateY(0); }
+
+  /* ============ Nav ============ */
+  .nav {
+    position: sticky; top: 0; z-index: 90;
+    backdrop-filter: blur(12px);
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+  .nav.is-stuck { border-color: var(--border); box-shadow: var(--shadow-soft); }
+  .nav__inner {
+    max-width: var(--container); margin-inline: auto; padding: 0.7rem var(--pad);
+    display: flex; align-items: center; gap: 1rem;
+  }
+  .brand { display: inline-flex; align-items: center; gap: 0.55rem; text-decoration: none; font-family: var(--font-display); font-weight: 900; letter-spacing: 0.02em; font-size: 1.3rem; }
+  .brand__mark {
+    display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 12px;
+    background: radial-gradient(circle at 30% 20%, var(--gold), var(--ember-solid) 75%);
+    box-shadow: 0 8px 20px -10px var(--ember-solid); font-size: 1.1rem;
+  }
+  .brand__name { color: var(--text); }
+  .brand__name b { color: var(--ember); }
+  .nav__links { display: flex; gap: 0.4rem; margin-left: 0.5rem; }
+  .nav__links a {
+    text-decoration: none; color: var(--text-dim); font-weight: 600; font-size: 0.95rem;
+    padding: 0.5rem 0.85rem; border-radius: 999px; transition: color 0.2s ease, background 0.2s ease;
+  }
+  .nav__links a:hover { color: var(--text); background: var(--surface-2); }
+  .nav__actions { display: flex; align-items: center; gap: 0.6rem; margin-left: auto; }
+  .cart-btn { position: relative; }
+  .badge {
+    position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px;
+    display: grid; place-items: center; border-radius: 999px;
+    background: var(--gold); color: #1c1206; font-size: 0.72rem; font-weight: 900;
+    border: 2px solid var(--bg); transition: transform 0.2s ease;
+  }
+  .badge.pop { animation: pop 0.4s ease; }
+  @keyframes pop { 0%{transform:scale(1)} 40%{transform:scale(1.5)} 100%{transform:scale(1)} }
+
+  /* ============ Hero ============ */
+  .hero { position: relative; overflow: hidden; padding-block: clamp(2.5rem, 6vw, 4.5rem) var(--section); }
+  .hero__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+  .hero__bg::before, .hero__bg::after {
+    content: ""; position: absolute; border-radius: 50%; filter: blur(70px);
+  }
+  .hero__bg::before { width: 55vw; height: 55vw; left: -12vw; top: -18vw; background: var(--glow-ember); }
+  .hero__bg::after { width: 42vw; height: 42vw; right: -10vw; top: 8vw; background: var(--glow-gold); }
+  #embers { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; opacity: 0.9; }
+
+  .hero__inner {
+    position: relative; z-index: 2;
+    max-width: var(--container); margin-inline: auto; padding-inline: var(--pad);
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(2rem, 5vw, 4rem); align-items: center;
+  }
+  .hero__copy { max-width: 36ch; }
+  .hero h1 {
+    font-family: var(--font-display); font-weight: 900; text-transform: uppercase; letter-spacing: -0.025em;
+    font-size: clamp(2.9rem, 8.5vw, 6.2rem); margin-top: 1rem; margin-bottom: 1.1rem;
+  }
+  .hero h1 .flame {
+    background: linear-gradient(100deg, var(--gold), var(--ember-solid) 55%, var(--ember));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero__sub { color: var(--text-dim); font-size: clamp(1.02rem, 2vw, 1.2rem); max-width: 42ch; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.8rem; }
+  .hero__stats { display: flex; flex-wrap: wrap; gap: 1.6rem; margin-top: 2.2rem; }
+  .stat b { font-family: var(--font-display); font-weight: 900; font-size: 1.5rem; display: block; line-height: 1; }
+  .stat span { font-size: 0.82rem; color: var(--text-dim); letter-spacing: 0.02em; }
+  .stat .stars { color: var(--gold); }
+
+  /* Hero food composition */
+  .plate { position: relative; aspect-ratio: 1; width: min(100%, 460px); margin-inline: auto; }
+  .plate__disc {
+    position: absolute; inset: 8%; border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--gold) 40%, transparent), transparent 60%),
+      conic-gradient(from 210deg, var(--surface-2), var(--surface) 40%, var(--surface-2));
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow), inset 0 0 60px -20px rgba(0,0,0,0.25);
+  }
+  .plate__hero { position: absolute; inset: 0; display: grid; place-items: center; font-size: clamp(6rem, 20vw, 12rem); filter: drop-shadow(0 20px 30px rgba(0,0,0,0.35)); animation: float 6s ease-in-out infinite; }
+  .float-food { position: absolute; font-size: clamp(2.2rem, 6vw, 3.4rem); filter: drop-shadow(0 12px 16px rgba(0,0,0,0.3)); }
+  .float-food.f1 { top: 2%; left: 8%; animation: float 5s ease-in-out infinite; }
+  .float-food.f2 { top: 6%; right: 4%; animation: float 6.5s ease-in-out 0.4s infinite; }
+  .float-food.f3 { bottom: 6%; left: -2%; animation: float 5.5s ease-in-out 0.8s infinite; }
+  .float-food.f4 { bottom: 0%; right: 8%; animation: float 6s ease-in-out 0.2s infinite; }
+  .badge-price {
+    position: absolute; right: 2%; top: 40%;
+    background: var(--ember-solid); color: #fff; font-family: var(--font-display); font-weight: 900;
+    padding: 0.5rem 0.8rem; border-radius: 14px; box-shadow: var(--shadow); transform: rotate(6deg);
+    animation: float 4.5s ease-in-out infinite;
+  }
+  .badge-price small { display: block; font-family: var(--font-body); font-weight: 700; font-size: 0.6rem; letter-spacing: 0.15em; opacity: 0.85; }
+  @keyframes float { 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-14px) } }
+
+  /* ============ Marquee ============ */
+  .marquee {
+    border-block: 1px solid var(--border);
+    background: linear-gradient(90deg, var(--ember-solid), #b8300f);
+    color: #fff; overflow: hidden; padding-block: 0.75rem;
+  }
+  .marquee__track { display: inline-flex; gap: 2.5rem; white-space: nowrap; will-change: transform; animation: scroll 26s linear infinite; }
+  .marquee__track span { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; letter-spacing: 0.04em; font-size: 1.05rem; display: inline-flex; align-items: center; gap: 2.5rem; }
+  .marquee__track span::after { content: "🔥"; font-size: 0.9rem; }
+  @keyframes scroll { from{ transform: translateX(0) } to{ transform: translateX(-50%) } }
+
+  /* ============ Section head ============ */
+  .section { padding-block: var(--section); }
+  .section__head { max-width: 640px; margin-bottom: 2.5rem; }
+  .section__head h2 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; font-size: clamp(2rem, 5vw, 3.2rem); margin: 0.8rem 0 0.6rem; }
+  .section__head p { color: var(--text-dim); font-size: 1.05rem; }
+
+  /* ============ Menu ============ */
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.8rem; }
+  .chip {
+    border: 1.5px solid var(--border-strong); background: transparent; color: var(--text-dim);
+    padding: 0.5rem 1rem; border-radius: 999px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+    transition: all 0.18s ease;
+  }
+  .chip:hover { color: var(--text); border-color: var(--ember); }
+  .chip[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .chip:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 1.25rem; }
+  .card {
+    position: relative; display: flex; flex-direction: column;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.3rem; box-shadow: var(--shadow-soft); overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  }
+  .card:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: var(--border-strong); }
+  .card__art {
+    position: relative; height: 140px; border-radius: var(--radius-sm); margin-bottom: 1rem;
+    display: grid; place-items: center; font-size: 4.6rem;
+    background:
+      radial-gradient(circle at 50% 120%, var(--glow-gold), transparent 60%),
+      var(--surface-2);
+    border: 1px solid var(--border);
+  }
+  .card__art .emoji { filter: drop-shadow(0 10px 14px rgba(0,0,0,0.28)); transition: transform 0.3s ease; }
+  .card:hover .card__art .emoji { transform: scale(1.12) rotate(-4deg); }
+  .tag {
+    position: absolute; top: 0.7rem; left: 0.7rem; z-index: 2;
+    font-size: 0.66rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.28rem 0.6rem; border-radius: 999px; color: #fff;
+  }
+  .tag--hot { background: var(--ember-solid); }
+  .tag--fresh { background: var(--herb); color: #10240a; }
+  .tag--best { background: var(--gold); color: #1c1206; }
+  .card h3 { font-size: 1.2rem; letter-spacing: -0.01em; }
+  .card__desc { color: var(--text-dim); font-size: 0.9rem; margin-top: 0.35rem; flex: 1; }
+  .card__foot { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; margin-top: 1.1rem; }
+  .price { font-family: var(--font-display); font-weight: 900; font-size: 1.5rem; }
+  .price small { font-family: var(--font-body); font-weight: 700; font-size: 0.7rem; color: var(--text-dim); letter-spacing: 0.1em; margin-right: 0.15rem; }
+  .add-btn { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  /* ============ How it works ============ */
+  .how { background: var(--bg-tint); border-block: 1px solid var(--border); }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+  .step { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.6rem; box-shadow: var(--shadow-soft); }
+  .step__no { font-family: var(--font-display); font-weight: 900; font-size: 2.4rem; color: transparent; -webkit-text-stroke: 2px var(--ember); line-height: 1; }
+  .step h3 { margin: 0.6rem 0 0.4rem; font-size: 1.25rem; }
+  .step p { color: var(--text-dim); font-size: 0.95rem; }
+
+  /* ============ CTA band ============ */
+  .band {
+    position: relative; overflow: hidden; text-align: center; color: #fff;
+    background: radial-gradient(120% 140% at 50% 0%, #ff6a3d, var(--ember-solid) 45%, #a82a0d);
+    border-radius: 28px; padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .band h2 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: clamp(2rem, 6vw, 3.6rem); letter-spacing: -0.02em; }
+  .band p { color: rgba(255,255,255,0.9); margin: 0.7rem auto 1.6rem; max-width: 46ch; }
+  .band .btn--primary { --_bg: #fff; --_fg: #b8300f; box-shadow: 0 14px 30px -12px rgba(0,0,0,0.5); }
+
+  /* ============ Footer ============ */
+  .footer { border-top: 1px solid var(--border); background: var(--bg-tint); padding-block: 3rem 2rem; }
+  .footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 2rem; }
+  .footer h4 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.14em; margin: 0 0 0.9rem; color: var(--text-dim); }
+  .footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+  .footer a { text-decoration: none; color: var(--text-dim); }
+  .footer a:hover { color: var(--ember); }
+  .footer__brand p { color: var(--text-dim); max-width: 34ch; margin-top: 0.8rem; }
+  .footer__bottom { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: space-between; align-items: center; margin-top: 2.5rem; padding-top: 1.4rem; border-top: 1px solid var(--border); color: var(--text-dim); font-size: 0.85rem; }
+
+  /* ============ Overlay / Drawer / Modal ============ */
+  .overlay {
+    position: fixed; inset: 0; z-index: 100; background: rgba(12, 7, 3, 0.55);
+    backdrop-filter: blur(3px); opacity: 0; visibility: hidden; transition: opacity 0.28s ease, visibility 0.28s ease;
+  }
+  .overlay.show { opacity: 1; visibility: visible; }
+
+  .drawer {
+    position: fixed; top: 0; right: 0; z-index: 110; height: 100dvh; width: min(420px, 100%);
+    background: var(--bg); border-left: 1px solid var(--border);
+    transform: translateX(100%); transition: transform 0.32s cubic-bezier(0.4, 0, 0.1, 1);
+    display: flex; flex-direction: column; box-shadow: -30px 0 60px -30px rgba(0,0,0,0.5);
+  }
+  .drawer.open { transform: translateX(0); }
+  .drawer__head { display: flex; align-items: center; justify-content: space-between; padding: 1.2rem var(--pad); border-bottom: 1px solid var(--border); }
+  .drawer__head h2 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: 1.3rem; }
+  .drawer__body { flex: 1; overflow-y: auto; padding: 0.5rem var(--pad); }
+  .drawer__foot { padding: 1.2rem var(--pad) calc(1.2rem + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: var(--surface); }
+
+  .cart-empty { text-align: center; color: var(--text-dim); padding: 3rem 1rem; }
+  .cart-empty .big { font-size: 3rem; margin-bottom: 0.5rem; }
+
+  .line { display: grid; grid-template-columns: 52px 1fr auto; gap: 0.85rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
+  .line__art { width: 52px; height: 52px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--border); display: grid; place-items: center; font-size: 1.7rem; }
+  .line__name { font-weight: 700; font-size: 0.98rem; }
+  .line__price { color: var(--text-dim); font-size: 0.85rem; }
+  .line__end { display: flex; flex-direction: column; align-items: flex-end; gap: 0.4rem; }
+  .line__total { font-family: var(--font-display); font-weight: 900; }
+
+  .stepper { display: inline-flex; align-items: center; gap: 0.15rem; border: 1.5px solid var(--border-strong); border-radius: 999px; padding: 0.15rem; }
+  .stepper button { width: 28px; height: 28px; border: none; background: transparent; border-radius: 999px; cursor: pointer; font-weight: 900; font-size: 1.05rem; display: grid; place-items: center; color: var(--text); transition: background 0.15s ease, color 0.15s ease; }
+  .stepper button:hover { background: var(--ember-solid); color: #fff; }
+  .stepper button:focus-visible { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .stepper .q { min-width: 22px; text-align: center; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+  .totals { display: grid; gap: 0.5rem; margin-bottom: 1rem; }
+  .totals .row { display: flex; justify-content: space-between; font-size: 0.95rem; color: var(--text-dim); }
+  .totals .row.grand { color: var(--text); font-family: var(--font-display); font-weight: 900; font-size: 1.4rem; padding-top: 0.6rem; border-top: 1px solid var(--border); margin-top: 0.2rem; }
+
+  /* Modal */
+  .modal {
+    position: fixed; z-index: 115; inset: 0; display: grid; place-items: center; padding: 1.1rem;
+    opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease;
+  }
+  .modal.open { opacity: 1; visibility: visible; }
+  .modal__card {
+    width: min(480px, 100%); max-height: 92dvh; overflow-y: auto;
+    background: var(--bg); border: 1px solid var(--border); border-radius: 22px; box-shadow: var(--shadow);
+    padding: clamp(1.4rem, 4vw, 2rem); transform: translateY(14px) scale(0.98); transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .modal.open .modal__card { transform: translateY(0) scale(1); }
+  .modal__head { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.2rem; }
+  .modal__head h2 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: 1.6rem; letter-spacing: -0.01em; }
+  .modal__head p { color: var(--text-dim); font-size: 0.92rem; margin-top: 0.3rem; }
+
+  .field { margin-bottom: 0.9rem; }
+  .field label { display: block; font-weight: 700; font-size: 0.82rem; margin-bottom: 0.35rem; letter-spacing: 0.02em; }
+  .field input, .field textarea, .field select {
+    width: 100%; padding: 0.8rem 0.9rem; border-radius: 12px; border: 1.5px solid var(--border-strong);
+    background: var(--surface); color: var(--text); transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus { outline: none; border-color: var(--ember); box-shadow: 0 0 0 3px var(--glow-ember); }
+  .field textarea { resize: vertical; min-height: 66px; }
+
+  .tabs { display: flex; gap: 0.3rem; background: var(--surface-2); padding: 0.3rem; border-radius: 999px; margin-bottom: 1.3rem; }
+  .tabs button { flex: 1; border: none; background: transparent; padding: 0.6rem; border-radius: 999px; font-weight: 800; cursor: pointer; color: var(--text-dim); transition: all 0.18s ease; }
+  .tabs button[aria-selected="true"] { background: var(--bg); color: var(--text); box-shadow: var(--shadow-soft); }
+  .tabs button:focus-visible { outline: 2px solid var(--gold); }
+
+  .segment { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; }
+  .segment label {
+    display: flex; flex-direction: column; align-items: center; gap: 0.25rem; text-align: center;
+    padding: 0.85rem 0.4rem; border: 1.5px solid var(--border-strong); border-radius: 14px; cursor: pointer;
+    font-weight: 700; font-size: 0.9rem; transition: all 0.18s ease;
+  }
+  .segment label .ico { font-size: 1.35rem; }
+  .segment input { position: absolute; opacity: 0; pointer-events: none; }
+  .segment label:has(input:checked) { border-color: var(--ember); background: var(--glow-ember); color: var(--ember); }
+  .segment label:has(input:focus-visible) { outline: 3px solid var(--gold); outline-offset: 2px; }
+
+  .summary-list { margin: 0 0 1rem; padding: 0; list-style: none; display: grid; gap: 0.4rem; max-height: 180px; overflow-y: auto; }
+  .summary-list li { display: flex; justify-content: space-between; font-size: 0.92rem; }
+  .summary-list li span:first-child { color: var(--text-dim); }
+
+  .success { text-align: center; padding: 0.5rem 0 0.5rem; }
+  .success .tick { width: 74px; height: 74px; margin: 0 auto 1rem; border-radius: 50%; background: var(--herb); display: grid; place-items: center; font-size: 2.2rem; color: #fff; box-shadow: 0 12px 30px -12px var(--herb); animation: pop 0.5s ease; }
+  .success .order-no { font-family: var(--font-display); font-weight: 900; font-size: 1.5rem; color: var(--ember); letter-spacing: 0.03em; }
+  .note { font-size: 0.78rem; color: var(--text-dim); text-align: center; margin-top: 0.9rem; }
+
+  /* Toast */
+  .toast {
+    position: fixed; left: 50%; bottom: 1.4rem; z-index: 200; transform: translate(-50%, 160%);
+    background: var(--text); color: var(--bg); padding: 0.8rem 1.2rem; border-radius: 999px; font-weight: 700;
+    box-shadow: var(--shadow); transition: transform 0.35s cubic-bezier(0.2, 0.9, 0.2, 1); display: flex; align-items: center; gap: 0.5rem; max-width: calc(100vw - 2rem);
+  }
+  .toast.show { transform: translate(-50%, 0); }
+
+  /* ============ Reveal ============ */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 900px) {
+    .hero__inner { grid-template-columns: 1fr; }
+    .hero__art { order: -1; }
+    .plate { width: min(80%, 360px); }
+    .footer__grid { grid-template-columns: 1fr 1fr; }
+    .footer__brand { grid-column: 1 / -1; }
+  }
+  @media (max-width: 680px) {
+    .nav__links { display: none; }
+    .steps { grid-template-columns: 1fr; }
+    .footer__grid { grid-template-columns: 1fr; }
+    .hero__stats { gap: 1.2rem; }
+    .btn { padding: 0.75rem 1.1rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    .reveal { opacity: 1; transform: none; }
+    .marquee__track { animation: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#menu">Skip to menu</a>
+
+<header class="nav" id="nav">
+  <div class="nav__inner">
+    <a class="brand" href="#top" aria-label="Ellynes — home">
+      <span class="brand__mark" aria-hidden="true">🔥</span>
+      <span class="brand__name">ELL<b>Y</b>NES</span>
+    </a>
+    <nav class="nav__links" aria-label="Primary">
+      <a href="#menu">Menu</a>
+      <a href="#how">How it works</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav__actions">
+      <button class="icon-btn" id="themeBtn" aria-label="Switch theme" title="Switch theme">🌙</button>
+      <button class="btn btn--ghost" id="signinBtn">Sign in</button>
+      <button class="btn btn--primary cart-btn" id="cartBtn" aria-label="Open your order">
+        <span aria-hidden="true">🛒</span> <span class="cart-label">Order</span>
+        <span class="badge" id="cartBadge" hidden>0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <canvas id="embers" aria-hidden="true"></canvas>
+    <div class="hero__inner">
+      <div class="hero__copy">
+        <span class="eyebrow">Flame-grilled in Windhoek</span>
+        <h1>Taste the <span class="flame">flame.</span> Made to order.</h1>
+        <p class="hero__sub">Burgers, wood-fired pizza and grilled chicken — fired up the moment you order and delivered hot across the city.</p>
+        <div class="hero__cta">
+          <a href="#menu" class="btn btn--primary btn--lg">Order now</a>
+          <a href="#menu" class="btn btn--ghost btn--lg">View the menu</a>
+        </div>
+        <div class="hero__stats">
+          <div class="stat"><b class="num">25<span style="font-size:1rem">min</span></b><span>Avg. delivery</span></div>
+          <div class="stat"><b class="stars">★★★★★</b><span>4.9 from 1,200+</span></div>
+          <div class="stat"><b class="num">5</b><span>Kitchen favourites</span></div>
+        </div>
+      </div>
+      <div class="hero__art">
+        <div class="plate">
+          <div class="plate__disc" aria-hidden="true"></div>
+          <div class="plate__hero" aria-hidden="true">🍔</div>
+          <span class="float-food f1" aria-hidden="true">🍕</span>
+          <span class="float-food f2" aria-hidden="true">🍗</span>
+          <span class="float-food f3" aria-hidden="true">🍟</span>
+          <span class="float-food f4" aria-hidden="true">🥤</span>
+          <div class="badge-price num" aria-hidden="true"><small>FROM</small>N$20</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>Flame-grilled</span><span>Fresh daily</span><span>Fast delivery</span><span>Made to order</span><span>Local &amp; loved</span>
+      <span>Flame-grilled</span><span>Fresh daily</span><span>Fast delivery</span><span>Made to order</span><span>Local &amp; loved</span>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <section class="section" id="menu">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow">The menu</span>
+        <h2>Pick your favourites</h2>
+        <p>Every plate is prepared fresh when you order. Tap add, build your bag, and check out in under a minute.</p>
+      </div>
+
+      <div class="filters reveal" role="group" aria-label="Filter menu">
+        <button class="chip" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="mains" aria-pressed="false">Mains</button>
+        <button class="chip" data-filter="sides" aria-pressed="false">Sides</button>
+        <button class="chip" data-filter="drinks" aria-pressed="false">Drinks</button>
+      </div>
+
+      <div class="menu-grid" id="menuGrid"><!-- cards injected --></div>
+    </div>
+  </section>
+
+  <!-- HOW -->
+  <section class="section how" id="how">
+    <div class="container">
+      <div class="section__head reveal">
+        <span class="eyebrow">How it works</span>
+        <h2>Hot food in three steps</h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step__no">01</div>
+          <h3>Build your bag</h3>
+          <p>Browse the menu and add your favourites. Adjust quantities any time in your order tray.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step__no">02</div>
+          <h3>Choose payment</h3>
+          <p>Pay by cash on delivery, card or bank transfer — whatever suits you best.</p>
+        </div>
+        <div class="step reveal">
+          <div class="step__no">03</div>
+          <h3>We fire the grill</h3>
+          <p>Your order hits the kitchen the second it lands. Hot and fresh, at your door in about 25 minutes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <div class="band reveal">
+        <h2>Hungry yet?</h2>
+        <p>Skip the queue. Order flame-grilled favourites and track them straight to your door.</p>
+        <a href="#menu" class="btn btn--primary btn--lg">Start your order</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer" id="contact">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <a class="brand" href="#top" aria-label="Ellynes — home">
+          <span class="brand__mark" aria-hidden="true">🔥</span>
+          <span class="brand__name">ELL<b>Y</b>NES</span>
+        </a>
+        <p>Flame-grilled favourites, made to order and delivered hot across Windhoek.</p>
+      </div>
+      <div>
+        <h4>Visit &amp; call</h4>
+        <ul>
+          <li>Independence Ave, Windhoek</li>
+          <li><a href="tel:+264610000000">+264 61 000 000</a></li>
+          <li><a href="mailto:hello@ellynes.na">hello@ellynes.na</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Kitchen hours</h4>
+        <ul>
+          <li>Mon–Thu · 10:00 – 22:00</li>
+          <li>Fri–Sat · 10:00 – 23:30</li>
+          <li>Sunday · 11:00 – 21:00</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© <span id="year">2026</span> Ellynes. All rights reserved.</span>
+      <span>Made with 🔥 in Namibia</span>
+    </div>
+  </div>
+</footer>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" hidden></div>
+
+<!-- CART DRAWER -->
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Your order" aria-hidden="true">
+  <div class="drawer__head">
+    <h2>Your order</h2>
+    <button class="icon-btn" data-close aria-label="Close order">✕</button>
+  </div>
+  <div class="drawer__body" id="cartBody"></div>
+  <div class="drawer__foot" id="cartFoot" hidden>
+    <div class="totals">
+      <div class="row"><span>Subtotal</span><span class="num" id="sumSub">N$0</span></div>
+      <div class="row"><span>Delivery</span><span class="num" id="sumDel">N$15</span></div>
+      <div class="row grand"><span>Total</span><span class="num" id="sumTot">N$0</span></div>
+    </div>
+    <button class="btn btn--primary btn--block btn--lg" id="checkoutBtn">Checkout</button>
+  </div>
+</aside>
+
+<!-- CHECKOUT MODAL -->
+<div class="modal" id="checkoutModal" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle" aria-hidden="true">
+  <div class="modal__card">
+    <div id="checkoutStep">
+      <div class="modal__head">
+        <div>
+          <h2 id="checkoutTitle">Checkout</h2>
+          <p>Almost there — tell us where to send the good stuff.</p>
+        </div>
+        <button class="icon-btn" data-close aria-label="Close checkout">✕</button>
+      </div>
+      <form id="checkoutForm" novalidate>
+        <div class="field">
+          <label for="coName">Full name</label>
+          <input id="coName" name="name" type="text" placeholder="Ellen Nangolo" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="coPhone">Phone</label>
+          <input id="coPhone" name="phone" type="tel" placeholder="+264 81 000 0000" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="coAddr">Delivery address</label>
+          <textarea id="coAddr" name="address" placeholder="Street, suburb, city" autocomplete="street-address" required></textarea>
+        </div>
+        <div class="field">
+          <label>Payment method</label>
+          <div class="segment">
+            <label><input type="radio" name="pay" value="Cash" checked><span class="ico">💵</span>Cash</label>
+            <label><input type="radio" name="pay" value="Card"><span class="ico">💳</span>Card</label>
+            <label><input type="radio" name="pay" value="Bank"><span class="ico">🏦</span>Bank</label>
+          </div>
+        </div>
+        <ul class="summary-list" id="coSummary"></ul>
+        <div class="totals">
+          <div class="row grand"><span>Total to pay</span><span class="num" id="coTotal">N$0</span></div>
+        </div>
+        <button type="submit" class="btn btn--primary btn--block btn--lg">Place order</button>
+        <p class="note">Demo checkout — no payment is taken and nothing leaves your device.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- AUTH MODAL -->
+<div class="modal" id="authModal" role="dialog" aria-modal="true" aria-labelledby="authTitle" aria-hidden="true">
+  <div class="modal__card">
+    <div class="modal__head">
+      <div>
+        <h2 id="authTitle">Welcome back</h2>
+        <p>Sign in to reorder faster and track deliveries.</p>
+      </div>
+      <button class="icon-btn" data-close aria-label="Close sign in">✕</button>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Sign in or register">
+      <button role="tab" id="tabLogin" aria-selected="true" aria-controls="paneLogin">Log in</button>
+      <button role="tab" id="tabReg" aria-selected="false" aria-controls="paneReg">Register</button>
+    </div>
+
+    <form id="paneLogin" role="tabpanel" aria-labelledby="tabLogin">
+      <div class="field">
+        <label for="liEmail">Email</label>
+        <input id="liEmail" type="email" placeholder="you@email.com" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="liPass">Password</label>
+        <input id="liPass" type="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block btn--lg">Log in</button>
+    </form>
+
+    <form id="paneReg" role="tabpanel" aria-labelledby="tabReg" hidden>
+      <div class="field">
+        <label for="rgName">Full name</label>
+        <input id="rgName" type="text" placeholder="Ellen Nangolo" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="rgPhone">Phone</label>
+        <input id="rgPhone" type="tel" placeholder="+264 81 000 0000" autocomplete="tel" required>
+      </div>
+      <div class="field">
+        <label for="rgEmail">Email</label>
+        <input id="rgEmail" type="email" placeholder="you@email.com" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="rgPass">Password</label>
+        <input id="rgPass" type="password" placeholder="Create a password" autocomplete="new-password" required>
+      </div>
+      <button type="submit" class="btn btn--primary btn--block btn--lg">Create account</button>
+    </form>
+    <p class="note">Demo only — accounts are not stored anywhere.</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Data ---------- */
+  var MENU = [
+    { id: "burger",  name: "Flame Burger",   price: 60, emoji: "🍔", cat: "mains",  tag: "best",  tagText: "Bestseller", desc: "Char-grilled beef patty, melted cheese, fresh salad and our smoky house sauce." },
+    { id: "pizza",   name: "Wood-Fired Pizza", price: 80, emoji: "🍕", cat: "mains", tag: "hot",   tagText: "Chef's pick", desc: "Stone-baked base, rich tomato, bubbling mozzarella and your choice of toppings." },
+    { id: "chicken", name: "Grilled Chicken", price: 30, emoji: "🍗", cat: "mains",  tag: "hot",   tagText: "Spicy",     desc: "Quarter chicken marinated overnight and flame-grilled with peri spice." },
+    { id: "fries",   name: "Golden Fries",    price: 25, emoji: "🍟", cat: "sides",  tag: "fresh", tagText: "Fresh cut",  desc: "Hand-cut, double-fried and salted — crisp outside, fluffy inside." },
+    { id: "drink",   name: "Cold Drinks",     price: 20, emoji: "🥤", cat: "drinks", tag: "fresh", tagText: "Ice cold",   desc: "Ice-cold sodas, juices and water to wash it all down." }
+  ];
+  var DELIVERY = 15;
+  var byId = {};
+  MENU.forEach(function (m) { byId[m.id] = m; });
+
+  /* ---------- State ---------- */
+  var cart = {}; // id -> qty
+  var lastFocus = null;
+
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var money = function (n) { return "N$" + n; };
+
+  /* ---------- Render menu ---------- */
+  var grid = $("#menuGrid");
+  MENU.forEach(function (m) {
+    var card = document.createElement("article");
+    card.className = "card reveal";
+    card.setAttribute("data-cat", m.cat);
+    card.innerHTML =
+      '<span class="tag tag--' + m.tag + '">' + m.tagText + '</span>' +
+      '<div class="card__art"><span class="emoji" aria-hidden="true">' + m.emoji + '</span></div>' +
+      '<h3>' + m.name + '</h3>' +
+      '<p class="card__desc">' + m.desc + '</p>' +
+      '<div class="card__foot">' +
+        '<div class="price num"><small>N$</small>' + m.price + '</div>' +
+        '<button class="btn btn--primary add-btn" data-add="' + m.id + '">Add <span aria-hidden="true">+</span></button>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+
+  /* ---------- Filters ---------- */
+  var chips = document.querySelectorAll(".chip");
+  chips.forEach(function (chip) {
+    chip.addEventListener("click", function () {
+      chips.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+      chip.setAttribute("aria-pressed", "true");
+      var f = chip.getAttribute("data-filter");
+      document.querySelectorAll(".card").forEach(function (card) {
+        var show = f === "all" || card.getAttribute("data-cat") === f;
+        card.style.display = show ? "" : "none";
+      });
+    });
+  });
+
+  /* ---------- Cart logic ---------- */
+  function count() {
+    var n = 0; for (var k in cart) { n += cart[k]; } return n;
+  }
+  function subtotal() {
+    var s = 0; for (var k in cart) { s += byId[k].price * cart[k]; } return s;
+  }
+  function updateBadge() {
+    var badge = $("#cartBadge"), n = count();
+    if (n > 0) { badge.hidden = false; badge.textContent = n; badge.classList.remove("pop"); void badge.offsetWidth; badge.classList.add("pop"); }
+    else { badge.hidden = true; }
+  }
+  function add(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    updateBadge(); renderCart(); toast("Added " + byId[id].name + " 🔥");
+  }
+  function setQty(id, q) {
+    if (q <= 0) { delete cart[id]; } else { cart[id] = q; }
+    updateBadge(); renderCart();
+  }
+  function renderCart() {
+    var body = $("#cartBody"), foot = $("#cartFoot");
+    var ids = Object.keys(cart);
+    if (!ids.length) {
+      body.innerHTML = '<div class="cart-empty"><div class="big" aria-hidden="true">🛍️</div><p><strong>Your bag is empty</strong></p><p>Add a few flame-grilled favourites to get started.</p></div>';
+      foot.hidden = true;
+      return;
+    }
+    var html = "";
+    ids.forEach(function (id) {
+      var m = byId[id], q = cart[id];
+      html +=
+        '<div class="line">' +
+          '<div class="line__art" aria-hidden="true">' + m.emoji + '</div>' +
+          '<div><div class="line__name">' + m.name + '</div><div class="line__price num">' + money(m.price) + ' each</div></div>' +
+          '<div class="line__end">' +
+            '<div class="line__total num">' + money(m.price * q) + '</div>' +
+            '<div class="stepper" role="group" aria-label="Quantity of ' + m.name + '">' +
+              '<button data-dec="' + id + '" aria-label="Remove one ' + m.name + '">−</button>' +
+              '<span class="q num">' + q + '</span>' +
+              '<button data-inc="' + id + '" aria-label="Add one ' + m.name + '">+</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+    });
+    body.innerHTML = html;
+    foot.hidden = false;
+    var sub = subtotal();
+    $("#sumSub").textContent = money(sub);
+    $("#sumTot").textContent = money(sub + DELIVERY);
+  }
+
+  grid.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-add]");
+    if (b) { add(b.getAttribute("data-add")); }
+  });
+  $("#cartBody").addEventListener("click", function (e) {
+    var inc = e.target.closest("[data-inc]"), dec = e.target.closest("[data-dec]");
+    if (inc) { var i = inc.getAttribute("data-inc"); setQty(i, cart[i] + 1); }
+    if (dec) { var d = dec.getAttribute("data-dec"); setQty(d, cart[d] - 1); }
+  });
+
+  /* ---------- Panels (overlay / drawer / modal) ---------- */
+  var overlay = $("#overlay");
+  var openEl = null;
+
+  function lockScroll(on) { document.body.style.overflow = on ? "hidden" : ""; }
+  function openPanel(el) {
+    if (openEl) closePanel(true);
+    lastFocus = document.activeElement;
+    openEl = el;
+    overlay.hidden = false;
+    requestAnimationFrame(function () { overlay.classList.add("show"); el.classList.add("open"); });
+    el.setAttribute("aria-hidden", "false");
+    lockScroll(true);
+    var f = el.querySelector("input, button, [tabindex]");
+    if (f) setTimeout(function () { f.focus(); }, 60);
+  }
+  function closePanel(keepOverlay) {
+    if (!openEl) return;
+    openEl.classList.remove("open");
+    openEl.setAttribute("aria-hidden", "true");
+    var closing = openEl;
+    setTimeout(function () { if (!openEl) closing.style.visibility = ""; }, 320);
+    openEl = null;
+    if (!keepOverlay) {
+      overlay.classList.remove("show");
+      setTimeout(function () { if (!openEl) overlay.hidden = true; }, 300);
+      lockScroll(false);
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    }
+  }
+  overlay.addEventListener("click", function () { closePanel(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && openEl) closePanel(); });
+  document.querySelectorAll("[data-close]").forEach(function (b) {
+    b.addEventListener("click", function () { closePanel(); });
+  });
+
+  $("#cartBtn").addEventListener("click", function () { renderCart(); openPanel($("#drawer")); });
+
+  /* ---------- Checkout ---------- */
+  $("#checkoutBtn").addEventListener("click", function () {
+    if (!count()) return;
+    var list = $("#coSummary"), html = "";
+    Object.keys(cart).forEach(function (id) {
+      var m = byId[id];
+      html += "<li><span>" + m.name + " × " + cart[id] + "</span><span class='num'>" + money(m.price * cart[id]) + "</span></li>";
+    });
+    html += "<li><span>Delivery</span><span class='num'>" + money(DELIVERY) + "</span></li>";
+    list.innerHTML = html;
+    $("#coTotal").textContent = money(subtotal() + DELIVERY);
+    openPanel($("#checkoutModal"));
+  });
+
+  $("#checkoutForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!this.checkValidity()) { this.reportValidity(); return; }
+    var pay = (document.querySelector('input[name="pay"]:checked') || {}).value || "Cash";
+    var total = subtotal() + DELIVERY;
+    var orderNo = "ELN-" + Math.floor(1000 + Math.random() * 9000);
+    $("#checkoutStep").innerHTML =
+      '<div class="modal__head"><div><h2>Order confirmed</h2></div>' +
+      '<button class="icon-btn" data-close aria-label="Close">✕</button></div>' +
+      '<div class="success">' +
+        '<div class="tick" aria-hidden="true">✓</div>' +
+        '<p>Thanks! Your order is with the kitchen.</p>' +
+        '<p class="order-no num">' + orderNo + '</p>' +
+        '<p class="note" style="margin-top:0.6rem">' + pay + ' · Total ' + money(total) + ' · ETA ~25 min</p>' +
+      '</div>' +
+      '<button class="btn btn--primary btn--block btn--lg" data-close style="margin-top:1rem">Done</button>';
+    $("#checkoutStep").querySelectorAll("[data-close]").forEach(function (b) {
+      b.addEventListener("click", function () { closePanel(); });
+    });
+    cart = {}; updateBadge(); renderCart();
+    toast("Order placed — see you soon! 🎉");
+  });
+
+  /* ---------- Auth ---------- */
+  $("#signinBtn").addEventListener("click", function () { openPanel($("#authModal")); });
+  var tabLogin = $("#tabLogin"), tabReg = $("#tabReg"), paneLogin = $("#paneLogin"), paneReg = $("#paneReg");
+  function selectTab(login) {
+    tabLogin.setAttribute("aria-selected", login ? "true" : "false");
+    tabReg.setAttribute("aria-selected", login ? "false" : "true");
+    paneLogin.hidden = !login; paneReg.hidden = login;
+    $("#authTitle").textContent = login ? "Welcome back" : "Create your account";
+  }
+  tabLogin.addEventListener("click", function () { selectTab(true); });
+  tabReg.addEventListener("click", function () { selectTab(false); });
+  paneLogin.addEventListener("submit", function (e) { e.preventDefault(); if (!this.checkValidity()) { this.reportValidity(); return; } closePanel(); toast("Welcome back! 👋"); });
+  paneReg.addEventListener("submit", function (e) { e.preventDefault(); if (!this.checkValidity()) { this.reportValidity(); return; } var n = ($("#rgName").value || "friend").split(" ")[0]; closePanel(); toast("Welcome to Ellynes, " + n + "! 🔥"); });
+
+  /* ---------- Toast ---------- */
+  var toastEl = $("#toast"), toastTimer;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toastEl.classList.remove("show"); }, 2600);
+  }
+
+  /* ---------- Theme toggle ---------- */
+  var themeBtn = $("#themeBtn");
+  function currentTheme() {
+    var set = document.documentElement.getAttribute("data-theme");
+    if (set) return set;
+    return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    themeBtn.textContent = t === "dark" ? "☀️" : "🌙";
+    themeBtn.setAttribute("aria-label", t === "dark" ? "Switch to light theme" : "Switch to dark theme");
+    try { localStorage.setItem("ellynes-theme", t); } catch (e) {}
+  }
+  (function initTheme() {
+    var saved = null;
+    try { saved = localStorage.getItem("ellynes-theme"); } catch (e) {}
+    applyTheme(saved || currentTheme());
+  })();
+  themeBtn.addEventListener("click", function () { applyTheme(currentTheme() === "dark" ? "light" : "dark"); });
+
+  /* ---------- Sticky nav shadow ---------- */
+  var nav = $("#nav");
+  var onScroll = function () { nav.classList.toggle("is-stuck", window.scrollY > 8); };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- Reveal on scroll ---------- */
+  var reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if ("IntersectionObserver" in window && !reduce) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  } else {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  }
+
+  /* ---------- Year ---------- */
+  $("#year").textContent = new Date().getFullYear();
+
+  /* ---------- Ember canvas ---------- */
+  (function embers() {
+    if (reduce) return;
+    var canvas = $("#embers"), ctx = canvas.getContext("2d");
+    var W, H, DPR, parts = [], raf = null, visible = true;
+    function size() {
+      var r = canvas.getBoundingClientRect();
+      DPR = Math.min(window.devicePixelRatio || 1, 2);
+      W = canvas.width = Math.max(1, Math.floor(r.width * DPR));
+      H = canvas.height = Math.max(1, Math.floor(r.height * DPR));
+    }
+    function spawn() {
+      return {
+        x: Math.random() * W,
+        y: H + Math.random() * 30 * DPR,
+        r: (0.8 + Math.random() * 2.2) * DPR,
+        vy: (0.25 + Math.random() * 0.85) * DPR,
+        vx: (-0.25 + Math.random() * 0.5) * DPR,
+        life: 0,
+        max: 90 + Math.random() * 120,
+        hue: Math.random() < 0.5 ? 20 : 36
+      };
+    }
+    var MAX = 60;
+    function tick() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.globalCompositeOperation = "lighter";
+      if (parts.length < MAX && Math.random() < 0.7) parts.push(spawn());
+      for (var i = parts.length - 1; i >= 0; i--) {
+        var p = parts[i];
+        p.life++;
+        p.x += p.vx; p.y -= p.vy; p.vx += (Math.random() - 0.5) * 0.05 * DPR;
+        var t = p.life / p.max;
+        if (t >= 1 || p.y < -20) { parts.splice(i, 1); continue; }
+        var a = Math.sin(t * Math.PI) * 0.8;
+        ctx.beginPath();
+        ctx.fillStyle = "hsla(" + p.hue + ", 95%, 58%, " + a + ")";
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalCompositeOperation = "source-over";
+      raf = requestAnimationFrame(tick);
+    }
+    function start() { if (!raf && visible) raf = requestAnimationFrame(tick); }
+    function stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } ctx.clearRect(0, 0, W, H); }
+    size(); start();
+    var rt;
+    window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 200); });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (en) {
+        visible = en[0].isIntersecting;
+        if (visible) start(); else stop();
+      }, { threshold: 0.01 }).observe(canvas);
+    }
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) stop(); else start();
+    });
+  })();
+
+})();
+</script>
+</body>
+</html>
