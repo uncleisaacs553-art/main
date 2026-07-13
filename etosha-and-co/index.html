@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en" data-tier="high">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etosha &amp; Co. — Fine Dining | Windhoek, Namibia</title>
+<meta name="description" content="Etosha & Co. is Windhoek's landmark fine-dining restaurant — Namibian game, Atlantic seafood and Kalahari botanicals, composed with Cordon Bleu technique. Reserve your evening.">
+<meta name="theme-color" content="#0A0705">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Etosha & Co. — Fine Dining, Windhoek">
+<meta property="og:description" content="Where Namibia's wild soul meets the table. Reserve your evening.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1200&q=80&auto=format&fit=crop">
+<meta name="twitter:card" content="summary_large_image">
+
+<!-- Perf: warm up origins before anything is requested -->
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" fetchpriority="high"
+  imagesrcset="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80&auto=format&fit=crop 800w,
+    https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1400&q=82&auto=format&fit=crop 1400w,
+    https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=2000&q=82&auto=format&fit=crop 2000w"
+  imagesizes="100vw">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Restaurant","name":"Etosha & Co.","servesCuisine":["Namibian","Contemporary European"],"priceRange":"N$$$","telephone":"+264 61 234 5678","email":"hello@etoshaandco.com.na","acceptsReservations":"True","address":{"@type":"PostalAddress","streetAddress":"14 Independence Avenue","addressLocality":"Windhoek","addressCountry":"NA"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],"opens":"18:00","closes":"22:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Friday","Saturday","Sunday"],"opens":"12:00","closes":"15:00"}]}
+</script>
+
+<script>
+/* Adaptive performance tier — decided before first paint.
+   high: full atmosphere · mid: reveals only · low: instant, motion-free. */
+(function(){
+  var d = document.documentElement, t = 'high';
+  try {
+    var mem   = navigator.deviceMemory || 8,
+        cores = navigator.hardwareConcurrency || 8,
+        rm    = matchMedia('(prefers-reduced-motion: reduce)').matches,
+        save  = navigator.connection && navigator.connection.saveData,
+        saved = sessionStorage.getItem('ec-tier');
+    if (rm || save || mem <= 2 || cores <= 2) t = 'low';
+    else if (mem <= 4 || cores <= 4)          t = 'mid';
+    if (saved === 'mid' && t === 'high') t = 'mid';
+    if (saved === 'low') t = 'low';
+  } catch(e){}
+  d.dataset.tier = t;
+  d.className += ' js';
+})();
+</script>
+
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:#0A0705; --ink-2:#120E09; --ink-3:#1B140C;
+  --gold:#C9A54B; --gold-hi:#EBD08E; --gold-lo:#8F6D2A;
+  --cream:#EFE5D1; --mute:#A6987F;
+  --line:rgba(201,165,75,.16); --line-soft:rgba(201,165,75,.08);
+  --sage:#96B074; --clay:#CE8158; --sea:#84AABE;
+  --serif:'Playfair Display',Georgia,serif;
+  --body:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.61,.21,1);
+  --pad:clamp(88px,11vw,148px);
+  --gut:max(5.5vw,22px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  background:var(--ink);color:var(--cream);
+  font-family:var(--body);font-size:19px;line-height:1.7;
+  overflow-x:clip;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+::selection{background:rgba(201,165,75,.3);color:#fff}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:var(--ink-2)}
+::-webkit-scrollbar-thumb{background:var(--gold-lo);border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--gold)}
+img{display:block;max-width:100%}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.skip{position:fixed;top:-60px;left:16px;z-index:10000;background:var(--gold);color:var(--ink);font:600 12px/1 var(--sans);letter-spacing:2px;text-transform:uppercase;padding:14px 22px;text-decoration:none;transition:top .2s}
+.skip:focus{top:16px}
+
+/* Every animated property below is transform or opacity only —
+   the whole motion system runs on the compositor thread. */
+
+/* ============ FILM GRAIN (high tier only) ============ */
+.grain{display:none}
+[data-tier="high"] .grain{
+  display:block;position:fixed;inset:0;z-index:2000;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+/* ============ SCROLL PROGRESS ============ */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:1600;background:linear-gradient(90deg,var(--gold-lo),var(--gold),var(--gold-hi));transform:scaleX(0);transform-origin:0 50%;pointer-events:none}
+@supports (animation-timeline: scroll()){
+  .js .progress{animation:prog linear both;animation-timeline:scroll()}
+  @keyframes prog{to{transform:scaleX(1)}}
+}
+
+/* ============ PRELOADER ============ */
+#preloader{position:fixed;inset:0;z-index:9000;background:var(--ink);display:flex;align-items:center;justify-content:center;transition:transform .9s var(--ease),visibility .9s}
+#preloader.gone{transform:translateY(-101%);visibility:hidden}
+html:not(.js) #preloader,[data-tier="low"] #preloader{display:none}
+.pre-in{text-align:center}
+.pre-mono{font-family:var(--serif);font-size:clamp(64px,10vw,104px);font-weight:900;line-height:1;color:var(--gold);opacity:0;animation:preFade .7s .1s var(--ease) forwards}
+.pre-mono em{font-style:italic;color:var(--cream)}
+.pre-tag{font:500 11px/1 var(--sans);letter-spacing:7px;text-transform:uppercase;color:var(--mute);margin:18px 0 26px;opacity:0;animation:preFade .7s .3s var(--ease) forwards}
+.pre-bar{width:200px;height:1px;background:var(--line);margin:0 auto;overflow:hidden}
+.pre-fill{height:100%;width:100%;background:linear-gradient(90deg,var(--gold-lo),var(--gold),var(--gold-hi));transform:scaleX(0);transform-origin:0 50%;animation:preFill 1.1s .25s var(--ease) forwards}
+@keyframes preFade{to{opacity:1}}
+@keyframes preFill{to{transform:scaleX(1)}}
+
+/* ============ CURSOR (high tier, fine pointer) ============ */
+.cursor-dot,.cursor-ring{display:none}
+@media (hover:hover) and (pointer:fine){
+  html.has-cursor{cursor:none}
+  html.has-cursor a,html.has-cursor button,html.has-cursor [role="button"],html.has-cursor input,html.has-cursor select,html.has-cursor textarea,html.has-cursor label{cursor:none}
+  html.has-cursor .cursor-dot{display:block;position:fixed;top:0;left:0;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--gold);z-index:9500;pointer-events:none;transition:opacity .25s}
+  html.has-cursor .cursor-ring{display:block;position:fixed;top:0;left:0;width:38px;height:38px;margin:-19px 0 0 -19px;border-radius:50%;border:1px solid rgba(201,165,75,.55);z-index:9490;pointer-events:none;transition:opacity .25s}
+  html.has-cursor .cursor-ring::after{content:'';position:absolute;inset:-1px;border-radius:50%;border:1px solid var(--gold-hi);opacity:0;transform:scale(.6);transition:opacity .25s,transform .3s var(--ease)}
+  html.has-cursor.cursor-hot .cursor-ring::after{opacity:1;transform:scale(1.35)}
+  html.has-cursor.cursor-hot .cursor-dot{background:#fff}
+  html.has-cursor.cursor-hidden .cursor-dot,html.has-cursor.cursor-hidden .cursor-ring{opacity:0}
+}
+
+/* ============ NAV ============ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1500;padding:0 var(--gut);border-bottom:1px solid transparent;transition:background .4s,border-color .4s}
+.nav.scrolled{background:rgba(10,7,5,.96);border-color:var(--line-soft)}
+[data-tier="high"] .nav.scrolled{background:rgba(10,7,5,.9);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:84px;max-width:1360px;margin:0 auto}
+.brand{font-family:var(--serif);font-size:23px;font-weight:700;color:#fff;text-decoration:none;letter-spacing:.5px;white-space:nowrap}
+.brand em{font-style:italic;color:var(--gold)}
+.nav-menu{display:flex;align-items:center;gap:34px}
+.nav-link{font:500 11.5px/1 var(--sans);letter-spacing:2.2px;text-transform:uppercase;color:var(--mute);text-decoration:none;padding:6px 0;position:relative;transition:color .3s}
+.nav-link::after{content:'';position:absolute;left:0;bottom:0;width:100%;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:100% 50%;transition:transform .35s var(--ease)}
+.nav-link:hover,.nav-link.active{color:var(--gold-hi)}
+.nav-link:hover::after,.nav-link.active::after{transform:scaleX(1);transform-origin:0 50%}
+.nav-cta{font:600 11px/1 var(--sans);letter-spacing:2.2px;text-transform:uppercase;color:var(--ink);background:var(--gold);text-decoration:none;padding:14px 26px;margin-left:8px;transition:background .3s,transform .3s}
+.nav-cta:hover{background:var(--gold-hi);transform:translateY(-1px)}
+.nav-toggle{display:none;background:none;border:0;width:44px;height:44px;cursor:pointer;position:relative;z-index:1701}
+.nav-toggle span{display:block;width:26px;height:1.5px;background:var(--gold);margin:6px auto;transition:transform .35s var(--ease),opacity .25s}
+.nav-toggle[aria-expanded="true"] span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.nav-toggle[aria-expanded="true"] span:nth-child(2){opacity:0}
+.nav-toggle[aria-expanded="true"] span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+@media (max-width:920px){
+  .nav-menu{position:fixed;inset:0;z-index:1700;background:#0C0906;flex-direction:column;justify-content:center;gap:30px;visibility:hidden;opacity:0;transition:opacity .35s,visibility .35s}
+  .nav-menu.open{visibility:visible;opacity:1}
+  .nav-link{font-size:15px;letter-spacing:4px;opacity:0;transform:translateY(14px);transition:opacity .4s var(--ease),transform .4s var(--ease),color .3s}
+  .nav-menu.open .nav-link{opacity:1;transform:none}
+  .nav-menu.open .nav-link:nth-child(2){transition-delay:.05s}.nav-menu.open .nav-link:nth-child(3){transition-delay:.1s}
+  .nav-menu.open .nav-link:nth-child(4){transition-delay:.15s}.nav-menu.open .nav-link:nth-child(5){transition-delay:.2s}
+  .nav-menu.open .nav-link:nth-child(6){transition-delay:.25s}.nav-menu.open .nav-link:nth-child(7){transition-delay:.3s}
+  .nav-cta{display:none}
+  .nav-toggle{display:block}
+}
+
+/* ============ HERO ============ */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;overflow:clip}
+.hero-par{position:absolute;inset:0;z-index:0}
+.hero-img{width:100%;height:100%;object-fit:cover;transform:scale(1.06)}
+.is-ready .hero-img{animation:kenburns 12s var(--ease) forwards}
+@keyframes kenburns{to{transform:scale(1)}}
+.hero-scrim{position:absolute;inset:0;z-index:1;background:
+  linear-gradient(100deg,rgba(8,5,3,.92) 0%,rgba(8,5,3,.55) 52%,rgba(8,5,3,.35) 75%,rgba(8,5,3,.72) 100%)}
+.hero-scrim::after{content:'';position:absolute;inset:auto 0 0 0;height:32vh;background:linear-gradient(to top,var(--ink) 4%,transparent)}
+.hero-fg{position:relative;z-index:2;width:100%;max-width:1360px;margin:0 auto;padding:120px var(--gut) 40px}
+.hero-badge{display:inline-flex;align-items:center;gap:12px;font:500 10.5px/1 var(--sans);letter-spacing:3.5px;text-transform:uppercase;color:var(--gold-hi);border:1px solid rgba(201,165,75,.35);padding:11px 20px;margin-bottom:34px}
+.hero-badge::before{content:'';width:22px;height:1px;background:var(--gold)}
+.hero-title{font-family:var(--serif);font-weight:900;font-size:clamp(42px,6vw + 19px,118px);line-height:.98;color:#fff;letter-spacing:-.01em;margin-bottom:28px}
+.hero-title .gold{color:var(--gold)}
+.hero-title .it{font-style:italic;font-weight:700}
+.hline{display:block;overflow:hidden}
+.hline > span{display:block}
+.js .hline > span{transform:translateY(112%)}
+.is-ready .hline > span{animation:lineUp .9s var(--ease) forwards}
+.is-ready .hline:nth-child(1) > span{animation-delay:.12s}
+.is-ready .hline:nth-child(2) > span{animation-delay:.26s}
+.is-ready .hline:nth-child(3) > span{animation-delay:.4s}
+@keyframes lineUp{to{transform:translateY(0)}}
+.hero-sub{max-width:530px;font-size:clamp(17px,1.7vw,21px);font-weight:400;color:rgba(239,229,209,.82);margin-bottom:46px}
+.hero-actions{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:68px}
+.btn{display:inline-flex;align-items:center;gap:12px;font:600 12px/1 var(--sans);letter-spacing:2.4px;text-transform:uppercase;text-decoration:none;padding:19px 38px;border:0;cursor:pointer;transition:background .3s,color .3s,border-color .3s,transform .3s}
+.btn .arr{font-family:var(--body);font-size:17px;line-height:0;transition:transform .3s var(--ease)}
+.btn:hover .arr{transform:translateX(5px)}
+.btn-gold{background:var(--gold);color:var(--ink);position:relative;overflow:hidden}
+.btn-gold::before{content:'';position:absolute;inset:0;background:var(--gold-hi);transform:translateX(-101%);transition:transform .4s var(--ease)}
+.btn-gold:hover::before{transform:none}
+.btn-gold > *{position:relative}
+.btn-gold:hover{transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--cream);border:1px solid rgba(239,229,209,.28)}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold-hi);transform:translateY(-2px)}
+.hero-stats{display:flex;align-items:center;gap:clamp(24px,4vw,44px)}
+.stat-num{display:block;font-family:var(--serif);font-size:clamp(30px,3vw,40px);font-weight:700;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums}
+.stat-lbl{display:block;font:400 10px/1.5 var(--sans);letter-spacing:1.8px;text-transform:uppercase;color:var(--mute);margin-top:7px}
+.stat-div{width:1px;height:46px;background:var(--line)}
+.hero-fade{opacity:0;transform:translateY(26px)}
+.is-ready .hero-fade{animation:fadeUp .85s var(--ease) forwards}
+.is-ready .hero-fade.d1{animation-delay:.5s}
+.is-ready .hero-fade.d2{animation-delay:.62s}
+.is-ready .hero-fade.d3{animation-delay:.76s}
+.is-ready .hero-fade.d4{animation-delay:.9s}
+@keyframes fadeUp{to{opacity:1;transform:none}}
+.hero-coords{position:absolute;right:calc(var(--gut) - 6px);bottom:44px;z-index:2;writing-mode:vertical-rl;font:400 10px/1 var(--sans);letter-spacing:3px;text-transform:uppercase;color:var(--mute);display:flex;align-items:center;gap:14px}
+.hero-coords::after{content:'';width:1px;height:64px;background:linear-gradient(to bottom,var(--gold),transparent)}
+.is-ready .hero-coords::after{animation:pulseLine 2.4s ease-in-out infinite}
+@keyframes pulseLine{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.35;transform:scaleY(.55)}}
+@media (max-width:920px){.hero-coords{display:none}}
+
+/* Dust motes — pure CSS, compositor-only, high tier only */
+.motes{display:none}
+[data-tier="high"] .motes{display:block;position:absolute;inset:0;z-index:1;overflow:hidden;pointer-events:none}
+.mote{position:absolute;bottom:-4vh;width:4px;height:4px;border-radius:50%;background:var(--gold-hi);opacity:0;animation:rise var(--dur,16s) linear var(--del,0s) infinite}
+.mote:nth-child(odd){width:3px;height:3px}
+.hero.asleep .mote{animation-play-state:paused}
+@keyframes rise{
+  0%{transform:translate3d(0,0,0);opacity:0}
+  8%{opacity:.7}
+  60%{opacity:.35}
+  100%{transform:translate3d(var(--dx,3vw),-108vh,0);opacity:0}
+}
+
+/* Scroll-driven hero parallax — off the main thread entirely */
+@supports (animation-timeline: view()){
+  [data-tier="high"] .hero{view-timeline:--hero block}
+  [data-tier="high"] .hero-par{animation:heroDrift linear both;animation-timeline:--hero;animation-range:exit 0% exit 100%}
+  [data-tier="high"] .hero-fg{animation:heroSink linear both;animation-timeline:--hero;animation-range:exit 0% exit 55%}
+  @keyframes heroDrift{from{transform:translateY(0) scale(1.12)}to{transform:translateY(9%) scale(1.12)}}
+  @keyframes heroSink{to{opacity:0;transform:translateY(-7%)}}
+}
+
+/* ============ MARQUEE ============ */
+.marquee{position:relative;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--ink);padding:22px 0;overflow:clip}
+.marquee::before,.marquee::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
+.marquee::before{left:0;background:linear-gradient(to right,var(--ink),transparent)}
+.marquee::after{right:0;background:linear-gradient(to left,var(--ink),transparent)}
+.mq-track{display:flex;gap:56px;width:max-content;animation:mq 46s linear infinite}
+.marquee.paused .mq-track,[data-tier="low"] .mq-track{animation-play-state:paused}
+.mq-track > span{display:flex;align-items:center;gap:56px;flex-shrink:0}
+.mq-item{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--mute);white-space:nowrap}
+.mq-dot{color:var(--gold);font-size:9px}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ============ SHARED SECTION FURNITURE ============ */
+.section{padding:var(--pad) var(--gut);position:relative}
+.wrap{max-width:1360px;margin:0 auto}
+.chap{display:flex;align-items:center;gap:18px;margin-bottom:22px}
+.chap-no{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--gold);letter-spacing:1px}
+.chap-line{width:44px;height:1px;background:var(--gold-lo)}
+.chap-label{font:500 11px/1 var(--sans);letter-spacing:4px;text-transform:uppercase;color:var(--gold)}
+.stitle{font-family:var(--serif);font-size:clamp(36px,4.6vw,66px);font-weight:700;line-height:1.06;color:#fff;letter-spacing:-.01em;margin-bottom:22px}
+.stitle em{font-style:italic;color:var(--gold);font-weight:500}
+.ssub{color:var(--mute);font-size:19px;max-width:560px}
+.center .chap{justify-content:center}
+.center .stitle,.center .ssub{text-align:center}
+.center .ssub{margin:0 auto}
+.watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:0;font-family:var(--serif);font-weight:900;font-size:min(17vw,260px);line-height:1;color:transparent;-webkit-text-stroke:1px rgba(201,165,75,.07);white-space:nowrap;pointer-events:none;user-select:none}
+
+/* Reveal system — one-shot IO adds .revealed, transitions are compositor-only */
+.js .rv{opacity:0;transform:translateY(34px)}
+.js .rv-l{opacity:0;transform:translateX(-34px)}
+.js .rv-r{opacity:0;transform:translateX(34px)}
+.js .rv,.js .rv-l,.js .rv-r{transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.js .revealed{opacity:1;transform:none}
+[data-tier="low"] .rv,[data-tier="low"] .rv-l,[data-tier="low"] .rv-r{opacity:1;transform:none;transition:none}
+
+/* Rendering firewall: below-fold sections aren't laid out or painted
+   until they approach the viewport — the low-end scroll superpower. */
+.cv{content-visibility:auto;contain-intrinsic-size:auto 860px}
+.cv-tall{content-visibility:auto;contain-intrinsic-size:auto 1400px}
+
+/* ============ STORY ============ */
+.story{background:var(--ink-2)}
+.story-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(44px,6vw,92px);align-items:center}
+.story-imgs{position:relative;height:600px}
+.simg{position:absolute;overflow:hidden;background:var(--ink-3)}
+.simg img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease)}
+.simg:hover img{transform:scale(1.045)}
+.simg-a{width:70%;height:430px;top:0;left:0}
+.simg-b{width:56%;height:310px;bottom:0;right:0;border:5px solid var(--ink-2)}
+.story-est{position:absolute;left:-14px;top:52%;transform:translateY(-50%);writing-mode:vertical-rl;background:var(--gold);color:var(--ink);font:700 12px/1 var(--sans);letter-spacing:4px;padding:18px 12px}
+.story-award{position:absolute;top:-22px;right:0;background:var(--ink);border:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;gap:8px}
+.story-award .st{color:var(--gold);letter-spacing:2px;font-size:13px}
+.story-award strong{display:block;font:600 12.5px/1.3 var(--sans);color:#fff}
+.story-award small{font:400 10.5px/1 var(--sans);letter-spacing:1px;color:var(--mute)}
+.lead{font-size:clamp(21px,2vw,25px);font-style:italic;font-weight:400;color:var(--cream);line-height:1.55;margin-bottom:26px}
+.lead::first-letter{font-family:var(--serif);font-style:normal;font-weight:900;font-size:3.1em;color:var(--gold);float:left;line-height:.82;padding:6px 12px 0 0}
+.copy{color:var(--mute);font-size:18px;margin-bottom:16px}
+.copy strong{color:var(--cream);font-weight:600}
+.pillars{margin-top:42px;border-top:1px solid var(--line-soft)}
+.pillar{display:flex;gap:20px;align-items:baseline;padding:20px 4px;border-bottom:1px solid var(--line-soft);transition:transform .35s var(--ease)}
+.pillar:hover{transform:translateX(8px)}
+.pillar-no{font-family:var(--serif);font-style:italic;color:var(--gold);font-size:16px;min-width:28px}
+.pillar strong{display:block;font-family:var(--serif);font-size:19px;font-weight:700;color:#fff;margin-bottom:2px}
+.pillar p{font-size:15.5px;color:var(--mute)}
+@media (max-width:1024px){.story-grid{grid-template-columns:1fr}.story-imgs{display:none}}
+
+/* ============ EXPERIENCES ============ */
+.exp{background:var(--ink);border-top:1px solid var(--line-soft)}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-soft);border:1px solid var(--line-soft);margin-top:56px}
+.exp-card{background:var(--ink);padding:clamp(32px,3.4vw,52px);position:relative;overflow:hidden;transition:background .4s}
+.exp-card:hover{background:var(--ink-2)}
+.exp-card::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--gold-lo),var(--gold-hi));transform:scaleX(0);transform-origin:0 50%;transition:transform .5s var(--ease)}
+.exp-card:hover::after{transform:scaleX(1)}
+.exp-no{font-family:var(--serif);font-style:italic;font-size:clamp(40px,4vw,56px);color:transparent;-webkit-text-stroke:1px var(--gold);line-height:1;margin-bottom:26px}
+.exp-card h3{font-family:var(--serif);font-size:clamp(23px,2.2vw,29px);font-weight:700;color:#fff;margin-bottom:14px}
+.exp-card > p{color:var(--mute);font-size:17px;min-height:0;margin-bottom:26px}
+.exp-meta{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--line-soft);padding-top:18px;font:500 11px/1.6 var(--sans);letter-spacing:1.6px;text-transform:uppercase;color:var(--mute);gap:12px}
+.exp-meta .price{font-family:var(--serif);font-size:21px;letter-spacing:0;text-transform:none;color:var(--gold);white-space:nowrap}
+@media (max-width:920px){.exp-grid{grid-template-columns:1fr}}
+
+/* ============ MENU ============ */
+.menu{background:var(--ink-2)}
+.filters{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:44px 0 52px}
+.fbtn{font:500 11px/1 var(--sans);letter-spacing:2.2px;text-transform:uppercase;color:var(--mute);background:transparent;border:1px solid rgba(239,229,209,.14);padding:13px 28px;cursor:pointer;transition:color .3s,background .3s,border-color .3s}
+.fbtn:hover{color:var(--gold-hi);border-color:var(--gold-lo)}
+.fbtn[aria-pressed="true"]{background:var(--gold);border-color:var(--gold);color:var(--ink)}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:26px;max-width:1360px;margin:0 auto}
+.mcard{perspective:1200px;outline-offset:4px}
+.mcard.hide{display:none}
+.card3d{position:relative;width:100%;height:432px;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.35,.15,.2,1);cursor:pointer}
+@media (hover:hover){.mcard:hover .card3d{transform:rotateY(180deg)}}
+.mcard.is-flipped .card3d{transform:rotateY(180deg)}
+.mcard:focus-visible .card3d{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;display:flex;flex-direction:column}
+.face-front{background:var(--ink-3);border:1px solid var(--line-soft)}
+.face-back{background:linear-gradient(150deg,#5C3512 0%,#9C7A2E 55%,var(--gold) 100%);transform:rotateY(180deg);padding:30px 28px;gap:12px;justify-content:center}
+.dish-img{width:100%;aspect-ratio:3/2;overflow:hidden;flex-shrink:0;background:var(--ink)}
+.dish-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+@media (hover:hover){.mcard:hover .dish-img img{transform:scale(1.05)}}
+.dish-body{padding:20px 22px 18px;flex:1;display:flex;flex-direction:column}
+.dish-cat{font:600 9.5px/1 var(--sans);letter-spacing:2.6px;text-transform:uppercase;color:var(--gold);margin-bottom:9px}
+.dish-cat.c-main{color:var(--sage)}.dish-cat.c-dessert{color:var(--clay)}.dish-cat.c-drink{color:var(--sea)}
+.dish-body h3{font-family:var(--serif);font-size:21.5px;font-weight:700;color:#fff;line-height:1.2;margin-bottom:7px}
+.dish-body > p{font-size:14.5px;line-height:1.5;color:var(--mute);flex:1}
+.dish-foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.dish-price{font-family:var(--serif);font-size:24px;font-weight:700;color:var(--gold)}
+.dish-hint{font:400 9.5px/1 var(--sans);letter-spacing:1.6px;text-transform:uppercase;color:rgba(166,152,127,.6)}
+.face-back h4{font-family:var(--serif);font-size:21px;font-weight:900;color:#140D04;line-height:1.15}
+.face-back > p{font-size:15px;line-height:1.55;color:rgba(20,13,4,.82)}
+.back-rule{width:34px;height:2px;background:rgba(20,13,4,.4)}
+.back-tags{display:flex;gap:8px;flex-wrap:wrap}
+.back-tags span{font:600 9.5px/1 var(--sans);letter-spacing:1.2px;text-transform:uppercase;background:rgba(20,13,4,.16);color:#140D04;padding:6px 11px;border-radius:20px}
+.add-btn{margin-top:14px;font:700 11px/1 var(--sans);letter-spacing:2.2px;text-transform:uppercase;color:#F5E9CE;background:#140D04;border:0;padding:15px 20px;cursor:pointer;transition:opacity .3s,transform .3s}
+.add-btn:hover{opacity:.86;transform:translateY(-1px)}
+.menu-note{text-align:center;margin-top:48px;font-style:italic;color:var(--mute);font-size:16.5px}
+.menu-note b{color:var(--gold);font-weight:600}
+
+/* ============ GALLERY ============ */
+.gallery{background:var(--ink)}
+.ggrid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:250px;gap:12px;margin-top:56px}
+.gi{position:relative;overflow:hidden;background:var(--ink-3);cursor:pointer;border:0;padding:0;text-align:left}
+.gi img{width:100%;height:100%;object-fit:cover;transition:transform .65s var(--ease)}
+.gi:hover img,.gi:focus-visible img{transform:scale(1.055)}
+.gi-tall{grid-row:span 2}
+.gi-wide{grid-column:span 2}
+.gi-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,5,3,.85),rgba(8,5,3,0) 55%);opacity:0;transition:opacity .45s;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;padding:22px 24px}
+.gi:hover .gi-ov,.gi:focus-visible .gi-ov{opacity:1}
+@media (hover:none){.gi-ov{opacity:1;background:linear-gradient(to top,rgba(8,5,3,.72),rgba(8,5,3,0) 40%)}}
+.gi-ov em{font-family:var(--serif);font-size:18px;color:#fff}
+.gi-ov span{font-size:20px;color:var(--gold-hi);line-height:1}
+@media (max-width:860px){.ggrid{grid-template-columns:1fr 1fr;grid-auto-rows:200px}}
+@media (max-width:520px){.ggrid{grid-template-columns:1fr;grid-auto-rows:230px}.gi-tall{grid-row:span 1}.gi-wide{grid-column:span 1}}
+
+/* Lightbox */
+.lb{position:fixed;inset:0;z-index:8000;background:rgba(5,3,2,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:56px 20px 28px;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.lb.open{opacity:1;visibility:visible}
+.lb img{max-width:min(1100px,92vw);max-height:72vh;object-fit:contain;box-shadow:0 40px 120px rgba(0,0,0,.85)}
+.lb-cap{font-family:var(--serif);font-style:italic;font-size:21px;color:#fff;margin-top:22px;text-align:center}
+.lb-count{font:500 10px/1 var(--sans);letter-spacing:3px;color:var(--gold);margin-top:10px;text-transform:uppercase}
+.lb-btn{position:absolute;background:none;border:1px solid rgba(239,229,209,.22);color:var(--cream);width:52px;height:52px;font-size:20px;line-height:1;cursor:pointer;transition:border-color .3s,color .3s;display:flex;align-items:center;justify-content:center}
+.lb-btn:hover{border-color:var(--gold);color:var(--gold-hi)}
+.lb-close{top:22px;right:22px}
+.lb-prev{left:18px;top:50%;transform:translateY(-50%)}
+.lb-next{right:18px;top:50%;transform:translateY(-50%)}
+@media (max-width:700px){.lb-prev{left:8px}.lb-next{right:8px}.lb-btn{width:44px;height:44px}}
+
+/* ============ CHEF ============ */
+.chef{background:var(--ink-2);padding:0}
+.chef-grid{display:grid;grid-template-columns:1fr 1.1fr;min-height:640px}
+.chef-media{position:relative;overflow:hidden;background:var(--ink-3);min-height:420px}
+.chef-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.chef-media::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,transparent 55%,var(--ink-2))}
+.chef-body{padding:clamp(56px,7vw,110px) clamp(28px,5vw,90px);display:flex;flex-direction:column;justify-content:center}
+.chef-quote{font-family:var(--serif);font-size:clamp(24px,2.7vw,38px);font-style:italic;font-weight:500;color:#fff;line-height:1.4;margin-bottom:34px}
+.chef-quote .gold{color:var(--gold)}
+.chef-sig{font:600 12.5px/1 var(--sans);letter-spacing:2.4px;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.chef-role{font:400 13px/1.5 var(--sans);color:var(--mute)}
+.chef-rule{width:56px;height:2px;background:var(--gold);margin:34px 0}
+.chef-honors{display:flex;gap:0;flex-wrap:wrap;margin-top:38px;border-top:1px solid var(--line-soft)}
+.honor{flex:1;min-width:150px;padding:20px 18px 4px;border-left:1px solid var(--line-soft)}
+.honor:first-child{border-left:0;padding-left:0}
+.honor b{display:block;font-family:var(--serif);font-style:italic;font-weight:500;font-size:19px;color:var(--gold-hi);margin-bottom:5px}
+.honor span{font:400 10.5px/1.6 var(--sans);letter-spacing:1.4px;text-transform:uppercase;color:var(--mute)}
+@media (max-width:920px){.chef-grid{grid-template-columns:1fr}.chef-media{min-height:380px;position:relative}.chef-media::after{background:linear-gradient(to top,var(--ink-2),transparent 45%)}}
+
+/* ============ RESERVATIONS ============ */
+.reserve{background:var(--ink-3);overflow:clip}
+.reserve .watermark{top:46%}
+.res-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:clamp(44px,6vw,90px);align-items:start;position:relative;z-index:1}
+.res-list{margin-top:38px;border-top:1px solid var(--line-soft)}
+.res-item{display:grid;grid-template-columns:26px 1fr;gap:16px;padding:19px 2px;border-bottom:1px solid var(--line-soft);align-items:baseline}
+.res-item .ic{font-size:15px;color:var(--gold);line-height:1.4}
+.res-item strong{display:block;font:600 12px/1.4 var(--sans);letter-spacing:1.6px;text-transform:uppercase;color:#fff;margin-bottom:3px}
+.res-item small{font-size:15.5px;color:var(--mute)}
+.form-card{background:var(--ink-2);border:1px solid var(--line-soft);padding:clamp(30px,3.6vw,52px);position:relative}
+.form-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold-lo),var(--gold),var(--gold-hi))}
+.form-title{font-family:var(--serif);font-size:27px;font-weight:700;color:#fff;margin-bottom:8px}
+.form-sub{font-size:15.5px;color:var(--mute);margin-bottom:30px;font-style:italic}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.fg{margin-bottom:20px}
+.fg label{display:block;font:500 10.5px/1 var(--sans);letter-spacing:1.8px;text-transform:uppercase;color:var(--mute);margin-bottom:9px}
+.fg input,.fg select,.fg textarea{width:100%;background:var(--ink);border:1px solid rgba(239,229,209,.1);color:#fff;font-family:var(--body);font-size:16.5px;padding:14px 16px;outline:none;border-radius:0;appearance:none;-webkit-appearance:none;transition:border-color .3s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg input[aria-invalid="true"],.fg select[aria-invalid="true"]{border-color:#C25E4C}
+.fg select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23C9A54B' fill='none' stroke-width='1.4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+.fg select option{background:var(--ink-2);color:#fff}
+.fg input::placeholder,.fg textarea::placeholder{color:rgba(166,152,127,.55)}
+.fg input[type="date"]{color-scheme:dark}
+.ferr{display:block;font:400 12px/1.4 var(--sans);color:#D98273;margin-top:6px;min-height:0}
+.counter{display:flex;align-items:stretch}
+.cbtn{width:48px;background:var(--ink);border:1px solid rgba(239,229,209,.1);color:var(--gold);font-size:20px;cursor:pointer;transition:background .25s;line-height:1}
+.cbtn:hover{background:rgba(201,165,75,.12)}
+.counter input{text-align:center;border-left:0;border-right:0}
+.submit{width:100%;justify-content:center;margin-top:6px}
+.form-ok{display:none;text-align:center;padding:40px 24px}
+.form-ok.show{display:block;animation:okIn .5s var(--ease)}
+@keyframes okIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.ok-ic{width:58px;height:58px;margin:0 auto 18px;border:1px solid var(--gold);border-radius:50%;color:var(--gold);font-size:22px;display:flex;align-items:center;justify-content:center}
+.form-ok h4{font-family:var(--serif);font-size:23px;color:#fff;margin-bottom:8px}
+.form-ok p{color:var(--mute);font-size:16px}
+@media (max-width:1024px){.res-grid{grid-template-columns:1fr}}
+@media (max-width:560px){.frow{grid-template-columns:1fr}}
+
+/* ============ VOICES ============ */
+.voices{background:var(--ink);position:relative;overflow:clip}
+.voices-in{max-width:880px;margin:0 auto;text-align:center;position:relative;z-index:1}
+.vmark{font-family:var(--serif);font-size:120px;line-height:.4;color:var(--gold);opacity:.35;display:block;margin:34px 0 8px}
+.vtrack{position:relative;min-height:300px}
+.ttest{position:absolute;inset:0;opacity:0;transform:translateY(18px);transition:opacity .55s var(--ease),transform .55s var(--ease);pointer-events:none;visibility:hidden}
+.ttest.active{position:relative;opacity:1;transform:none;pointer-events:auto;visibility:visible}
+.tstars{color:var(--gold);letter-spacing:6px;font-size:17px;margin-bottom:26px}
+.ttest blockquote{font-family:var(--serif);font-size:clamp(20px,2.4vw,27px);font-style:italic;font-weight:500;line-height:1.6;color:var(--cream);margin-bottom:30px}
+.ttest cite{display:block;font-style:normal}
+.ttest cite b{display:block;font:600 13px/1.6 var(--sans);letter-spacing:1.6px;text-transform:uppercase;color:#fff}
+.ttest cite span{font:400 12.5px/1.6 var(--sans);color:var(--mute)}
+.tdots{display:flex;gap:10px;justify-content:center;margin-top:42px}
+.tdot{width:34px;height:20px;background:none;border:0;cursor:pointer;position:relative;padding:0}
+.tdot::after{content:'';position:absolute;left:0;right:0;top:9px;height:1.5px;background:rgba(201,165,75,.25);transition:background .3s,transform .3s}
+.tdot:hover::after{background:rgba(201,165,75,.6)}
+.tdot[aria-selected="true"]::after{background:var(--gold);transform:scaleY(1.6)}
+
+/* ============ CONTACT ============ */
+.contact{background:var(--ink-2)}
+.contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:clamp(44px,6vw,90px);align-items:start}
+.cit{display:grid;grid-template-columns:26px 1fr;gap:16px;padding:19px 2px;border-bottom:1px solid var(--line-soft);align-items:baseline;transition:transform .35s var(--ease)}
+.cit:hover{transform:translateX(6px)}
+.cit .ic{color:var(--gold);font-size:15px}
+.cit strong{display:block;font:600 12px/1.4 var(--sans);letter-spacing:1.6px;text-transform:uppercase;color:#fff;margin-bottom:3px}
+.cit p{font-size:15.5px;color:var(--mute)}
+.cit a{color:var(--mute);text-decoration:none;transition:color .3s}
+.cit a:hover{color:var(--gold-hi)}
+.citems{margin-top:38px;border-top:1px solid var(--line-soft);margin-bottom:36px}
+.socials{display:flex;gap:10px;flex-wrap:wrap}
+.soc{font:500 10.5px/1 var(--sans);letter-spacing:2px;text-transform:uppercase;color:var(--mute);text-decoration:none;border:1px solid rgba(239,229,209,.14);padding:12px 22px;transition:color .3s,border-color .3s,transform .3s}
+.soc:hover{color:var(--gold-hi);border-color:var(--gold-lo);transform:translateY(-2px)}
+@media (max-width:1024px){.contact-grid{grid-template-columns:1fr}}
+
+/* ============ FOOTER ============ */
+.footer{background:var(--ink);border-top:1px solid var(--line-soft);padding:0 var(--gut);overflow:clip}
+.foot-mark{text-align:center;padding:clamp(48px,7vw,96px) 0 0;line-height:.8}
+.foot-mark span{font-family:var(--serif);font-weight:900;font-size:clamp(64px,14.5vw,218px);letter-spacing:.04em;color:transparent;-webkit-text-stroke:1px rgba(201,165,75,.3);white-space:nowrap}
+.foot-grid{max-width:1360px;margin:0 auto;display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:44px;padding:clamp(40px,6vw,72px) 0 56px;border-bottom:1px solid var(--line-soft)}
+.foot-brand .brand{font-size:26px}
+.foot-brand p{color:var(--mute);font-size:16px;margin-top:14px;max-width:320px}
+.fcol h4{font:600 10.5px/1 var(--sans);letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:20px}
+.fcol a,.fcol p{display:block;font:400 13.5px/1.6 var(--sans);color:var(--mute);text-decoration:none;margin-bottom:11px}
+.fcol a:hover{color:var(--gold-hi)}
+.foot-bot{max-width:1360px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:26px 0 30px}
+.foot-bot p{font:400 12px/1.6 var(--sans);color:rgba(166,152,127,.55)}
+@media (max-width:860px){.foot-grid{grid-template-columns:1fr;gap:36px}.foot-bot{flex-direction:column;text-align:center}}
+
+/* ============ TOAST / TO-TOP ============ */
+.toast{position:fixed;left:50%;bottom:30px;z-index:8500;transform:translate(-50%,140%);background:var(--ink-2);border:1px solid var(--gold-lo);color:var(--cream);font:500 13px/1.5 var(--sans);letter-spacing:.4px;padding:15px 26px;display:flex;align-items:center;gap:12px;max-width:min(92vw,460px);transition:transform .45s var(--ease);pointer-events:none}
+.toast.show{transform:translate(-50%,0)}
+.toast .tick{color:var(--gold);font-size:15px}
+.totop{position:fixed;right:26px;bottom:26px;z-index:1400;width:50px;height:50px;background:rgba(10,7,5,.9);border:1px solid var(--line);color:var(--gold);font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .4s,visibility .4s,transform .4s,border-color .3s}
+.totop.show{opacity:1;visibility:visible;transform:none}
+.totop:hover{border-color:var(--gold)}
+@media (max-width:700px){.totop{right:16px;bottom:16px;width:44px;height:44px}}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="progress" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<!-- PRELOADER -->
+<div id="preloader" aria-hidden="true">
+  <div class="pre-in">
+    <div class="pre-mono">E<em>&amp;</em>Co.</div>
+    <div class="pre-tag">Windhoek · Namibia</div>
+    <div class="pre-bar"><div class="pre-fill"></div></div>
+  </div>
+</div>
+
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+
+<!-- NAV -->
+<header class="nav" id="siteNav">
+  <div class="nav-in">
+    <a href="#home" class="brand">Etosha <em>&amp;</em> Co.</a>
+    <nav class="nav-menu" id="navMenu" aria-label="Primary">
+      <a href="#story" class="nav-link">Story</a>
+      <a href="#experiences" class="nav-link">Experiences</a>
+      <a href="#menu" class="nav-link">Menu</a>
+      <a href="#gallery" class="nav-link">Gallery</a>
+      <a href="#chef" class="nav-link">Chef</a>
+      <a href="#reservations" class="nav-link">Reserve</a>
+      <a href="#contact" class="nav-link">Contact</a>
+    </nav>
+    <a href="#reservations" class="nav-cta">Book a Table</a>
+    <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="navMenu" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ============ HERO ============ -->
+<section id="home" class="hero" aria-label="Welcome">
+  <div class="hero-par">
+    <img class="hero-img" fetchpriority="high" decoding="async"
+      src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1600&q=82&auto=format&fit=crop"
+      srcset="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80&auto=format&fit=crop 800w,
+              https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1400&q=82&auto=format&fit=crop 1400w,
+              https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=2000&q=82&auto=format&fit=crop 2000w"
+      sizes="100vw"
+      alt="The red dunes of Sossusvlei, Namibia, glowing at golden hour">
+  </div>
+  <div class="hero-scrim" aria-hidden="true"></div>
+  <div class="motes" aria-hidden="true">
+    <span class="mote" style="left:8%;--dur:15s;--del:0s;--dx:4vw"></span>
+    <span class="mote" style="left:19%;--dur:19s;--del:3.2s;--dx:-3vw"></span>
+    <span class="mote" style="left:31%;--dur:14s;--del:6.5s;--dx:5vw"></span>
+    <span class="mote" style="left:44%;--dur:21s;--del:1.4s;--dx:-4vw"></span>
+    <span class="mote" style="left:57%;--dur:16s;--del:8s;--dx:3vw"></span>
+    <span class="mote" style="left:68%;--dur:18s;--del:4.6s;--dx:-5vw"></span>
+    <span class="mote" style="left:79%;--dur:15s;--del:10.5s;--dx:4vw"></span>
+    <span class="mote" style="left:88%;--dur:20s;--del:2.3s;--dx:-3vw"></span>
+    <span class="mote" style="left:95%;--dur:17s;--del:7.2s;--dx:-4vw"></span>
+  </div>
+  <div class="hero-fg">
+    <p class="hero-badge hero-fade d1">Fine Dining — Windhoek, Namibia · Est. 2013</p>
+    <h1 class="hero-title">
+      <span class="hline"><span>Where Namibia's</span></span>
+      <span class="hline"><span class="gold it">Wild Soul</span></span>
+      <span class="hline"><span>Meets the Table</span></span>
+    </h1>
+    <p class="hero-sub hero-fade d2">Game from the Etosha plains. Seafood from the cold Benguela Current. Botanicals from the Kalahari. Composed each evening with Cordon Bleu precision.</p>
+    <div class="hero-actions hero-fade d3">
+      <a href="#reservations" class="btn btn-gold"><span>Reserve Your Evening</span><span class="arr" aria-hidden="true">→</span></a>
+      <a href="#menu" class="btn btn-ghost"><span>Explore the Menu</span></a>
+    </div>
+    <div class="hero-stats hero-fade d4">
+      <div><span class="stat-num" data-count="12" data-suffix="+">0</span><span class="stat-lbl">Years of Excellence</span></div>
+      <div class="stat-div" aria-hidden="true"></div>
+      <div><span class="stat-num" data-count="80">0</span><span class="stat-lbl">Intimate Seats</span></div>
+      <div class="stat-div" aria-hidden="true"></div>
+      <div><span class="stat-num">5★</span><span class="stat-lbl">Michelin Inspired</span></div>
+    </div>
+  </div>
+  <p class="hero-coords hero-fade d4">22.5609° S &nbsp;·&nbsp; 17.0658° E</p>
+</section>
+
+<!-- ============ MARQUEE ============ -->
+<div class="marquee" aria-hidden="true">
+  <div class="mq-track">
+    <span>
+      <em class="mq-item">Oryx Tenderloin</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Atlantic Kingklip</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Kudu Carpaccio</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Walvis Bay Oysters</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Springbok Rack</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Kalahari Truffle</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Marula Crème Brûlée</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Etosha Sunset</em><i class="mq-dot">◆</i>
+    </span>
+    <span>
+      <em class="mq-item">Oryx Tenderloin</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Atlantic Kingklip</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Kudu Carpaccio</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Walvis Bay Oysters</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Springbok Rack</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Kalahari Truffle</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Marula Crème Brûlée</em><i class="mq-dot">◆</i>
+      <em class="mq-item">Etosha Sunset</em><i class="mq-dot">◆</i>
+    </span>
+  </div>
+</div>
+
+<!-- ============ 01 · STORY ============ -->
+<section id="story" class="section story cv" aria-labelledby="story-title">
+  <div class="wrap story-grid">
+    <div class="story-imgs rv-l">
+      <div class="simg simg-a">
+        <img loading="lazy" decoding="async" width="800" height="430"
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=82&auto=format&fit=crop"
+          alt="Candlelit dining room with white linen at Etosha & Co.">
+      </div>
+      <div class="simg simg-b">
+        <img loading="lazy" decoding="async" width="700" height="310"
+          src="https://images.unsplash.com/photo-1577219491135-ce391730fb2c?w=700&q=82&auto=format&fit=crop"
+          alt="Chef's hands plating a fine-dining dish">
+      </div>
+      <div class="story-est" aria-hidden="true">EST. 2013</div>
+      <div class="story-award">
+        <div>
+          <span class="st" aria-hidden="true">★★★★★</span>
+          <strong>Best Fine Dining</strong>
+          <small>Namibia · 2024</small>
+        </div>
+      </div>
+    </div>
+    <div>
+      <header class="chap rv"><span class="chap-no">01</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">Our Story</span></header>
+      <h2 class="stitle rv" id="story-title">A Taste Born of <em>Wild Land</em></h2>
+      <p class="lead rv">Etosha &amp; Co. was born from a single belief — that the untamed beauty of Namibia deserves a seat at the world's finest tables.</p>
+      <p class="copy rv">Founded in 2013 by <strong>Chef Amara Nghipandulwa</strong>, a Windhoek native trained at Le Cordon Bleu in Paris, our kitchen bridges two worlds: the ancient flavours of the Namib — game from the plains, seafood from the icy Benguela Current, botanicals from the Kalahari — carried by contemporary European technique.</p>
+      <p class="copy rv">Every plate tells a story of place. Every ingredient is Namibian. Every evening is composed to be unforgettable.</p>
+      <div class="pillars" data-stagger>
+        <div class="pillar rv">
+          <span class="pillar-no" aria-hidden="true">i.</span>
+          <div><strong>100% Namibian Sourcing</strong><p>Every ingredient from Namibian farms, waters and wilderness — nothing imported, nothing anonymous.</p></div>
+        </div>
+        <div class="pillar rv">
+          <span class="pillar-no" aria-hidden="true">ii.</span>
+          <div><strong>Cordon Bleu Precision</strong><p>A Paris-trained brigade with twenty years of fine-dining mastery behind every course.</p></div>
+        </div>
+        <div class="pillar rv">
+          <span class="pillar-no" aria-hidden="true">iii.</span>
+          <div><strong>A Curated Cellar</strong><p>Over 200 South African and international labels, kept at cellar temperature beneath the dining room.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 · EXPERIENCES ============ -->
+<section id="experiences" class="section exp cv" aria-labelledby="exp-title">
+  <div class="wrap">
+    <div class="center">
+      <header class="chap rv"><span class="chap-no">02</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">The Experiences</span></header>
+      <h2 class="stitle rv" id="exp-title">Three Ways Into <em>the Evening</em></h2>
+      <p class="ssub rv">Choose your passage through Namibia's larder — from a golden-hour apéritif to full surrender at the chef's counter.</p>
+    </div>
+    <div class="exp-grid" data-stagger>
+      <article class="exp-card rv">
+        <div class="exp-no" aria-hidden="true">I</div>
+        <h3>The Tasting Journey</h3>
+        <p>Seven courses that travel Namibia — opening on the Atlantic coast, crossing the Etosha plains, and closing in the red sands of the Kalahari.</p>
+        <div class="exp-meta"><span>7 courses · ~3 hrs<br>Wine pairing +N$620</span><span class="price">N$1,450</span></div>
+      </article>
+      <article class="exp-card rv">
+        <div class="exp-no" aria-hidden="true">II</div>
+        <h3>The Chef's Table</h3>
+        <p>Six seats at the pass with Chef Amara. Nine courses, no menu, total trust — the kitchen's boldest work, narrated as it is plated.</p>
+        <div class="exp-meta"><span>9 courses · Fri &amp; Sat<br>Six seats only</span><span class="price">N$2,400</span></div>
+      </article>
+      <article class="exp-card rv">
+        <div class="exp-no" aria-hidden="true">III</div>
+        <h3>The Sundowner</h3>
+        <p>A rooftop apéritif hour above Independence Avenue — three small plates, three pours, and one slow Windhoek sunset.</p>
+        <div class="exp-meta"><span>From 17:00 daily<br>Walk-ins welcome</span><span class="price">N$680</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · MENU ============ -->
+<section id="menu" class="section menu cv-tall" aria-labelledby="menu-title">
+  <div class="wrap">
+    <div class="center">
+      <header class="chap rv"><span class="chap-no">03</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">The Table</span></header>
+      <h2 class="stitle rv" id="menu-title">À la Carte</h2>
+      <p class="ssub rv">Each dish celebrates Namibia's extraordinary larder, reimagined for the contemporary palate. Turn a card for its provenance.</p>
+    </div>
+    <div class="filters rv" role="group" aria-label="Filter menu by course">
+      <button class="fbtn" data-filter="all" aria-pressed="true">All</button>
+      <button class="fbtn" data-filter="starters" aria-pressed="false">Starters</button>
+      <button class="fbtn" data-filter="mains" aria-pressed="false">Mains</button>
+      <button class="fbtn" data-filter="desserts" aria-pressed="false">Desserts</button>
+      <button class="fbtn" data-filter="drinks" aria-pressed="false">Drinks</button>
+    </div>
+    <div class="menu-grid" id="menuGrid" data-stagger>
+
+      <div class="mcard rv" data-category="starters" tabindex="0" role="button" aria-label="Namibian Oysters, N$185 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1606168094336-48f205bde3c5?w=600&q=78&auto=format&fit=crop" alt="Fresh oysters on ice with lemon"></div>
+            <div class="dish-body">
+              <p class="dish-cat">Starter</p>
+              <h3>Namibian Oysters</h3>
+              <p>Six Walvis Bay oysters, champagne granita, lemon zest, mignonette.</p>
+              <div class="dish-foot"><span class="dish-price">N$185</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>Sourced from Walvis Bay</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Harvested each morning from the cold Benguela Current off Namibia's Atlantic coast — brine, iron and champagne frost.</p>
+            <div class="back-tags"><span>Gluten Free</span><span>Seafood</span></div>
+            <button class="add-btn" data-dish="Namibian Oysters">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="starters" tabindex="0" role="button" aria-label="Kudu Carpaccio, N$210 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=600&q=78&auto=format&fit=crop" alt="Thinly sliced carpaccio with rocket and parmesan"></div>
+            <div class="dish-body">
+              <p class="dish-cat">Starter</p>
+              <h3>Kudu Carpaccio</h3>
+              <p>Thinly sliced kudu loin, truffle oil, shaved parmesan, wild rocket, capers.</p>
+              <div class="dish-foot"><span class="dish-price">N$210</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>Wild &amp; Sustainable</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Free-range kudu from the Khomas Hochland — ethically taken from Namibia's open wilderness, never farmed.</p>
+            <div class="back-tags"><span>Gluten Free</span><span>Game</span></div>
+            <button class="add-btn" data-dish="Kudu Carpaccio">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="starters" tabindex="0" role="button" aria-label="Kalahari Salad, N$165 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&q=78&auto=format&fit=crop" alt="Garden salad with microgreens and pomegranate"></div>
+            <div class="dish-body">
+              <p class="dish-cat">Starter</p>
+              <h3>Kalahari Salad</h3>
+              <p>Wild truffle, biltong crisps, marula dressing, micro herbs, pomegranate.</p>
+              <div class="dish-foot"><span class="dish-price">N$165</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>Foraged in Winter</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Kalahari truffles are foraged for a few short weeks after the rains — this plate exists only while they do.</p>
+            <div class="back-tags"><span>Seasonal</span><span>Vegetarian option</span></div>
+            <button class="add-btn" data-dish="Kalahari Salad">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="mains" tabindex="0" role="button" aria-label="Oryx Tenderloin, N$420 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1558030006-450675393462?w=600&q=78&auto=format&fit=crop" alt="Seared game tenderloin with jus and roasted vegetables"></div>
+            <div class="dish-body">
+              <p class="dish-cat c-main">Main</p>
+              <h3>Oryx Tenderloin</h3>
+              <p>Herb-crusted oryx fillet, red-wine jus, roasted roots, bone marrow.</p>
+              <div class="dish-foot"><span class="dish-price">N$420</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>The Signature</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Our most celebrated dish — rested over Namibian hardwood coals, carved at the pass, finished with smoked marrow.</p>
+            <div class="back-tags"><span>Signature</span><span>Game</span></div>
+            <button class="add-btn" data-dish="Oryx Tenderloin">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="mains" tabindex="0" role="button" aria-label="Atlantic Kingklip, N$385 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&q=78&auto=format&fit=crop" alt="Pan-seared fish fillet with saffron sauce"></div>
+            <div class="dish-body">
+              <p class="dish-cat c-main">Main</p>
+              <h3>Atlantic Kingklip</h3>
+              <p>Pan-seared Benguela kingklip, saffron beurre blanc, samphire, fennel confit.</p>
+              <div class="dish-foot"><span class="dish-price">N$385</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>Line-Caught Daily</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Pulled from Namibia's cold Atlantic each dawn and on the plate by dusk — the shortest possible line from ocean to table.</p>
+            <div class="back-tags"><span>Seafood</span><span>Gluten Free</span></div>
+            <button class="add-btn" data-dish="Atlantic Kingklip">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="mains" tabindex="0" role="button" aria-label="Springbok Rack, N$445 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=78&auto=format&fit=crop" alt="Roasted rack with berry jus and purée"></div>
+            <div class="dish-body">
+              <p class="dish-cat c-main">Main</p>
+              <h3>Springbok Rack</h3>
+              <p>Rosemary springbok rack, pumpkin purée, truffle pomme purée, berry jus.</p>
+              <div class="dish-foot"><span class="dish-price">N$445</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>Raised on Open Veld</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Springbok from natural Namibian veld — lean, rich and full of wild character, roasted whole and carved to order.</p>
+            <div class="back-tags"><span>Game</span><span>Chef's Pick</span></div>
+            <button class="add-btn" data-dish="Springbok Rack">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="desserts" tabindex="0" role="button" aria-label="Marula Crème Brûlée, N$145 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?w=600&q=78&auto=format&fit=crop" alt="Crème brûlée with caramelised sugar crust"></div>
+            <div class="dish-body">
+              <p class="dish-cat c-dessert">Dessert</p>
+              <h3>Marula Crème Brûlée</h3>
+              <p>Classic crème brûlée, marula fruit infusion, caramelised sugar crust.</p>
+              <div class="dish-foot"><span class="dish-price">N$145</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>The Elephant's Fruit</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Marula — the fruit elephants cross valleys for — lends this French classic a soul that is entirely Namibian.</p>
+            <div class="back-tags"><span>Vegetarian</span><span>Signature</span></div>
+            <button class="add-btn" data-dish="Marula Crème Brûlée">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="desserts" tabindex="0" role="button" aria-label="Dark Chocolate Sphere, N$165 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1611293388250-580b08c4a145?w=600&q=78&auto=format&fit=crop" alt="Dark chocolate sphere dessert with caramel"></div>
+            <div class="dish-body">
+              <p class="dish-cat c-dessert">Dessert</p>
+              <h3>Dark Chocolate Sphere</h3>
+              <p>Molten sphere, table-side caramel pour, Kalahari salt, vanilla cream.</p>
+              <div class="dish-foot"><span class="dish-price">N$165</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>Table Theatre</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Hot caramel is poured at the table and the sphere gives way slowly — a dessert that performs before it indulges.</p>
+            <div class="back-tags"><span>Vegetarian</span><span>Showstopper</span></div>
+            <button class="add-btn" data-dish="Dark Chocolate Sphere">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="drinks" tabindex="0" role="button" aria-label="Etosha Sunset cocktail, N$125 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=600&q=78&auto=format&fit=crop" alt="Amber cocktail with gold dust garnish"></div>
+            <div class="dish-body">
+              <p class="dish-cat c-drink">Drink</p>
+              <h3>Etosha Sunset</h3>
+              <p>Marula liqueur, passion fruit, prosecco, edible gold dust.</p>
+              <div class="dish-foot"><span class="dish-price">N$125</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>The House Cocktail</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Poured to mirror dusk over the Etosha pan — amber below, gold drifting through, gone too soon.</p>
+            <div class="back-tags"><span>Signature</span><span>Cocktail</span></div>
+            <button class="add-btn" data-dish="Etosha Sunset">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mcard rv" data-category="drinks" tabindex="0" role="button" aria-label="Blanc de Blancs, N$285 — press to read its story">
+        <div class="card3d">
+          <div class="face face-front">
+            <div class="dish-img"><img loading="lazy" decoding="async" width="600" height="400" src="https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=600&q=78&auto=format&fit=crop" alt="Sparkling wine in crystal flutes"></div>
+            <div class="dish-body">
+              <p class="dish-cat c-drink">Drink</p>
+              <h3>Blanc de Blancs</h3>
+              <p>Graham Beck Blanc de Blancs, vintage MCC, served at 6°C.</p>
+              <div class="dish-foot"><span class="dish-price">N$285</span><span class="dish-hint">Turn ↻</span></div>
+            </div>
+          </div>
+          <div class="face face-back">
+            <h4>From the Cellar</h4>
+            <span class="back-rule" aria-hidden="true"></span>
+            <p>Chosen by our sommelier from more than 200 labels resting in the cellar beneath the dining room.</p>
+            <div class="back-tags"><span>Premium</span><span>Méthode Cap Classique</span></div>
+            <button class="add-btn" data-dish="Blanc de Blancs">Add to Order →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p class="menu-note rv">Menus follow the season — these dishes are from the <b>Winter menu, July 2026</b>. Dietary paths for every course on request.</p>
+  </div>
+</section>
+
+<!-- ============ 04 · GALLERY ============ -->
+<section id="gallery" class="section gallery cv-tall" aria-labelledby="gallery-title">
+  <div class="wrap">
+    <div class="center">
+      <header class="chap rv"><span class="chap-no">04</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">The Room</span></header>
+      <h2 class="stitle rv" id="gallery-title">Inside Etosha <em>&amp;</em> Co.</h2>
+    </div>
+    <div class="ggrid" data-stagger>
+      <button class="gi gi-tall rv" data-label="The Main Dining Room">
+        <img loading="lazy" decoding="async" width="800" height="1000" src="https://images.unsplash.com/photo-1550966871-3ed3cbe818b5?w=800&q=80&auto=format&fit=crop" alt="The main dining room by candlelight">
+        <span class="gi-ov"><em>The Main Dining Room</em><span aria-hidden="true">⌕</span></span>
+      </button>
+      <button class="gi rv" data-label="The Open Kitchen">
+        <img loading="lazy" decoding="async" width="700" height="500" src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?w=700&q=80&auto=format&fit=crop" alt="Chefs plating in the open kitchen">
+        <span class="gi-ov"><em>The Open Kitchen</em><span aria-hidden="true">⌕</span></span>
+      </button>
+      <button class="gi rv" data-label="Signature Oryx Tenderloin">
+        <img loading="lazy" decoding="async" width="700" height="500" src="https://images.unsplash.com/photo-1558030006-450675393462?w=700&q=80&auto=format&fit=crop" alt="The signature oryx tenderloin, plated">
+        <span class="gi-ov"><em>Signature Oryx Tenderloin</em><span aria-hidden="true">⌕</span></span>
+      </button>
+      <button class="gi gi-wide rv" data-label="Our Inspiration — the Namib">
+        <img loading="lazy" decoding="async" width="1200" height="500" src="https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=1200&q=80&auto=format&fit=crop" alt="Red dunes of the Namib at golden hour">
+        <span class="gi-ov"><em>Our Inspiration — the Namib</em><span aria-hidden="true">⌕</span></span>
+      </button>
+      <button class="gi rv" data-label="The Wine Cellar">
+        <img loading="lazy" decoding="async" width="700" height="500" src="https://images.unsplash.com/photo-1474722883778-792e7990302f?w=700&q=80&auto=format&fit=crop" alt="Bottles resting in the wine cellar">
+        <span class="gi-ov"><em>The Wine Cellar</em><span aria-hidden="true">⌕</span></span>
+      </button>
+      <button class="gi rv" data-label="Etosha Sunset — the house cocktail">
+        <img loading="lazy" decoding="async" width="700" height="500" src="https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=700&q=80&auto=format&fit=crop" alt="Etosha Sunset cocktail at the bar">
+        <span class="gi-ov"><em>Etosha Sunset — the house cocktail</em><span aria-hidden="true">⌕</span></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 · CHEF ============ -->
+<section id="chef" class="chef cv" aria-labelledby="chef-title">
+  <div class="chef-grid">
+    <div class="chef-media rv-l">
+      <img loading="lazy" decoding="async"
+        src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&q=82&auto=format&fit=crop"
+        alt="Chef Amara Nghipandulwa at work in the kitchen">
+    </div>
+    <div class="chef-body">
+      <header class="chap rv"><span class="chap-no">05</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">The Chef</span></header>
+      <h2 class="visually-hidden" id="chef-title" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Meet the Chef</h2>
+      <blockquote class="chef-quote rv">"Every dish I create is a <span class="gold">love letter to Namibia</span> — its land, its people, its extraordinary flavours."</blockquote>
+      <p class="chef-sig rv">Chef Amara Nghipandulwa</p>
+      <p class="chef-role rv">Executive Head Chef &amp; Co-Founder</p>
+      <div class="chef-rule rv" aria-hidden="true"></div>
+      <p class="copy rv">Born in Windhoek and trained at Le Cordon Bleu in Paris, Chef Amara returned home with one mission: to put Namibian cuisine on the world's fine-dining map. Twenty years across Europe and Africa later, his kitchen is where tradition and invention share a counter.</p>
+      <div class="chef-honors" data-stagger>
+        <div class="honor rv"><b>2023</b><span>Best Chef · Africa</span></div>
+        <div class="honor rv"><b>2024</b><span>Restaurant of the Year</span></div>
+        <div class="honor rv"><b>×3</b><span>Signature Dish Award</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 · RESERVATIONS ============ -->
+<section id="reservations" class="section reserve cv-tall" aria-labelledby="res-title">
+  <div class="watermark" aria-hidden="true">RESERVE</div>
+  <div class="wrap res-grid">
+    <div>
+      <header class="chap rv-l"><span class="chap-no">06</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">Book Your Evening</span></header>
+      <h2 class="stitle rv-l" id="res-title">Reserve <em>a Table</em></h2>
+      <p class="ssub rv-l">Every table at Etosha &amp; Co. is a private world. We recommend reserving at least 48 hours ahead for your preferred hour.</p>
+      <div class="res-list" data-stagger>
+        <div class="res-item rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Dinner Service</strong><small>Tuesday – Sunday · 18:00 – 22:30</small></div></div>
+        <div class="res-item rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Lunch Service</strong><small>Friday – Sunday · 12:00 – 15:00</small></div></div>
+        <div class="res-item rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Telephone</strong><small>+264 61 234 5678</small></div></div>
+        <div class="res-item rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Location</strong><small>14 Independence Avenue, Windhoek</small></div></div>
+      </div>
+    </div>
+    <div class="form-card rv-r">
+      <h3 class="form-title">Make a Reservation</h3>
+      <p class="form-sub">Confirmation arrives by email within the hour.</p>
+      <form id="resForm" novalidate>
+        <div class="frow">
+          <div class="fg"><label for="gName">Full Name *</label><input type="text" id="gName" name="name" autocomplete="name" placeholder="Your full name" required><span class="ferr" id="nErr" role="alert"></span></div>
+          <div class="fg"><label for="gPhone">Phone *</label><input type="tel" id="gPhone" name="tel" autocomplete="tel" placeholder="+264 XX XXX XXXX" required><span class="ferr" id="phErr" role="alert"></span></div>
+        </div>
+        <div class="fg"><label for="gEmail">Email Address *</label><input type="email" id="gEmail" name="email" autocomplete="email" placeholder="your@email.com" required><span class="ferr" id="emErr" role="alert"></span></div>
+        <div class="frow">
+          <div class="fg"><label for="gDate">Date *</label><input type="date" id="gDate" name="date" required><span class="ferr" id="dErr" role="alert"></span></div>
+          <div class="fg"><label for="gTime">Time *</label>
+            <select id="gTime" name="time" required>
+              <option value="">Select time</option>
+              <optgroup label="Lunch (Fri–Sun)"><option>12:00</option><option>12:30</option><option>13:00</option><option>13:30</option></optgroup>
+              <optgroup label="Dinner"><option>18:00</option><option>18:30</option><option>19:00</option><option>19:30</option><option>20:00</option><option>20:30</option><option>21:00</option><option>21:30</option></optgroup>
+            </select><span class="ferr" id="tErr" role="alert"></span></div>
+        </div>
+        <div class="fg"><label for="gGuests">Number of Guests *</label>
+          <div class="counter">
+            <button type="button" class="cbtn" data-delta="-1" aria-label="One fewer guest">−</button>
+            <input type="number" id="gGuests" name="guests" value="2" min="1" max="20" readonly aria-live="polite">
+            <button type="button" class="cbtn" data-delta="1" aria-label="One more guest">+</button>
+          </div><span class="ferr" id="gErr" role="alert"></span></div>
+        <div class="fg"><label for="gReq">Special Requests</label><textarea id="gReq" name="requests" rows="3" placeholder="Dietary requirements, allergies, occasions…"></textarea></div>
+        <button type="submit" class="btn btn-gold submit"><span>Confirm Reservation</span><span class="arr" aria-hidden="true">→</span></button>
+      </form>
+      <div class="form-ok" id="resOk" role="status">
+        <div class="ok-ic" aria-hidden="true">✓</div>
+        <h4>Reservation Received</h4>
+        <p>We look forward to welcoming you. A confirmation is on its way to your inbox.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 07 · VOICES ============ -->
+<section id="voices" class="section voices cv" aria-labelledby="voices-title">
+  <div class="voices-in">
+    <header class="chap rv" style="justify-content:center"><span class="chap-no">07</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">Voices</span></header>
+    <h2 class="stitle rv" id="voices-title" style="text-align:center">What the Table <em>Remembers</em></h2>
+    <span class="vmark rv" aria-hidden="true">&ldquo;</span>
+    <div class="vtrack rv" id="vtrack">
+      <div class="ttest active">
+        <p class="tstars" aria-label="Five stars">★★★★★</p>
+        <blockquote>The Oryx Tenderloin was unlike anything I have ever tasted. The entire evening felt like being transported — from the moment we arrived to the last sip of wine. World class.</blockquote>
+        <cite><b>James Müller</b><span>Windhoek, Namibia</span></cite>
+      </div>
+      <div class="ttest">
+        <p class="tstars" aria-label="Five stars">★★★★★</p>
+        <blockquote>As a critic who has dined across Africa and Europe, I say with confidence: Etosha &amp; Co. belongs on every serious list. The champagne granita with the oysters alone earns it.</blockquote>
+        <cite><b>Amelia van der Berg</b><span>Cape Town, South Africa</span></cite>
+      </div>
+      <div class="ttest">
+        <p class="tstars" aria-label="Five stars">★★★★★</p>
+        <blockquote>We celebrated our anniversary here and it was perfect. The chocolate sphere left us speechless, and Chef Nghipandulwa greeted us himself. A memory we will keep forever.</blockquote>
+        <cite><b>Thomas &amp; Sarah Nakale</b><span>Windhoek, Namibia</span></cite>
+      </div>
+    </div>
+    <div class="tdots rv" role="tablist" aria-label="Choose testimonial">
+      <button class="tdot" role="tab" aria-selected="true" aria-label="Testimonial 1"></button>
+      <button class="tdot" role="tab" aria-selected="false" aria-label="Testimonial 2"></button>
+      <button class="tdot" role="tab" aria-selected="false" aria-label="Testimonial 3"></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 · CONTACT ============ -->
+<section id="contact" class="section contact cv-tall" aria-labelledby="contact-title">
+  <div class="wrap contact-grid">
+    <div>
+      <header class="chap rv-l"><span class="chap-no">08</span><span class="chap-line" aria-hidden="true"></span><span class="chap-label">Find Us</span></header>
+      <h2 class="stitle rv-l" id="contact-title">We'd Love to <em>Hear From You</em></h2>
+      <div class="citems" data-stagger>
+        <div class="cit rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Address</strong><p>14 Independence Avenue, Windhoek Central, Namibia</p></div></div>
+        <div class="cit rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Phone</strong><p><a href="tel:+26461234567">+264 61 234 5678</a></p></div></div>
+        <div class="cit rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Email</strong><p><a href="mailto:hello@etoshaandco.com.na">hello@etoshaandco.com.na</a></p></div></div>
+        <div class="cit rv-l"><span class="ic" aria-hidden="true">◆</span><div><strong>Hours</strong><p>Tue–Sun · Lunch 12:00–15:00 · Dinner 18:00–22:30<br>Monday — the kitchen rests</p></div></div>
+      </div>
+      <div class="socials rv-l">
+        <a href="#" class="soc" rel="noopener">Instagram</a>
+        <a href="#" class="soc" rel="noopener">Facebook</a>
+        <a href="#" class="soc" rel="noopener">TripAdvisor</a>
+      </div>
+    </div>
+    <div class="form-card rv-r">
+      <h3 class="form-title">Send a Message</h3>
+      <p class="form-sub">We respond within one working day.</p>
+      <form id="contactForm" novalidate>
+        <div class="fg"><label for="cName">Full Name *</label><input type="text" id="cName" autocomplete="name" placeholder="Your name" required></div>
+        <div class="fg"><label for="cEmail">Email *</label><input type="email" id="cEmail" autocomplete="email" placeholder="your@email.com" required></div>
+        <div class="fg"><label for="cSub">Subject *</label><input type="text" id="cSub" placeholder="How can we help?" required></div>
+        <div class="fg"><label for="cMsg">Message *</label><textarea id="cMsg" rows="5" placeholder="Tell us how we can help…" required></textarea></div>
+        <button type="submit" class="btn btn-gold submit"><span>Send Message</span><span class="arr" aria-hidden="true">→</span></button>
+      </form>
+      <div class="form-ok" id="contactOk" role="status">
+        <div class="ok-ic" aria-hidden="true">✓</div>
+        <h4>Message Received</h4>
+        <p>Thank you for reaching out. We will respond within one working day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="foot-mark" aria-hidden="true"><span>ETOSHA</span></div>
+  <div class="foot-grid">
+    <div class="foot-brand">
+      <a href="#home" class="brand">Etosha <em>&amp;</em> Co.</a>
+      <p>Fine dining in Windhoek, Namibia — where the wild soul of the Namib meets the table.</p>
+    </div>
+    <nav class="fcol" aria-label="Footer">
+      <h4>Navigate</h4>
+      <a href="#story">Our Story</a>
+      <a href="#experiences">Experiences</a>
+      <a href="#menu">Menu</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#reservations">Reservations</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="fcol">
+      <h4>Visit</h4>
+      <p>14 Independence Avenue</p>
+      <p>Windhoek Central, Namibia</p>
+      <p>+264 61 234 5678</p>
+      <p>Tue–Sun · 12:00–15:00 · 18:00–22:30</p>
+    </div>
+  </div>
+  <div class="foot-bot">
+    <p>© <span id="year">2026</span> Etosha &amp; Co. Fine Dining. All rights reserved.</p>
+    <p>Designed with ♥ in Windhoek, Namibia</p>
+  </div>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span class="tick" aria-hidden="true">✓</span><span id="toastMsg"></span></div>
+<button class="totop" id="toTop" aria-label="Back to top">↑</button>
+
+<!-- LIGHTBOX -->
+<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Gallery viewer">
+  <button class="lb-btn lb-close" id="lbClose" aria-label="Close">✕</button>
+  <button class="lb-btn lb-prev" id="lbPrev" aria-label="Previous image">←</button>
+  <img id="lbImg" src="" alt="">
+  <p class="lb-cap" id="lbCap"></p>
+  <p class="lb-count" id="lbCount"></p>
+  <button class="lb-btn lb-next" id="lbNext" aria-label="Next image">→</button>
+</div>
+
+<script>
+(function(){
+'use strict';
+var doc = document.documentElement,
+    body = document.body,
+    tier = function(){ return doc.dataset.tier; },
+    $  = function(s,c){ return (c||document).querySelector(s); },
+    $$ = function(s,c){ return Array.prototype.slice.call((c||document).querySelectorAll(s)); };
+
+/* ---------- Ready / preloader ---------- */
+/* Safety net first: nothing may ever stay hidden if something below throws */
+setTimeout(function(){ body.classList.add('is-ready'); }, 2200);
+
+var pre = $('#preloader');
+function ready(){
+  if (body.classList.contains('is-ready')) return;
+  body.classList.add('is-ready');
+  if (pre){ pre.classList.add('gone'); setTimeout(function(){ pre.remove(); pre = null; }, 1000); }
+}
+if (tier() === 'low' || !pre){
+  if (pre) pre.remove();
+  ready();
+} else {
+  var seen = false;
+  try { seen = !!sessionStorage.getItem('ec-seen'); sessionStorage.setItem('ec-seen','1'); } catch(e){}
+  var min = seen ? 250 : 1250, start = performance.now();
+  var go = function(){ setTimeout(ready, Math.max(0, min - (performance.now() - start))); };
+  if (document.readyState === 'complete') go();
+  else window.addEventListener('load', go, { once:true });
+  setTimeout(ready, 2100); /* hard cap — never hold the page hostage */
+}
+
+/* ---------- Frame-time watchdog: demote tier on weak machines ---------- */
+if (tier() === 'high'){
+  var frames = 0, slow = 0, prev = 0;
+  var probe = function(ts){
+    if (prev){ frames++; if (ts - prev > 28) slow++; }
+    prev = ts;
+    if (frames < 90){ requestAnimationFrame(probe); }
+    else if (slow / frames > .4){
+      doc.dataset.tier = 'mid';
+      doc.classList.remove('has-cursor');
+      try { sessionStorage.setItem('ec-tier','mid'); } catch(e){}
+    }
+  };
+  setTimeout(function(){ requestAnimationFrame(probe); }, 2600);
+}
+
+/* ---------- Custom cursor (high tier, fine pointer only) ---------- */
+(function(){
+  if (tier() !== 'high') return;
+  if (!matchMedia('(hover:hover) and (pointer:fine)').matches) return;
+  var dot = $('.cursor-dot'), ring = $('.cursor-ring');
+  if (!dot || !ring) return;
+  doc.classList.add('has-cursor');
+  var x=innerWidth/2, y=innerHeight/2, rx=x, ry=y, raf=null;
+  function loop(){
+    rx += (x-rx)*.16; ry += (y-ry)*.16;
+    ring.style.transform = 'translate3d('+rx+'px,'+ry+'px,0)';
+    if (Math.abs(x-rx)+Math.abs(y-ry) > .3) raf = requestAnimationFrame(loop);
+    else raf = null;  /* idle: stop the loop entirely */
+  }
+  addEventListener('pointermove', function(e){
+    x=e.clientX; y=e.clientY;
+    dot.style.transform = 'translate3d('+x+'px,'+y+'px,0)';
+    doc.classList.remove('cursor-hidden');
+    if (!raf) raf = requestAnimationFrame(loop);
+  }, { passive:true });
+  document.addEventListener('mouseleave', function(){ doc.classList.add('cursor-hidden'); });
+  /* one delegated listener instead of hundreds */
+  addEventListener('pointerover', function(e){
+    doc.classList.toggle('cursor-hot',
+      !!(e.target.closest && e.target.closest('a,button,[role="button"],input,select,textarea,label')));
+  }, { passive:true });
+})();
+
+/* ---------- Nav: shrink + mobile menu ---------- */
+var nav = $('#siteNav'), navScrolled = false, scrollRaf = null;
+var progress = $('.progress');
+var heroPar = $('.hero-par'), heroFg = $('.hero-fg');
+var nativeScrollAnim = CSS.supports && CSS.supports('animation-timeline: scroll()');
+var docH = 1, vh = innerHeight;
+function measure(){ vh = innerHeight; docH = Math.max(1, doc.scrollHeight - vh); }
+measure();
+addEventListener('resize', function(){ measure(); }, { passive:true });
+
+/* Single scroll listener; reads scrollY only — zero layout queries in the hot path */
+function onScroll(){
+  scrollRaf = null;
+  var sy = scrollY;
+  var sc = sy > 40;
+  if (sc !== navScrolled){ navScrolled = sc; nav.classList.toggle('scrolled', sc); }
+  if (!nativeScrollAnim){
+    if (progress) progress.style.transform = 'scaleX(' + Math.min(1, sy/docH) + ')';
+    if (tier() === 'high' && heroPar && sy <= vh){
+      var p = sy / vh;
+      heroPar.style.transform = 'translateY(' + (p*9) + '%) scale(1.12)';
+      heroFg.style.opacity = Math.max(0, 1 - p/.55);
+      heroFg.style.transform = 'translateY(' + (-p*7) + '%)';
+    }
+  }
+}
+addEventListener('scroll', function(){ if (!scrollRaf) scrollRaf = requestAnimationFrame(onScroll); }, { passive:true });
+onScroll();
+
+var toggle = $('#navToggle'), menu = $('#navMenu');
+function closeMenu(){
+  menu.classList.remove('open');
+  toggle.setAttribute('aria-expanded','false');
+  toggle.setAttribute('aria-label','Open menu');
+  body.style.overflow = '';
+}
+toggle.addEventListener('click', function(){
+  var open = menu.classList.toggle('open');
+  toggle.setAttribute('aria-expanded', open);
+  toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  body.style.overflow = open ? 'hidden' : '';
+});
+$$('.nav-link', menu).forEach(function(l){ l.addEventListener('click', closeMenu); });
+
+/* Active section highlighting — IntersectionObserver, no scroll math */
+(function(){
+  var links = {};
+  $$('.nav-link').forEach(function(l){ links[l.getAttribute('href').slice(1)] = l; });
+  var current = null;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (!en.isIntersecting) return;
+      var id = en.target.id;
+      if (!links[id]) return;
+      if (current) current.classList.remove('active');
+      current = links[id];
+      current.classList.add('active');
+    });
+  }, { rootMargin:'-38% 0px -55% 0px' });
+  $$('main section[id]').forEach(function(s){ io.observe(s); });
+})();
+
+/* ---------- Reveal system (one-shot, unobserved after firing) ---------- */
+$$('[data-stagger]').forEach(function(parent){
+  $$('.rv,.rv-l,.rv-r', parent).forEach(function(el,i){
+    el.style.transitionDelay = Math.min(i*70, 420) + 'ms';
+  });
+});
+var revealIO = new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if (en.isIntersecting){ en.target.classList.add('revealed'); revealIO.unobserve(en.target); }
+  });
+}, { threshold:.12, rootMargin:'0px 0px -40px 0px' });
+$$('.rv,.rv-l,.rv-r').forEach(function(el){ revealIO.observe(el); });
+
+/* ---------- Stat counters ---------- */
+(function(){
+  var els = $$('.stat-num[data-count]');
+  if (!els.length) return;
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (!en.isIntersecting) return;
+      io.unobserve(en.target);
+      var el = en.target, target = +el.dataset.count, suf = el.dataset.suffix || '', t0 = null;
+      if (tier() === 'low'){ el.textContent = target + suf; return; }
+      var step = function(ts){
+        if (!t0) t0 = ts;
+        var p = Math.min(1, (ts - t0)/1300), e = 1 - Math.pow(1-p, 3);
+        el.textContent = Math.round(target*e) + suf;
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }, { threshold:.4 });
+  els.forEach(function(el){ io.observe(el); });
+})();
+
+/* ---------- Pause offscreen animation work (marquee, motes) ---------- */
+(function(){
+  var mq = $('.marquee'), hero = $('.hero');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if (en.target === mq) mq.classList.toggle('paused', !en.isIntersecting);
+      if (en.target === hero) hero.classList.toggle('asleep', !en.isIntersecting);
+    });
+  }, { threshold:0 });
+  if (mq) io.observe(mq);
+  if (hero) io.observe(hero);
+})();
+
+/* ---------- Menu filter ---------- */
+(function(){
+  var btns = $$('.fbtn'), cards = $$('.mcard');
+  btns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      btns.forEach(function(b){ b.setAttribute('aria-pressed', b===btn ? 'true':'false'); });
+      var f = btn.dataset.filter;
+      cards.forEach(function(c){
+        c.classList.remove('is-flipped');
+        c.classList.toggle('hide', !(f === 'all' || c.dataset.category === f));
+      });
+    });
+  });
+})();
+
+/* ---------- Card flip: tap / keyboard (hover handled in CSS) ---------- */
+$$('.mcard').forEach(function(card){
+  card.addEventListener('click', function(e){
+    if (e.target.closest('.add-btn')) return;
+    card.classList.toggle('is-flipped');
+  });
+  card.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){
+      if (e.target.closest('.add-btn')) return;
+      e.preventDefault();
+      card.classList.toggle('is-flipped');
+    }
+  });
+});
+
+/* ---------- Order toast ---------- */
+var toast = $('#toast'), toastMsg = $('#toastMsg'), toastTimer = null, orderCount = 0;
+function showToast(msg){
+  toastMsg.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 2800);
+}
+$$('.add-btn').forEach(function(btn){
+  btn.addEventListener('click', function(e){
+    e.stopPropagation();
+    orderCount++;
+    showToast(btn.dataset.dish + ' added — ' + orderCount + (orderCount === 1 ? ' dish' : ' dishes') + ' in your order');
+  });
+});
+
+/* ---------- Lightbox (single instance, keyboard-driven) ---------- */
+(function(){
+  var lb = $('#lightbox'), img = $('#lbImg'), cap = $('#lbCap'), count = $('#lbCount');
+  var items = $$('.gi'), idx = 0, lastFocus = null;
+  function big(src){ return src.replace(/w=\d+/,'w=1600').replace(/q=\d+/,'q=86'); }
+  function show(i){
+    idx = (i + items.length) % items.length;
+    var g = items[idx], gi = $('img', g);
+    img.src = big(gi.currentSrc || gi.src);
+    img.alt = gi.alt;
+    cap.textContent = g.dataset.label;
+    count.textContent = (idx+1) + ' / ' + items.length;
+  }
+  function open(i){
+    lastFocus = document.activeElement;
+    show(i);
+    lb.classList.add('open');
+    body.style.overflow = 'hidden';
+    $('#lbClose').focus();
+  }
+  function close(){
+    lb.classList.remove('open');
+    body.style.overflow = '';
+    img.src = '';
+    if (lastFocus) lastFocus.focus();
+  }
+  items.forEach(function(g,i){ g.addEventListener('click', function(){ open(i); }); });
+  $('#lbClose').addEventListener('click', close);
+  $('#lbPrev').addEventListener('click', function(){ show(idx-1); });
+  $('#lbNext').addEventListener('click', function(){ show(idx+1); });
+  lb.addEventListener('click', function(e){ if (e.target === lb) close(); });
+  document.addEventListener('keydown', function(e){
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close();
+    else if (e.key === 'ArrowLeft') show(idx-1);
+    else if (e.key === 'ArrowRight') show(idx+1);
+  });
+})();
+
+/* ---------- Testimonials (advance only while visible) ---------- */
+(function(){
+  var track = $('#vtrack');
+  if (!track) return;
+  var tests = $$('.ttest', track), dots = $$('.tdot'), i = 0, visible = false, hover = false, timer = null;
+  function go(n){
+    tests[i].classList.remove('active');
+    dots[i].setAttribute('aria-selected','false');
+    i = (n + tests.length) % tests.length;
+    tests[i].classList.add('active');
+    dots[i].setAttribute('aria-selected','true');
+  }
+  function arm(){
+    clearInterval(timer);
+    if (visible && !hover && tier() !== 'low') timer = setInterval(function(){ go(i+1); }, 6000);
+  }
+  dots.forEach(function(d,n){ d.addEventListener('click', function(){ go(n); arm(); }); });
+  track.addEventListener('mouseenter', function(){ hover = true; arm(); });
+  track.addEventListener('mouseleave', function(){ hover = false; arm(); });
+  new IntersectionObserver(function(en){ visible = en[0].isIntersecting; arm(); }, { threshold:.3 }).observe(track);
+})();
+
+/* ---------- Forms ---------- */
+var dateInput = $('#gDate');
+var todayISO = new Date().toISOString().split('T')[0];
+if (dateInput) dateInput.min = todayISO;
+
+$$('.cbtn').forEach(function(b){
+  b.addEventListener('click', function(){
+    var i = $('#gGuests');
+    i.value = Math.max(1, Math.min(20, +i.value + (+b.dataset.delta)));
+  });
+});
+
+function setErr(field, errId, msg){
+  var f = $('#'+field);
+  $('#'+errId).textContent = msg || '';
+  f.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  return !msg;
+}
+$('#resForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/, ok = true;
+  ok = setErr('gName','nErr', $('#gName').value.trim().length < 2 ? 'Please enter your full name' : '') && ok;
+  ok = setErr('gPhone','phErr', $('#gPhone').value.trim().length < 7 ? 'Enter a valid phone number' : '') && ok;
+  ok = setErr('gEmail','emErr', !emailRe.test($('#gEmail').value.trim()) ? 'Enter a valid email address' : '') && ok;
+  var d = $('#gDate').value;
+  ok = setErr('gDate','dErr', (!d || d < todayISO) ? 'Select a future date' : '') && ok;
+  ok = setErr('gTime','tErr', !$('#gTime').value ? 'Please select a time' : '') && ok;
+  var g = +$('#gGuests').value;
+  ok = setErr('gGuests','gErr', (g < 1 || g > 20) ? 'Guests must be 1–20' : '') && ok;
+  if (!ok) return;
+  var btn = $('.submit', this);
+  btn.disabled = true;
+  btn.querySelector('span').textContent = 'Confirming…';
+  var form = this;
+  setTimeout(function(){
+    form.style.display = 'none';
+    $('#resOk').classList.add('show');
+    showToast('Reservation received — see you soon');
+  }, 900);
+});
+
+$('#contactForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  if (!this.checkValidity()){ this.reportValidity(); return; }
+  var btn = $('.submit', this), form = this;
+  btn.disabled = true;
+  btn.querySelector('span').textContent = 'Sending…';
+  setTimeout(function(){
+    form.style.display = 'none';
+    $('#contactOk').classList.add('show');
+  }, 800);
+});
+
+/* ---------- Back to top ---------- */
+(function(){
+  var btn = $('#toTop'), hero = $('.hero');
+  new IntersectionObserver(function(en){
+    btn.classList.toggle('show', !en[0].isIntersecting);
+  }, { threshold:0 }).observe(hero);
+  btn.addEventListener('click', function(){ scrollTo({ top:0, behavior:'smooth' }); });
+})();
+
+$('#year').textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
