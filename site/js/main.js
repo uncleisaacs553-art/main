@@ -1,9 +1,9 @@
-// Meridian — interaction layer.
+// B Digital — interaction layer.
 // Everything here degrades gracefully: if GSAP / Lenis fail to load, content
 // is still fully visible and the site remains usable.
 
 import initScene from "./scene.js";
-import { mountResidences } from "./data.js";
+import { mountWork } from "./data.js";
 
 const qs = (s, c = document) => c.querySelector(s);
 const qsa = (s, c = document) => [...c.querySelectorAll(s)];
@@ -19,7 +19,7 @@ if (!hasGsap) document.documentElement.classList.add("no-gsap");
 
 document.addEventListener("DOMContentLoaded", () => {
   qs("#year").textContent = new Date().getFullYear();
-  mountResidences(qs("#residenceGrid"));
+  mountWork(qs("#workGrid"));
 
   initScene();
   setupSmoothScroll();
@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupTilt();
   setupMagnetic();
   setupForm();
+  setupLiveTeaser();
 
   if (hasGsap) {
     gsap.registerPlugin(ScrollTrigger);
@@ -241,8 +242,50 @@ function setupForm() {
       status.style.color = "var(--ink-soft)";
       return;
     }
-    status.style.color = "var(--brass-lite)";
-    status.textContent = `Thank you, ${name.split(" ")[0]} — a Meridian advisor will be in touch within two working days.`;
+    status.style.color = "var(--accent-lite)";
+    status.textContent = `Thanks, ${name.split(" ")[0]} — we'll reply within one working day with a clear next step.`;
     form.reset();
   });
+}
+
+/* ---------- Live ops teaser (homepage) ---------- */
+// Pulls one public GitHub events call and fills the live panel. Degrades
+// silently to a status note if the API is unreachable or rate-limited.
+const GH_OWNER = "uncleisaacs553-art";
+function setupLiveTeaser() {
+  const elAgents = qs("#liveAgents");
+  const elEvents = qs("#liveEvents");
+  const elRepos = qs("#liveRepos");
+  const elStatus = qs("#liveStatus");
+  if (!elStatus) return;
+
+  fetch(`https://api.github.com/users/${GH_OWNER}/events/public?per_page=100`, {
+    headers: { Accept: "application/vnd.github+json" },
+  })
+    .then((r) => { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then((events) => {
+      if (!Array.isArray(events) || !events.length) throw new Error("no data");
+      const dayAgo = Date.now() - 86400000;
+      const recent = events.filter((e) => new Date(e.created_at).getTime() > dayAgo);
+      const repos = new Set(events.map((e) => e.repo?.name).filter(Boolean));
+      const botRe = /\[bot\]|bot$|agent|claude|action/i;
+      const botActors = new Set(events.map((e) => e.actor?.login).filter((l) => l && botRe.test(l)));
+      const allActors = new Set(events.map((e) => e.actor?.login).filter(Boolean));
+
+      if (elAgents) elAgents.textContent = String(botActors.size || allActors.size);
+      if (elEvents) elEvents.textContent = String(recent.length);
+      if (elRepos) elRepos.textContent = String(repos.size);
+      elStatus.textContent = `Last activity ${timeAgo(events[0].created_at)} · live from GitHub`;
+    })
+    .catch(() => {
+      elStatus.textContent = "Live feed paused (API limit) — open the Command Center for full status.";
+    });
+}
+
+function timeAgo(iso) {
+  const s = Math.max(1, Math.floor((Date.now() - new Date(iso).getTime()) / 1000));
+  if (s < 60) return s + "s ago";
+  const m = Math.floor(s / 60); if (m < 60) return m + "m ago";
+  const h = Math.floor(m / 60); if (h < 24) return h + "h ago";
+  return Math.floor(h / 24) + "d ago";
 }

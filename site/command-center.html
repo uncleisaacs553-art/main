@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#06070b" />
+  <title>Agent Command Center — B Digital</title>
+  <meta name="description" content="A live mission-control view of B Digital's agents, builds, and pipeline activity — wired straight to the GitHub API." />
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="B Digital" />
+  <meta property="og:title" content="Agent Command Center — B Digital" />
+  <meta property="og:description" content="A live, mission-control view of B Digital's agents, builds, and pipeline activity — wired to the GitHub API." />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/command-center.css" />
+</head>
+<body class="cc">
+  <canvas id="ccBg" aria-hidden="true"></canvas>
+
+  <!-- Custom cursor (desktop, fine-pointer only) -->
+  <div class="cursor" id="cursor" aria-hidden="true">
+    <div class="cursor__dot"></div>
+    <div class="cursor__ring"></div>
+  </div>
+
+  <!-- Top bar -->
+  <header class="cc-top">
+    <a class="cc-brand" href="index.html" data-cursor="link">
+      <span class="nav__brand-mark">B</span>
+      <span class="cc-brand__txt">
+        <b id="ccBrandWord">B Digital</b>
+        <span id="ccOwner" class="cc-mono">@owner</span>
+      </span>
+    </a>
+    <div class="cc-top__title"><span class="live-dot" aria-hidden="true"></span> Agent Command Center</div>
+    <div class="cc-top__meta">
+      <span class="cc-badge cc-badge--live" id="ccMode">LIVE</span>
+      <span id="ccRate" class="cc-mono" title="GitHub API budget remaining">API —</span>
+      <span id="ccUpdated" class="cc-mono cc-hide-sm"></span>
+      <span id="ccClock" class="cc-mono cc-hide-sm"></span>
+      <button id="ccRefresh" class="cc-btn" data-cursor="link" title="Refresh now" aria-label="Refresh now">↻</button>
+      <button id="ccSettings" class="cc-btn" data-cursor="link" title="Settings" aria-label="Settings">⚙</button>
+    </div>
+  </header>
+
+  <main class="cc-main">
+    <!-- KPI row -->
+    <section class="kpis" aria-label="Key metrics">
+      <div class="kpi"><span class="kpi__num" id="kpiRepos">—</span><span class="kpi__label">Active repos</span></div>
+      <div class="kpi kpi--accent"><span class="kpi__num" id="kpiRunning">—</span><span class="kpi__label">Agents running</span></div>
+      <div class="kpi"><span class="kpi__num" id="kpiRuns">—</span><span class="kpi__label">Runs · 24h</span></div>
+      <div class="kpi"><span class="kpi__num" id="kpiSuccess">—</span><span class="kpi__label">Success rate</span></div>
+      <div class="kpi"><span class="kpi__num" id="kpiCommits">—</span><span class="kpi__label">Commits · 24h</span></div>
+      <div class="kpi"><span class="kpi__num" id="kpiEvents">—</span><span class="kpi__label">Events · 24h</span></div>
+    </section>
+
+    <!-- Dashboard panels -->
+    <section class="cc-grid">
+      <article class="panel panel--agents">
+        <div class="panel__head"><h2>Agents</h2><span class="panel__hint">workflows &amp; bots</span></div>
+        <div id="agents" class="agents"><div class="empty"><div class="empty__t">Connecting…</div><div class="empty__s">Reading live activity from GitHub.</div></div></div>
+      </article>
+
+      <article class="panel panel--feed">
+        <div class="panel__head"><h2>Live activity</h2><span class="panel__hint">public events</span></div>
+        <ul id="feed" class="feed"></ul>
+      </article>
+
+      <article class="panel panel--runs">
+        <div class="panel__head"><h2>Workflow runs</h2><span class="panel__hint">GitHub Actions</span></div>
+        <div id="runs" class="runs"></div>
+      </article>
+
+      <article class="panel panel--repos">
+        <div class="panel__head"><h2>Repositories</h2><span class="panel__hint">most recent</span></div>
+        <div id="repos" class="repos"></div>
+      </article>
+
+      <article class="panel panel--chart">
+        <div class="panel__head"><h2>Throughput</h2><span class="panel__hint">activity · last 18h</span></div>
+        <div id="throughput" class="throughput"></div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Toast / status messages -->
+  <div id="ccToast" class="cc-toast" role="status" aria-live="polite"></div>
+
+  <!-- Settings modal -->
+  <div class="cc-modal" id="settingsModal">
+    <div class="cc-modal__panel">
+      <button class="cc-modal__close" id="settingsClose" aria-label="Close settings">×</button>
+      <h3>Connect a token <span>· optional</span></h3>
+      <p>
+        This center reads the <b>public</b> GitHub API with no token (~60 requests/hour).
+        For private repos or 5,000 requests/hour, paste a fine-grained, read-only token.
+        It is stored <b>only in this browser</b> and is never uploaded or committed.
+      </p>
+      <label class="field">
+        <span>GitHub token</span>
+        <input id="tokenInput" type="password" placeholder="github_pat_… (read-only)" autocomplete="off" spellcheck="false" />
+      </label>
+      <div class="cc-modal__row">
+        <button class="btn btn--solid" id="tokenSave" data-cursor="link"><span>Save token</span></button>
+        <button class="btn btn--ghost" id="tokenClear" data-cursor="link"><span>Clear</span></button>
+      </div>
+      <label class="cc-check">
+        <input type="checkbox" id="demoToggle" />
+        <span>Show demo data (synthetic — for screenshots &amp; offline)</span>
+      </label>
+      <p class="cc-modal__foot">A fine-grained token with read-only <code>Actions</code>, <code>Contents</code> and <code>Metadata</code> is plenty.</p>
+    </div>
+  </div>
+
+  <!-- App (no build step, no CDN) -->
+  <script type="module" src="js/cc/main.js"></script>
+</body>
+</html>
