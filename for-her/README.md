@@ -28,9 +28,9 @@ stuck invisible. Measured at ~56 fps scrolling under 6x CPU throttling.
 ## The music
 
 **Put the song at `assets/song.mp3`** and run `python3 build.py` — it gets inlined and plays in the
-background from the moment the envelope opens. That mp3 is deliberately **not committed** here
-(see `.gitignore`), so the builds checked into this repo are the light ones, ~620 KB. Add the file
-and rebuild to reproduce exactly what was published.
+background from the moment the envelope opens. The mp3 itself is **not committed** (see
+`.gitignore`), but the built `index.html` is, song and all, because that file is what gets served
+as the live site.
 
 It rides at the very end of the document rather than in a `data:` URI at the top, so the letter
 paints and becomes tappable while those megabytes are still arriving. If she taps the envelope
