@@ -1,0 +1,59 @@
+name: Deploy for babe (GitHub Pages)
+
+# Publishes the love letter at the root of the Pages site.
+#
+# There is only one Pages site per repo, so this replaces whatever was
+# published before. Nothing is deleted: b-digital-lead/ and meridian-estates/
+# are untouched in the repo, and re-running either of the other two Pages
+# workflows from the Actions tab puts that site straight back.
+
+on:
+  push:
+    branches: ["claude/girlfriend-love-website-6ewv4x"]
+    paths:
+      - "for-her/index.html"
+      - ".github/workflows/deploy-babe.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One Pages site per repo — serialise deployments.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp for-her/index.html _site/index.html
+          touch _site/.nojekyll
+          # a private link: reachable by anyone who has it, but not indexed
+          printf 'User-agent: *\nDisallow: /\n' > _site/robots.txt
+          ls -la _site
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
