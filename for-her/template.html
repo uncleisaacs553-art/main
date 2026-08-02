@@ -131,6 +131,7 @@
      ============================================================ */
   .gate{
     position:fixed;inset:0;z-index:20;display:grid;place-items:center;gap:0;
+    cursor:pointer;
     background:radial-gradient(120% 90% at 50% 20%,var(--blush),var(--paper) 70%);
     transition:opacity .9s ease,visibility .9s;
     padding:1.25rem;
@@ -524,6 +525,22 @@
     <p class="kicker" style="opacity:.72;font-size:1.02rem">tap anywhere &mdash; there&rsquo;s music inside</p>
   </div>
 </div>
+
+<script>
+  /* The envelope has to answer a tap straight away, even while the rest of the
+     page (and the song) is still coming down. This binds now and remembers a
+     tap that lands before the main script below has run. */
+  (function(){
+    var g = document.getElementById("gate");
+    function go(){
+      if(window.__openLetter) window.__openLetter();
+      else g.setAttribute("data-tapped","1");
+    }
+    g.addEventListener("click", go);
+    g.addEventListener("touchend", go);
+    g.addEventListener("pointerdown", go);
+  })();
+</script>
 
 <main class="page" id="page">
 
@@ -958,19 +975,19 @@
         mode="file";
         var triedAlt=false, node=new Audio();
         el=node; node.loop=true; node.volume=vol; node.preload="auto";
-        function start(src){
-          node.src=src;
-          node.play().then(function(){ on=true; emit(name,who); })
-                     .catch(function(){ on=false; emit(name,who); });
-        }
-        node.onerror=function(){
+        function fail(){
           if(el!==node) return;
           if(!triedAlt && alt && alt!==url){ triedAlt=true; start(alt); return; }
-          /* audio refused outright — slip back to the piano rather than go silent */
+          /* blocked or broken — back to the piano, never to silence */
           mode="score"; el=null; songDead=true;
           if(ac){ if(ac.state==="suspended") ac.resume(); startScore(); fade(vol*0.85,1.4); on=true; }
           emit();
-        };
+        }
+        function start(src){
+          node.src=src;
+          node.play().then(function(){ on=true; emit(name,who); }).catch(fail);
+        }
+        node.onerror=fail;
         start(url);
       }
     };
@@ -1092,7 +1109,10 @@
   }
   /* the seal is the real control, but the whole envelope opens —
      nobody should have to aim at a circle to read their own letter */
+  window.__openLetter = openLetter;
   gate.addEventListener("click", openLetter);
+  gate.addEventListener("touchend", openLetter);
+  if(gate.getAttribute("data-tapped")) openLetter();   /* she tapped while it was still loading */
 
   /* =========================================================
      player wiring
