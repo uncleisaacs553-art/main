@@ -19,22 +19,31 @@ handwriting. Opens as a sealed envelope; everything after that is hers to poke a
 Petals drift up the whole page and little hearts follow the cursor on desktop. All of it stops
 dead if the device asks for reduced motion.
 
+Built to run on an entry-level Android phone: particle count and pixel ratio drop on small or
+low-core devices, the full-screen grain layer and the big shadows are dropped under 760 px, tilts
+use `transform` rather than the newer `rotate`/`translate` properties, and reveals run off a
+throttled scroll pass instead of an IntersectionObserver so a fast flick can never leave a section
+stuck invisible. Measured at ~56 fps scrolling under 6x CPU throttling.
+
 ## The music
 
-The page plays **an original piece written in Web Audio** — a music-box piano arpeggio over a soft
-pad, ~70 BPM, four chords on a loop, with a little timing jitter so it never sounds like a machine.
-No audio file, nothing copyrighted, about 60 lines of JavaScript.
+**Put the song at `assets/song.mp3`** and run `python3 build.py` — it gets inlined and plays in the
+background from the moment the envelope opens. That mp3 is deliberately **not committed** here
+(see `.gitignore`), so the builds checked into this repo are the light ones, ~620 KB. Add the file
+and rebuild to reproduce exactly what was published.
 
-*She's Mine, Pt. 1* itself is J. Cole's to distribute, not ours, so it isn't baked into the page.
-Two ways to hear the real thing instead:
+It rides at the very end of the document rather than in a `data:` URI at the top, so the letter
+paints and becomes tappable while those megabytes are still arriving. If she taps the envelope
+before the song is down, the piano below starts and the song takes over the moment it lands.
 
-- The **Spotify / YouTube / Apple Music** buttons open it directly.
-- **Play my own copy** loads an audio file off the device and plays it in the page instead of the
-  loop. It's remembered (IndexedDB), so on that device it starts by itself next time.
+**With no song file, the page plays an original piece written in Web Audio** — a music-box piano
+arpeggio over a soft pad, ~70 BPM, four chords on a loop, with a little timing jitter so it never
+sounds like a machine. No audio file, nothing copyrighted, about 60 lines of JavaScript. It is also
+the automatic fallback if the browser refuses to play the mp3.
 
-Want your own copy baked in permanently? Drop it at `assets/song.mp3` (`.m4a`, `.ogg` and `.wav`
-work too) and run `python3 build.py` — it gets inlined and becomes the background track. That file
-is yours and is deliberately not committed here.
+Two more ways to reach the real track: the **Spotify / YouTube / Apple Music** buttons, and
+**play my own copy**, which loads an audio file off her device and remembers it (IndexedDB) so it
+starts by itself next time.
 
 ## Files
 

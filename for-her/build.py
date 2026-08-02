@@ -11,9 +11,9 @@ Edit template.html (the captions, the reasons and the letter live there), then r
 
   python3 build.py
 
-Optional: drop your own copy of the song at assets/song.mp3 (or .m4a / .ogg) and it
-gets baked in as the background track instead of the little piano loop. Nothing is
-shipped in this repo — that file is yours to add, on your own machine.
+Put the song at assets/song.mp3 (or .m4a / .ogg / .wav) and it gets baked in as the
+background track. Without it the page falls back to the little piano loop, which is
+written in code and always works.
 """
 
 import base64
@@ -35,7 +35,7 @@ TOKENS = {
     "__IMG_MENU__":     ("photos/menu.webp",                      "image/webp"),
 }
 
-SONG_TYPES = {".mp3": "audio/mpeg", ".m4a": "audio/mp4", ".ogg": "audio/ogg", ".wav": "audio/wav"}
+SONG_EXTS = (".mp3", ".m4a", ".ogg", ".wav")
 
 
 def data_uri(path: pathlib.Path, mime: str) -> str:
@@ -47,13 +47,17 @@ html = (HERE / "template.html").read_text(encoding="utf-8")
 for token, (rel, mime) in TOKENS.items():
     html = html.replace(token, data_uri(ASSETS / rel, mime))
 
-# Your own copy of the song, if you dropped one in. Never shipped by default.
-song = next((ASSETS / f"song{ext}" for ext in SONG_TYPES if (ASSETS / f"song{ext}").exists()), None)
+# The song, if one is sitting in assets/. Inlined as raw base64 in a trailing
+# <script> tag rather than a data: URI up top, so the page is on screen and
+# interactive while these few megabytes are still coming down the wire.
+song = next((ASSETS / f"song{ext}" for ext in SONG_EXTS if (ASSETS / f"song{ext}").exists()), None)
 if song:
-    html = html.replace("__SONG__", data_uri(song, SONG_TYPES[song.suffix]))
+    b64 = base64.b64encode(song.read_bytes()).decode("ascii")
+    html = html.replace("__SONG_B64__", b64)
     print(f"baked in {song.name} ({song.stat().st_size / 1024 / 1024:.1f} MB)")
 else:
-    html = html.replace("__SONG__", "")
+    html = html.replace("__SONG_B64__", "")
+    print("no assets/song.* — the page will play the piano loop")
 
 leftover = [t for t in TOKENS if t in html]
 if leftover:

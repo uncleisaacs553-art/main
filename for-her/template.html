@@ -1,4 +1,12 @@
 <title>for babe &#9825;</title>
+<script>
+  /* belt and braces: without this the whole page renders desktop-wide on a phone */
+  if(!document.querySelector('meta[name="viewport"]')){
+    var m=document.createElement("meta");
+    m.name="viewport"; m.content="width=device-width, initial-scale=1";
+    (document.head||document.documentElement).appendChild(m);
+  }
+</script>
 <style>
   @font-face{font-family:"Gloock";src:url(__FONT_DISPLAY__) format("woff2");font-weight:400;font-style:normal;font-display:block}
   @font-face{font-family:"Lora";src:url(__FONT_BODY__) format("woff2");font-weight:400;font-style:normal;font-display:swap}
@@ -56,6 +64,7 @@
   html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
   body{
     margin:0;background:var(--paper);color:var(--ink);
+    -webkit-tap-highlight-color:transparent;
     font-family:var(--body);font-size:clamp(16px,.55vw + 14.5px,18px);line-height:1.75;
     overflow-x:hidden;
   }
@@ -98,6 +107,7 @@
   .deckle{display:block;width:100%;height:34px;margin-bottom:-1px}
   .deckle.up{margin:-1px 0 0}
 
+  button,.btn,.pol,label{touch-action:manipulation}
   .btn{
     font-family:var(--label);font-size:.95rem;letter-spacing:.13em;text-transform:uppercase;
     text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:.55em;
@@ -171,7 +181,7 @@
     border-radius:0 0 6px 6px;
   }
   .seal{
-    position:absolute;left:50%;top:52%;translate:-50% -50%;z-index:6;
+    position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);z-index:6;
     width:104px;height:104px;border-radius:50%;border:0;cursor:pointer;
     background:radial-gradient(circle at 34% 30%,#F6B9CE,var(--rose) 45%,var(--rose-deep));
     color:var(--on-rose);font-family:var(--label);font-size:.86rem;letter-spacing:.16em;text-transform:uppercase;
@@ -197,7 +207,7 @@
      2 — hero
      ============================================================ */
   .hero{
-    min-height:100svh;display:grid;align-content:center;
+    min-height:100vh;min-height:100svh;display:grid;align-content:center;
     padding:clamp(5rem,10vw,7rem) clamp(1.15rem,5vw,3rem) clamp(3rem,7vw,5rem);
     text-align:center;
   }
@@ -227,7 +237,7 @@
     border-radius:26px 22px 28px 20px;padding:clamp(1.5rem,4vw,2.6rem);
     box-shadow:var(--shadow);position:relative;
   }
-  .song-card .tape{top:-14px;left:50%;translate:-50% 0;rotate:-2.5deg}
+  .song-card .tape{top:-14px;left:50%;transform:translateX(-50%) rotate(-2.5deg)}
   @media(min-width:760px){.song-card{grid-template-columns:auto 1fr}}
 
   .vinyl{
@@ -297,12 +307,12 @@
   @media(min-width:620px){.board{grid-template-columns:repeat(2,1fr)}}
   @media(min-width:1000px){.board{grid-template-columns:repeat(3,1fr)}}
   .note-tile{
-    position:relative;rotate:1.3deg;display:flex;flex-direction:column;justify-content:center;gap:.9rem;
-    min-height:clamp(240px,30vw,320px);padding:clamp(1.4rem,3vw,2rem);border-radius:3px;
+    position:relative;display:flex;flex-direction:column;justify-content:center;gap:.9rem;
+    min-height:clamp(240px,30vw,320px);padding:clamp(1.4rem,3vw,2rem);border-radius:3px;transform:rotate(1.3deg);
     border:1px solid var(--line);box-shadow:var(--shadow);
     background:repeating-linear-gradient(180deg,transparent 0 27px,var(--line) 27px 28px),var(--card);
   }
-  .note-tile .tape{top:-13px;left:34px;rotate:-6deg}
+  .note-tile .tape{top:-13px;left:34px;transform:rotate(-6deg)}
   .note-tile p{font-family:var(--hand);font-size:1.12rem;line-height:28px;color:var(--ink);margin:0}
   .note-tile svg{width:38px;color:var(--rose);align-self:flex-end;margin-top:.3rem}
   .note-tile svg path{fill:none;stroke:currentColor;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;filter:url(#wobble)}
@@ -310,11 +320,11 @@
     all:unset;display:block;cursor:pointer;perspective:1400px;position:relative;
     border-radius:3px;
   }
-  .pol:nth-child(1){rotate:-2.4deg}
-  .pol:nth-child(2){rotate:1.8deg;margin-top:clamp(0px,2.5vw,30px)}
-  .pol:nth-child(3){rotate:-1.2deg}
-  .pol:nth-child(4){rotate:2.6deg;margin-top:clamp(0px,2.5vw,30px)}
-  .pol:nth-child(5){rotate:-1.9deg}
+  .pol:nth-child(1){transform:rotate(-2.4deg)}
+  .pol:nth-child(2){transform:rotate(1.8deg);margin-top:clamp(0px,2.5vw,30px)}
+  .pol:nth-child(3){transform:rotate(-1.2deg)}
+  .pol:nth-child(4){transform:rotate(2.6deg);margin-top:clamp(0px,2.5vw,30px)}
+  .pol:nth-child(5){transform:rotate(-1.9deg)}
   .pol-in{
     display:block;position:relative;transform-style:preserve-3d;
     transition:transform .8s cubic-bezier(.35,.9,.25,1);
@@ -347,8 +357,8 @@
   }
   .pol:hover .pol-in{transform:translateY(-6px) rotate(.6deg)}
   .pol[aria-pressed="true"]:hover .pol-in{transform:rotateY(180deg) translateY(-6px)}
-  .pol .tape{top:-13px;left:50%;translate:-50% 0;rotate:-3deg;z-index:3}
-  .pol:nth-child(even) .tape{rotate:4deg}
+  .pol .tape{top:-13px;left:50%;transform:translateX(-50%) rotate(-3deg);z-index:3}
+  .pol:nth-child(even) .tape{transform:translateX(-50%) rotate(4deg)}
 
   /* ============================================================
      5 — jar of reasons
@@ -371,7 +381,7 @@
     background:var(--card);border:1px solid var(--line);border-radius:18px 14px 20px 12px;
     padding:clamp(1.4rem,4vw,2.2rem);box-shadow:var(--shadow);
   }
-  .reason .tape{top:-13px;left:22px;rotate:-5deg}
+  .reason .tape{top:-13px;left:22px;transform:rotate(-5deg)}
   .reason p{
     font-family:var(--hand);font-size:clamp(1.25rem,3.6vw,1.6rem);color:var(--ink);
     margin:0;line-height:1.45;
@@ -392,7 +402,7 @@
     background:var(--card);border:1px solid var(--line);border-radius:22px 18px 24px 16px;
     padding:clamp(1.6rem,4.5vw,2.6rem);box-shadow:var(--shadow);position:relative;
   }
-  .meter-box .tape{top:-13px;right:26px;rotate:5deg}
+  .meter-box .tape{top:-13px;right:26px;transform:rotate(5deg)}
   .meter-q{font-family:var(--display);font-size:clamp(1.5rem,4.2vw,2.1rem);margin:0 0 1.4rem;line-height:1.15}
   .track{
     position:relative;height:20px;border-radius:99px;background:var(--blush);
@@ -432,8 +442,8 @@
     position:relative;background:var(--card);border:1px solid var(--line);
     padding:clamp(1.8rem,6vw,3.6rem);border-radius:4px;box-shadow:var(--shadow);
   }
-  .letter-paper .tape:nth-of-type(1){top:-13px;left:28px;rotate:-6deg}
-  .letter-paper .tape:nth-of-type(2){top:-13px;right:28px;rotate:6deg}
+  .letter-paper .tape:nth-of-type(1){top:-13px;left:28px;transform:rotate(-6deg)}
+  .letter-paper .tape:nth-of-type(2){top:-13px;right:28px;transform:rotate(6deg)}
   .letter-paper p{margin:0 0 1.3rem}
   .letter-paper p:last-of-type{margin-bottom:0}
   .letter-paper .open{font-family:var(--hand);font-size:clamp(1.4rem,4vw,1.9rem);color:var(--rose-deep);margin-bottom:1.1rem}
@@ -467,6 +477,15 @@
 
   .rise{opacity:0;transform:translateY(22px);transition:opacity .85s ease,transform .85s cubic-bezier(.2,.8,.2,1)}
   .rise.in{opacity:1;transform:none}
+
+  /* an entry-level phone should not have to composite a full-screen blend
+     layer and a dozen 60px shadows on every scroll frame */
+  @media (max-width:760px){
+    :root,:root[data-theme="dark"],:root[data-theme="light"]{
+      --shadow:9px 12px 24px -17px rgba(96,45,66,.45);
+    }
+    .grain{display:none}
+  }
 
   @media (prefers-reduced-motion: reduce){
     html{scroll-behavior:auto}
@@ -540,7 +559,7 @@
           <p class="label">playing softly, just for you</p>
           <h3 id="trackName">A little song I wrote for you</h3>
           <p class="who" id="trackWho">piano, made out of nothing, on a loop &mdash; it started when you opened the envelope</p>
-          <p class="why">Our real one is <em>She&rsquo;s Mine, Pt. 1</em>. I couldn&rsquo;t sneak J. Cole into this page, so I wrote you something instead &mdash; and the real thing is one tap away.</p>
+          <p class="why" id="trackWhy">Our real one is <em>She&rsquo;s Mine, Pt. 1</em>. I couldn&rsquo;t sneak J. Cole into this page, so I wrote you something instead &mdash; and the real thing is one tap away.</p>
 
           <div class="controls" id="controls">
             <button class="play" id="playBtn" aria-label="Pause the music">
@@ -769,7 +788,26 @@
 (function(){
   "use strict";
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var SONG_SRC = "__SONG__";
+  /* Our song lives in a <script> at the very end of the page, so the letter
+     paints and becomes tappable long before the audio bytes finish arriving. */
+  var songUrl = null, songTried = false, songDead = false;
+  var SONG_TITLE = "She\u2019s Mine, Pt. 1", SONG_WHO = "J. Cole \u00b7 4 Your Eyez Only";
+  function songSource(){
+    if(songTried) return songUrl;
+    var node = document.getElementById("songdata");
+    if(!node) return null;                       /* not downloaded yet — try again later */
+    songTried = true;
+    var b64 = (node.textContent || "").replace(/\s+/g, "");
+    if(b64.length < 500) return null;
+    try{
+      var bin = atob(b64), len = bin.length, buf = new Uint8Array(len);
+      for(var i = 0; i < len; i++) buf[i] = bin.charCodeAt(i);
+      songUrl = URL.createObjectURL(new Blob([buf], {type:"audio/mpeg"}));
+    }catch(err){
+      songUrl = "data:audio/mpeg;base64," + b64;
+    }
+    return songUrl;
+  }
 
   /* =========================================================
      the music — a little piano loop written in code,
@@ -878,15 +916,24 @@
       init:function(){
         if(inited) return true;
         inited = true;
-        if(SONG_SRC){ mode="file"; el=new Audio(SONG_SRC); el.loop=true; el.volume=vol; }
-        else if(!build()) return false;
+        build();                       /* the piano is always there as a safety net */
         return true;
       },
       play:function(){
+        if(mode==="score" && !songDead){
+          var url = songSource();
+          if(url){ this.useFile(url, SONG_TITLE, SONG_WHO); return; }
+        }
         on=true;
         if(mode==="file" && el){ el.volume=vol; el.play().catch(function(){ on=false; emit(); }); }
         else if(ac){ if(ac.state==="suspended") ac.resume(); startScore(); fade(vol*0.85,2.2); }
         emit();
+      },
+      /* the song finished downloading while the piano was playing — hand over */
+      upgrade:function(){
+        if(mode!=="score" || songDead) return;
+        var url = songSource();
+        if(url && on) this.useFile(url, SONG_TITLE, SONG_WHO);
       },
       pause:function(){
         on=false;
@@ -900,16 +947,23 @@
         if(mode==="file" && el) el.volume=v;
         else if(ac && on) fade(v*0.85,0.25);
       },
-      useFile:function(url,name){
-        if(ac){ fade(0,0.5); setTimeout(stopScore,600); }
+      useFile:function(url,name,who){
+        if(ac){ fade(0,0.9); setTimeout(stopScore,1000); }
         if(el){ el.pause(); }
-        mode="file"; el=new Audio(url); el.loop=true; el.volume=vol;
-        el.play().then(function(){ on=true; emit(name); })
-                 .catch(function(){ on=false; emit(name); });
+        mode="file";
+        el=new Audio(); el.loop=true; el.volume=vol; el.preload="auto";
+        el.onerror=function(){          /* audio blocked or broken — quietly go back to the piano */
+          mode="score"; el=null; songDead=true;
+          if(ac){ if(ac.state==="suspended") ac.resume(); startScore(); fade(vol*0.85,1.4); on=true; }
+          emit();
+        };
+        el.src=url;
+        el.play().then(function(){ on=true; emit(name,who); })
+                 .catch(function(){ on=false; emit(name,who); });
       }
     };
-    function emit(name){
-      document.dispatchEvent(new CustomEvent("music", {detail:{on:on, name:name}}));
+    function emit(name,who){
+      document.dispatchEvent(new CustomEvent("music",{detail:{on:on,mode:mode,name:name,who:who}}));
     }
   })();
 
@@ -919,8 +973,9 @@
   var cv=document.getElementById("petals"), cx=cv.getContext("2d");
   var bits=[], trail=[], W=0, H=0, DPR=1;
 
+  var LOW = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || innerWidth < 760;
   function resize(){
-    DPR=Math.min(window.devicePixelRatio||1,2);
+    DPR=Math.min(window.devicePixelRatio||1, LOW ? 1.25 : 2);
     W=innerWidth; H=innerHeight;
     cv.width=Math.floor(W*DPR); cv.height=Math.floor(H*DPR);
     cx.setTransform(DPR,0,0,DPR,0,0);
@@ -985,7 +1040,7 @@
     spawn(10); cx.clearRect(0,0,W,H);
     bits.forEach(function(b){ b.y=Math.random()*H; cx.globalAlpha=b.a; cx.fillStyle="#E8698E"; heartPath(b.x,b.y,b.s,b.rot); });
   } else {
-    spawn(26);
+    spawn(LOW ? 12 : 26);
     raf = requestAnimationFrame(frame);
     document.addEventListener("visibilitychange", function(){
       if(document.hidden){ if(raf) cancelAnimationFrame(raf); raf=null; }
@@ -1016,7 +1071,7 @@
     Music.init();
     if(savedFile){ Music.useFile(URL.createObjectURL(savedFile), savedFile.name || "our song"); }
     else { Music.play(); }
-    if(!reduce) spawn(46,true);
+    if(!reduce) spawn(LOW ? 22 : 46,true);
     setTimeout(function(){
       gate.classList.add("gone");
       document.body.classList.remove("locked");
@@ -1036,6 +1091,8 @@
   var mini=document.getElementById("mini"), miniLabel=document.getElementById("miniLabel");
   var nowPlaying=document.getElementById("nowPlaying"), songCard=document.getElementById("songCard");
   var trackName=document.getElementById("trackName"), trackWho=document.getElementById("trackWho");
+  var trackWhy=document.getElementById("trackWhy");
+  var PIANO_NAME=trackName.textContent, PIANO_WHO=trackWho.textContent, PIANO_WHY=trackWhy.innerHTML;
   var PLAY='<path d="M8 5v14l11-7z"/>', PAUSE='<path d="M7 5h4v14H7zM13 5h4v14h-4z"/>';
 
   document.addEventListener("music", function(e){
@@ -1046,22 +1103,27 @@
     miniPlay.setAttribute("aria-label", on ? "Pause the music" : "Play the music");
     controls.classList.toggle("playing", on);
     if(!reduce) vinyl.classList.toggle("spinning", on);
-    if(e.detail.name){
+    if(e.detail.mode==="score" && !e.detail.name){
+      trackName.textContent = PIANO_NAME;
+      trackWho.textContent = PIANO_WHO;
+      trackWhy.innerHTML = PIANO_WHY;
+      miniLabel.textContent = "our little song";
+    } else if(e.detail.name){
       trackName.textContent = e.detail.name.replace(/\.[^.]+$/,"");
-      trackWho.textContent = "your own copy, straight off your phone";
+      trackWho.textContent = e.detail.who || "your own copy, straight off your phone";
+      trackWhy.innerHTML = "Our song. It&rsquo;s been playing since the second you opened the envelope.";
       miniLabel.textContent = "our song";
-      nowPlaying.textContent = on ? "playing your copy — saved, so it starts on its own next time" : "loaded — press play";
+      nowPlaying.textContent = on ? "" : "press play";
     }
   });
   playBtn.addEventListener("click", function(){ Music.init(); Music.toggle(); });
   miniPlay.addEventListener("click", function(){ Music.init(); Music.toggle(); });
   document.getElementById("vol").addEventListener("input", function(){ Music.setVolume(this.value/100); });
 
-  if("IntersectionObserver" in window){
-    new IntersectionObserver(function(en){
-      mini.classList.toggle("show", !en[0].isIntersecting && en[0].boundingClientRect.top < 0);
-    },{threshold:0}).observe(songCard);
-  }
+  /* decode the song once the page has fully arrived, then take over from the piano */
+  addEventListener("load", function(){
+    setTimeout(function(){ songSource(); Music.upgrade(); }, 60);
+  });
 
   /* she can bring the real song, and we remember it */
   var DB="babe-song";
@@ -1249,7 +1311,7 @@
     heartBtn.classList.remove("beat"); void heartBtn.offsetWidth; heartBtn.classList.add("beat");
     if(!reduce){
       var r=heartBtn.getBoundingClientRect(), cxp=r.left+r.width/2, cyp=r.top+r.height/2;
-      for(var i=0;i<14;i++){
+      for(var i=0;i<(LOW?8:14);i++){
         bits.push({x:cxp,y:cyp,s:1+Math.random()*1.6,vy:-(2+Math.random()*3.6),vx:(Math.random()-.5)*5,
                    sway:0,ph:0,rot:Math.random()*6,vr:(Math.random()-.5)*.1,a:.9,burst:true});
       }
@@ -1257,21 +1319,43 @@
   });
 
   /* =========================================================
-     reveals
+     reveals + the docked player, on one throttled scroll pass
+
+     This used to be an IntersectionObserver, which never fires for
+     anything a fast flick scrolls clean past — sections would stay
+     invisible on a phone. A rect check per frame cannot miss.
      ========================================================= */
-  var revealables=document.querySelectorAll(".rise,.line");
-  if("IntersectionObserver" in window && !reduce){
-    var io=new IntersectionObserver(function(en){
-      en.forEach(function(x){
-        if(x.isIntersecting){ x.target.classList.add("in"); io.unobserve(x.target); }
-      });
-    },{rootMargin:"0px 0px -10% 0px",threshold:.06});
-    Array.prototype.forEach.call(revealables,function(el,i){
-      el.style.transitionDelay=(Math.min(i%6,5)*80)+"ms";
-      io.observe(el);
-    });
-  } else {
-    Array.prototype.forEach.call(revealables,function(el){ el.classList.add("in"); });
+  var pending=[];
+  Array.prototype.forEach.call(document.querySelectorAll(".rise,.line"),function(el,i){
+    if(reduce){ el.classList.add("in"); return; }
+    el.style.transitionDelay=(Math.min(i%6,5)*80)+"ms";
+    pending.push(el);
+  });
+
+  var miniOn=false;
+  function sweep(){
+    var vh=innerHeight;
+    for(var i=pending.length-1;i>=0;i--){
+      if(pending[i].getBoundingClientRect().top < vh*0.92){
+        pending[i].classList.add("in");
+        pending.splice(i,1);
+      }
+    }
+    var want = songCard.getBoundingClientRect().bottom < 0;
+    if(want!==miniOn){ miniOn=want; mini.classList.toggle("show",want); }
   }
+
+  var ticking=false;
+  addEventListener("scroll",function(){
+    if(ticking) return;
+    ticking=true;
+    requestAnimationFrame(function(){ ticking=false; sweep(); });
+  },{passive:true});
+  addEventListener("resize",sweep);
+  sweep();
 })();
 </script>
+
+<!-- Our song, last thing in the document on purpose: the browser paints and hooks up
+     the whole letter before these bytes have finished arriving. -->
+<script id="songdata" type="text/plain">__SONG_B64__</script>
