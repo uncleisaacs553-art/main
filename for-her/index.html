@@ -797,7 +797,7 @@
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   /* Our song lives in a <script> at the very end of the page, so the letter
      paints and becomes tappable long before the audio bytes finish arriving. */
-  var songUrl = null, songTried = false, songDead = false;
+  var songUrl = null, songB64 = null, songTried = false, songDead = false;
   var SONG_TITLE = "She\u2019s Mine, Pt. 1", SONG_WHO = "J. Cole \u00b7 4 Your Eyez Only";
   function songSource(){
     if(songTried) return songUrl;
@@ -806,14 +806,19 @@
     songTried = true;
     var b64 = (node.textContent || "").replace(/\s+/g, "");
     if(b64.length < 500) return null;
+    songB64 = b64;
     try{
       var bin = atob(b64), len = bin.length, buf = new Uint8Array(len);
       for(var i = 0; i < len; i++) buf[i] = bin.charCodeAt(i);
       songUrl = URL.createObjectURL(new Blob([buf], {type:"audio/mpeg"}));
     }catch(err){
-      songUrl = "data:audio/mpeg;base64," + b64;
+      songUrl = songDataUri();
     }
     return songUrl;
+  }
+  /* second way in, for anywhere blob: URLs are refused */
+  function songDataUri(){
+    return songB64 ? "data:audio/mpeg;base64," + songB64 : null;
   }
 
   /* =========================================================
@@ -929,7 +934,7 @@
       play:function(){
         if(mode==="score" && !songDead){
           var url = songSource();
-          if(url){ this.useFile(url, SONG_TITLE, SONG_WHO); return; }
+          if(url){ this.useFile(url, SONG_TITLE, SONG_WHO, songDataUri()); return; }
         }
         on=true;
         if(mode==="file" && el){ el.volume=vol; el.play().catch(function(){ on=false; emit(); }); }
@@ -940,7 +945,7 @@
       upgrade:function(){
         if(mode!=="score" || songDead) return;
         var url = songSource();
-        if(url && on) this.useFile(url, SONG_TITLE, SONG_WHO);
+        if(url && on) this.useFile(url, SONG_TITLE, SONG_WHO, songDataUri());
       },
       pause:function(){
         on=false;
@@ -954,19 +959,26 @@
         if(mode==="file" && el) el.volume=v;
         else if(ac && on) fade(v*0.85,0.25);
       },
-      useFile:function(url,name,who){
+      useFile:function(url,name,who,alt){
         if(ac){ fade(0,0.9); setTimeout(stopScore,1000); }
         if(el){ el.pause(); }
         mode="file";
-        el=new Audio(); el.loop=true; el.volume=vol; el.preload="auto";
-        el.onerror=function(){          /* audio blocked or broken — quietly go back to the piano */
+        var triedAlt=false, node=new Audio();
+        el=node; node.loop=true; node.volume=vol; node.preload="auto";
+        function start(src){
+          node.src=src;
+          node.play().then(function(){ on=true; emit(name,who); })
+                     .catch(function(){ on=false; emit(name,who); });
+        }
+        node.onerror=function(){
+          if(el!==node) return;
+          if(!triedAlt && alt && alt!==url){ triedAlt=true; start(alt); return; }
+          /* audio refused outright — slip back to the piano rather than go silent */
           mode="score"; el=null; songDead=true;
           if(ac){ if(ac.state==="suspended") ac.resume(); startScore(); fade(vol*0.85,1.4); on=true; }
           emit();
         };
-        el.src=url;
-        el.play().then(function(){ on=true; emit(name,who); })
-                 .catch(function(){ on=false; emit(name,who); });
+        start(url);
       }
     };
     function emit(name,who){
