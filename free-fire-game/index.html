@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>Firestorm — Battle Royale</title>
+<style>
+  :root {
+    --accent: #f0a30a;
+    --accent-2: #ff5a4a;
+    --hp: #4ade80;
+    --armor: #4fc3f7;
+    --panel: rgba(10, 14, 20, 0.72);
+    --panel-solid: #10161f;
+    --line: rgba(240, 163, 10, 0.45);
+    --text: #eef2f6;
+    --muted: #9aa7b4;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; height: 100%; overflow: hidden; background: #0d1117; color: var(--text);
+    font-family: Rajdhani, "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+    user-select: none; -webkit-user-select: none; touch-action: none;
+  }
+  canvas#view { display: block; width: 100vw; height: 100vh; }
+
+  /* ------------------------------------------------------------------ HUD */
+  #hud {
+    position: fixed; inset: 0; pointer-events: none; z-index: 10;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  #hud.hidden { display: none; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid var(--accent);
+    backdrop-filter: blur(3px);
+  }
+
+  /* Vitals */
+  #vitals { position: absolute; top: 14px; left: 14px; width: 250px; padding: 10px 12px; }
+  #vitals .name { font-weight: 700; letter-spacing: 1px; font-size: 15px; }
+  #vitals .loc { font-size: 12px; color: var(--muted); min-height: 14px; letter-spacing: 1px; }
+  .bar { position: relative; height: 14px; margin-top: 6px; background: rgba(0,0,0,0.55); overflow: hidden; }
+  .bar > i { position: absolute; inset: 0 auto 0 0; width: 100%; display: block; transition: width .12s linear; }
+  .bar > span { position: absolute; right: 6px; top: 0; font-size: 11px; line-height: 14px; font-weight: 700; text-shadow: 0 1px 2px #000; }
+  #hp-fill { background: linear-gradient(90deg, #22c55e, #86efac); }
+  #ar-fill { background: linear-gradient(90deg, #0ea5e9, #7dd3fc); }
+
+  /* Top status */
+  #status {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; align-items: stretch;
+  }
+  #status .cell { padding: 6px 14px; text-align: center; min-width: 82px; }
+  #status .cell .k { font-size: 10px; letter-spacing: 2px; color: var(--muted); }
+  #status .cell .v { font-size: 20px; font-weight: 700; line-height: 1; }
+  #status .zone .v { color: var(--armor); }
+  #status .alive .v { color: var(--accent); }
+
+  /* Minimap */
+  #minimap-wrap { position: absolute; top: 14px; right: 14px; padding: 4px; }
+  #minimap { width: 168px; height: 168px; display: block; }
+  #killfeed { position: absolute; top: 200px; right: 14px; width: 300px; text-align: right; }
+  .feed-row {
+    font-size: 13px; padding: 3px 8px; margin-bottom: 4px;
+    background: rgba(10, 14, 20, 0.66); border-right: 3px solid rgba(255,255,255,0.25);
+    animation: slideIn .18s ease-out;
+  }
+  .feed-row.mine { border-right-color: var(--accent); }
+  .feed-row .k { color: #fff; font-weight: 700; }
+  .feed-row .w { color: var(--accent); margin: 0 6px; }
+  .feed-row .v { color: var(--accent-2); font-weight: 700; }
+  @keyframes slideIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+
+  /* Weapon + items */
+  #weapon { position: absolute; right: 14px; bottom: 14px; padding: 8px 12px; min-width: 210px; text-align: right; }
+  #weapon .wname { font-size: 18px; font-weight: 700; letter-spacing: 1px; }
+  #weapon .ammo { font-size: 26px; font-weight: 700; line-height: 1.05; }
+  #weapon .ammo small { font-size: 14px; color: var(--muted); font-weight: 600; }
+  #slots { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+  #slots div {
+    font-size: 11px; padding: 3px 8px; background: rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.12); color: var(--muted);
+  }
+  #slots div.active { color: #0d1117; background: var(--accent); border-color: var(--accent); font-weight: 700; }
+
+  #items { position: absolute; left: 14px; bottom: 14px; display: flex; gap: 8px; }
+  #items .item { width: 62px; padding: 6px 4px; text-align: center; }
+  #items .item .ic { font-size: 18px; }
+  #items .item .n { font-size: 10px; color: var(--muted); letter-spacing: 1px; }
+  #items .item .c { font-size: 15px; font-weight: 700; }
+
+  /* Reticle */
+  #crosshair { --gap: 8px; position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  #crosshair i {
+    position: absolute; background: rgba(255,255,255,0.9); box-shadow: 0 0 2px #000;
+  }
+  #crosshair .t { width: 2px; height: 9px; left: -1px; top: calc(-1 * var(--gap) - 9px); }
+  #crosshair .b { width: 2px; height: 9px; left: -1px; top: var(--gap); }
+  #crosshair .l { height: 2px; width: 9px; top: -1px; left: calc(-1 * var(--gap) - 9px); }
+  #crosshair .r { height: 2px; width: 9px; top: -1px; left: var(--gap); }
+  #crosshair .dot { width: 2px; height: 2px; left: -1px; top: -1px; background: var(--accent); }
+
+  #hitmarker {
+    position: absolute; left: 50%; top: 50%; width: 26px; height: 26px;
+    margin: -13px 0 0 -13px; opacity: 0; transition: opacity .05s linear;
+  }
+  #hitmarker::before, #hitmarker::after {
+    content: ''; position: absolute; left: 11px; top: 0; width: 3px; height: 26px;
+    background: #fff; transform-origin: 50% 50%;
+  }
+  #hitmarker::before { transform: rotate(45deg); }
+  #hitmarker::after { transform: rotate(-45deg); }
+  #hitmarker.head::before, #hitmarker.head::after { background: var(--accent-2); }
+
+  #scope {
+    position: absolute; inset: 0; display: none;
+    background: radial-gradient(circle at 50% 50%, transparent 0 25vh, rgba(0,0,0,0.92) 25.4vh);
+  }
+  #scope.show { display: block; }
+  #scope::before, #scope::after {
+    content: ''; position: absolute; background: rgba(0,0,0,0.85);
+  }
+  #scope::before { left: 0; right: 0; top: 50%; height: 1px; }
+  #scope::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+
+  #vignette {
+    position: absolute; inset: 0; opacity: 0; transition: opacity .18s linear;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(190, 20, 20, 0.85) 100%);
+  }
+
+  #dir-layer { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  .dir-ind {
+    position: absolute; left: -14px; top: -104px; width: 28px; height: 26px; opacity: 0;
+    background: linear-gradient(to top, transparent, var(--accent-2));
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+    transform-origin: 50% 104px; transition: opacity .15s linear;
+  }
+
+  #damage-layer { position: absolute; inset: 0; }
+  .dmg-num {
+    position: absolute; font-size: 22px; font-weight: 700; color: #fff;
+    text-shadow: 0 2px 4px #000; animation: floatUp .75s ease-out forwards;
+  }
+  .dmg-num.head { color: var(--accent-2); font-size: 28px; }
+  @keyframes floatUp {
+    from { opacity: 1; transform: translateY(0) scale(1); }
+    to { opacity: 0; transform: translateY(-46px) scale(1.15); }
+  }
+
+  #announce {
+    position: absolute; left: 50%; top: 22%; transform: translateX(-50%);
+    font-size: 20px; font-weight: 700; letter-spacing: 2px; text-shadow: 0 2px 6px #000;
+    opacity: 0; transition: opacity .2s; white-space: nowrap; color: var(--accent);
+  }
+  #announce.show { opacity: 1; }
+
+  #prompt {
+    position: absolute; left: 50%; top: 58%; transform: translateX(-50%);
+    padding: 6px 14px; background: var(--panel); border: 1px solid var(--line);
+    font-size: 14px; opacity: 0; transition: opacity .12s;
+  }
+  #prompt.show { opacity: 1; }
+  #prompt b {
+    display: inline-block; background: var(--accent); color: #0d1117;
+    padding: 0 6px; margin-right: 6px; border-radius: 2px;
+  }
+  #prompt span { color: var(--accent); font-weight: 700; }
+
+  #reload-indicator {
+    --p: 0%;
+    position: absolute; left: 50%; top: 54%; transform: translateX(-50%);
+    width: 150px; height: 6px; background: rgba(0,0,0,0.6); display: none;
+  }
+  #reload-indicator.show { display: block; }
+  #reload-indicator::after {
+    content: ''; position: absolute; inset: 0 auto 0 0; width: var(--p); background: var(--accent);
+  }
+
+  #channel {
+    position: absolute; left: 50%; bottom: 22%; transform: translateX(-50%);
+    width: 220px; text-align: center; display: none;
+  }
+  #channel.show { display: block; }
+  #channel .lbl { font-size: 13px; margin-bottom: 4px; letter-spacing: 1px; }
+  #channel .track { height: 8px; background: rgba(0,0,0,0.6); }
+  #channel .track i { display: block; height: 100%; width: 0; background: var(--hp); }
+
+  /* Big map */
+  #bigmap-wrap {
+    position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+    background: rgba(5, 8, 12, 0.85);
+  }
+  #bigmap-wrap.show { display: flex; }
+  #bigmap { width: min(78vh, 78vw); height: min(78vh, 78vw); border: 2px solid var(--line); }
+
+  /* ------------------------------------------------------- touch controls */
+  #touch { position: absolute; inset: 0; display: none; }
+  #look-area { position: absolute; right: 0; top: 0; width: 55%; height: 78%; pointer-events: auto; }
+  #stick {
+    position: absolute; left: 22px; bottom: 96px; width: 132px; height: 132px; border-radius: 50%;
+    background: rgba(255,255,255,0.07); border: 2px solid rgba(255,255,255,0.18); pointer-events: auto;
+  }
+  #stick-knob {
+    position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px;
+    border-radius: 50%; background: rgba(240,163,10,0.55); border: 2px solid rgba(255,255,255,0.35);
+  }
+  .tbtn {
+    position: absolute; pointer-events: auto; border-radius: 50%;
+    background: rgba(10,14,20,0.6); border: 2px solid rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; letter-spacing: 1px; color: #fff; text-align: center;
+  }
+  .tbtn:active { background: rgba(240,163,10,0.55); }
+  #btn-fire { right: 26px; bottom: 108px; width: 96px; height: 96px; font-size: 15px;
+              background: rgba(255,90,74,0.45); border-color: rgba(255,120,100,0.6); }
+  #btn-ads { right: 138px; bottom: 176px; width: 62px; height: 62px; }
+  #btn-jump { right: 138px; bottom: 96px; width: 62px; height: 62px; }
+  #btn-crouch { right: 30px; bottom: 26px; width: 58px; height: 58px; }
+  #btn-reload { right: 100px; bottom: 26px; width: 58px; height: 58px; }
+  #btn-swap { right: 170px; bottom: 26px; width: 58px; height: 58px; }
+  #btn-med { left: 172px; bottom: 176px; width: 58px; height: 58px; }
+  #btn-gloo { left: 172px; bottom: 106px; width: 58px; height: 58px; }
+  #btn-pick { left: 172px; bottom: 36px; width: 58px; height: 58px; }
+
+  @media (hover: none) and (pointer: coarse) {
+    #touch { display: block; }
+    #minimap { width: 118px; height: 118px; }
+    #killfeed { top: 150px; width: 220px; font-size: 11px; }
+    #vitals { width: 190px; }
+  }
+
+  /* --------------------------------------------------------------- screens */
+  .screen {
+    position: fixed; inset: 0; z-index: 30; display: none;
+    align-items: center; justify-content: center; flex-direction: column;
+    background:
+      radial-gradient(circle at 25% 18%, rgba(240,163,10,0.16), transparent 42%),
+      radial-gradient(circle at 78% 78%, rgba(255,90,74,0.14), transparent 45%),
+      linear-gradient(160deg, #0b1017, #141c26 60%, #0b1017);
+  }
+  .screen.show { display: flex; }
+
+  .logo { font-size: clamp(42px, 9vw, 96px); font-weight: 800; letter-spacing: 6px; line-height: 1; }
+  .logo span { color: var(--accent); }
+  .tagline { color: var(--muted); letter-spacing: 5px; font-size: 13px; margin: 8px 0 34px; }
+
+  .btn {
+    pointer-events: auto; cursor: pointer; min-width: 260px; padding: 13px 26px; margin: 6px;
+    font-family: inherit; font-size: 17px; font-weight: 700; letter-spacing: 2px;
+    color: var(--text); background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.18); transition: transform .1s, background .15s;
+  }
+  .btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+  .btn.primary {
+    background: linear-gradient(90deg, var(--accent), #ffd166); color: #10161f; border: none;
+    font-size: 21px; padding: 16px 30px;
+  }
+  .btn.primary:hover { filter: brightness(1.06); }
+
+  .card {
+    width: min(560px, 92vw); padding: 24px 28px; background: rgba(9, 13, 19, 0.82);
+    border: 1px solid rgba(255,255,255,0.1); border-top: 3px solid var(--accent);
+  }
+  .card h2 { margin: 0 0 18px; letter-spacing: 3px; font-size: 22px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
+  .row label { font-size: 14px; letter-spacing: 1px; color: var(--muted); }
+  .row .val { font-size: 13px; color: var(--accent); min-width: 66px; text-align: right; }
+  .row input[type=range] { flex: 1; accent-color: var(--accent); }
+  .row input[type=text], .row select {
+    background: rgba(0,0,0,0.45); color: var(--text); border: 1px solid rgba(255,255,255,0.18);
+    padding: 7px 10px; font-family: inherit; font-size: 14px; min-width: 150px;
+  }
+  .row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--accent); }
+
+  .keys { display: grid; grid-template-columns: 96px 1fr; gap: 8px 14px; font-size: 14px; }
+  .keys b {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18);
+    padding: 2px 8px; text-align: center; border-radius: 3px; font-size: 12px;
+  }
+  .keys span { color: var(--muted); }
+
+  #res-title { font-size: clamp(44px, 10vw, 104px); font-weight: 800; letter-spacing: 6px; line-height: 1; }
+  #res-title.booyah { color: var(--accent); text-shadow: 0 0 34px rgba(240,163,10,0.55); }
+  #res-title.placed { color: var(--accent-2); }
+  #res-sub { color: var(--muted); letter-spacing: 3px; margin: 10px 0 26px; }
+  .stats { display: flex; gap: 34px; margin-bottom: 30px; }
+  .stats .s { text-align: center; }
+  .stats .s .v { font-size: 32px; font-weight: 700; color: var(--accent); }
+  .stats .s .k { font-size: 11px; letter-spacing: 2px; color: var(--muted); }
+
+  #pause { position: fixed; inset: 0; z-index: 40; display: none; align-items: center; justify-content: center;
+           background: rgba(5, 8, 12, 0.8); flex-direction: column; }
+  #pause.show { display: flex; }
+  .hint { color: var(--muted); font-size: 12px; letter-spacing: 2px; margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<canvas id="view"></canvas>
+
+<!-- ================================================================= HUD -->
+<div id="hud" class="hidden">
+  <div id="vitals" class="panel">
+    <div class="name" id="player-name">YOU</div>
+    <div class="loc" id="location"></div>
+    <div class="bar"><i id="hp-fill"></i><span id="hp-text">100</span></div>
+    <div class="bar"><i id="ar-fill" style="width:0"></i><span id="ar-text">0</span></div>
+  </div>
+
+  <div id="status">
+    <div class="cell panel alive"><div class="k">ALIVE</div><div class="v" id="alive-count">25</div></div>
+    <div class="cell panel"><div class="k">KILLS</div><div class="v" id="kill-count">0</div></div>
+    <div class="cell panel zone"><div class="k" id="zone-label">NEXT ZONE</div><div class="v" id="zone-timer">0:45</div></div>
+  </div>
+
+  <div id="minimap-wrap" class="panel"><canvas id="minimap" width="168" height="168"></canvas></div>
+  <div id="killfeed"></div>
+
+  <div id="weapon" class="panel">
+    <div class="wname" id="weapon-name">Unarmed</div>
+    <div class="ammo"><span id="ammo-mag">0</span><small> / <span id="ammo-reserve">0</span></small></div>
+    <div id="slots">
+      <div id="slot-primary">—</div>
+      <div id="slot-sidearm">—</div>
+    </div>
+  </div>
+
+  <div id="items">
+    <div class="item panel"><div class="ic">✚</div><div class="n">MED</div><div class="c" id="item-med-count">0</div></div>
+    <div class="item panel"><div class="ic">🛡</div><div class="n">ARMOR</div><div class="c" id="item-armor-count">0</div></div>
+    <div class="item panel"><div class="ic">▦</div><div class="n">GLOO</div><div class="c" id="item-gloo-count">0</div></div>
+  </div>
+
+  <div id="crosshair"><i class="t"></i><i class="b"></i><i class="l"></i><i class="r"></i><i class="dot"></i></div>
+  <div id="hitmarker"></div>
+  <div id="scope"></div>
+  <div id="vignette"></div>
+  <div id="dir-layer"></div>
+  <div id="damage-layer"></div>
+  <div id="announce"></div>
+  <div id="prompt"></div>
+  <div id="reload-indicator"></div>
+  <div id="channel">
+    <div class="lbl" id="channel-label">Using Med Kit</div>
+    <div class="track"><i id="channel-fill"></i></div>
+  </div>
+
+  <div id="bigmap-wrap"><canvas id="bigmap" width="620" height="620"></canvas></div>
+
+  <div id="touch">
+    <div id="look-area"></div>
+    <div id="stick"><div id="stick-knob"></div></div>
+    <div id="btn-fire" class="tbtn">FIRE</div>
+    <div id="btn-ads" class="tbtn">AIM</div>
+    <div id="btn-jump" class="tbtn">JUMP</div>
+    <div id="btn-crouch" class="tbtn">CRCH</div>
+    <div id="btn-reload" class="tbtn">RELD</div>
+    <div id="btn-swap" class="tbtn">SWAP</div>
+    <div id="btn-med" class="tbtn">MED</div>
+    <div id="btn-gloo" class="tbtn">GLOO</div>
+    <div id="btn-pick" class="tbtn">PICK</div>
+  </div>
+</div>
+
+<!-- ============================================================= SCREENS -->
+<div id="menu-screen" class="screen show">
+  <div class="logo">FIRE<span>STORM</span></div>
+  <div class="tagline">51 SECONDS TO DROP · LAST ONE STANDING WINS</div>
+  <button class="btn primary" id="btn-play">PLAY</button>
+  <button class="btn" id="btn-settings">SETTINGS</button>
+  <button class="btn" id="btn-howto">HOW TO PLAY</button>
+  <div class="hint">CLICK TO LOCK THE MOUSE · ESC TO PAUSE</div>
+</div>
+
+<div id="settings-screen" class="screen">
+  <div class="card">
+    <h2>SETTINGS</h2>
+    <div class="row"><label for="set-name">Player name</label><input type="text" id="set-name" maxlength="12"></div>
+    <div class="row"><label for="set-quality">Graphics</label>
+      <select id="set-quality">
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+    </div>
+    <div class="row"><label for="set-bots">Opponents</label><input type="range" id="set-bots" min="8" max="40" step="1"><span class="val" id="lbl-bots">24 bots</span></div>
+    <div class="row"><label for="set-sens">Sensitivity</label><input type="range" id="set-sens" min="25" max="250" step="5"><span class="val" id="lbl-sens">100%</span></div>
+    <div class="row"><label for="set-volume">Volume</label><input type="range" id="set-volume" min="0" max="100" step="5"><span class="val" id="lbl-volume">55%</span></div>
+    <div class="row"><label for="set-invert">Invert look</label><input type="checkbox" id="set-invert"></div>
+    <div class="row"><label for="set-assist">Aim assist</label><input type="checkbox" id="set-assist"></div>
+    <button class="btn" id="btn-settings-back">BACK</button>
+  </div>
+</div>
+
+<div id="howto-screen" class="screen">
+  <div class="card">
+    <h2>HOW TO PLAY</h2>
+    <div class="keys">
+      <b>W A S D</b><span>Move</span>
+      <b>Shift</b><span>Sprint</span>
+      <b>Ctrl / C</b><span>Crouch</span>
+      <b>Space</b><span>Jump</span>
+      <b>Mouse</b><span>Look · Left click fires · Right click aims</span>
+      <b>1 / 2 / 3</b><span>Primary · Sidearm · Fists</span>
+      <b>R</b><span>Reload</span>
+      <b>E</b><span>Pick up weapon</span>
+      <b>H</b><span>Med kit (heals 75)</span>
+      <b>J</b><span>Armor plate</span>
+      <b>F</b><span>Deploy gloo wall (instant cover)</span>
+      <b>M</b><span>Full map</span>
+      <b>Esc</b><span>Pause</span>
+    </div>
+    <p style="color:var(--muted);font-size:13px;line-height:1.55;margin-top:18px">
+      Steer your drop, land on a rooftop or a town, and grab a gun before anyone else does.
+      Ammo, med kits, armor and gloo walls are picked up automatically as you walk over them.
+      The blue safe zone shrinks in phases — stay inside it or it will burn your health down.
+      Outlast everyone for a <b style="color:var(--accent)">BOOYAH</b>.
+    </p>
+    <button class="btn" id="btn-howto-back">BACK</button>
+  </div>
+</div>
+
+<div id="results-screen" class="screen">
+  <div id="res-title" class="booyah">BOOYAH!</div>
+  <div id="res-sub">Last one standing</div>
+  <div class="stats">
+    <div class="s"><div class="v" id="res-kills">0</div><div class="k">KILLS</div></div>
+    <div class="s"><div class="v" id="res-damage">0</div><div class="k">DAMAGE</div></div>
+    <div class="s"><div class="v" id="res-time">0:00</div><div class="k">SURVIVED</div></div>
+  </div>
+  <button class="btn primary" id="btn-again">PLAY AGAIN</button>
+  <button class="btn" id="btn-menu">MAIN MENU</button>
+</div>
+
+<div id="pause">
+  <div class="logo" style="font-size:44px">PAUSED</div>
+  <button class="btn primary" id="btn-resume">RESUME</button>
+  <button class="btn" id="btn-quit">QUIT TO MENU</button>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/world.js"></script>
+<script src="js/entities.js"></script>
+<script src="js/combat.js"></script>
+<script src="js/zone.js"></script>
+<script src="js/bots.js"></script>
+<script src="js/player.js"></script>
+<script src="js/hud.js"></script>
+<script src="js/game.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
