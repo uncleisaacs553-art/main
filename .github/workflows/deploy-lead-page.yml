@@ -6,6 +6,7 @@ on:
     paths:
       - "b-digital-lead/**"
       - "meridian-estates/**"
+      - "good-morning/**"
       - ".github/workflows/deploy-lead-page.yml"
   workflow_dispatch:
 
@@ -29,13 +30,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Assemble site (B Digital at root, Meridian demo under /meridian/)
+      - name: Assemble site (B Digital at root, Meridian demo under /meridian/, /good-morning/)
         run: |
           mkdir -p _site
           cp -r b-digital-lead/* _site/
           if [ -d meridian-estates ]; then
             mkdir -p _site/meridian
             cp -r meridian-estates/* _site/meridian/
+          fi
+          if [ -d good-morning ]; then
+            mkdir -p _site/good-morning
+            cp -r good-morning/* _site/good-morning/
           fi
 
       - name: Configure Pages
