@@ -422,6 +422,587 @@ table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--
 <div class="wrong"><b>JPEG is lossy</b>, so the quality <b>IS reduced</b>. Normal <b>WMA is lossy</b> too.</div>
 </div></details>
 
+<div class="thead" data-theme="4B">Theme 4B · Logic and the CPU</div>
+
+<details class="topic" data-theme="4B" data-topic="logic"><summary>Logic gates and truth tables</summary><div class="in">
+<p>A logic gate takes inputs (0 or 1) and gives one output (0 or 1).</p>
+<div class="tw"><table class="c">
+<tr><th>A</th><th>B</th><th>AND</th><th>OR</th><th>NAND</th><th>NOR</th><th>XOR</th></tr>
+<tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+<tr><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>
+</table></div>
+<p><b>NOT</b> has one input: 0 → 1, 1 → 0.</p>
+<div class="tw"><table>
+<tr><th>Gate</th><th>Rule (easy to remember)</th></tr>
+<tr><td>AND</td><td>1 only if <b>both</b> inputs are 1.</td></tr>
+<tr><td>OR</td><td>1 if <b>at least one</b> input is 1.</td></tr>
+<tr><td>NOT</td><td>Turns the input round.</td></tr>
+<tr><td>NAND</td><td>NOT AND. Opposite of AND.</td></tr>
+<tr><td>NOR</td><td>NOT OR. Opposite of OR.</td></tr>
+<tr><td>XOR</td><td>1 if the inputs are <b>different</b>.</td></tr>
+</table></div>
+<h4>Gate symbols</h4>
+<div class="svgwrap" data-svg="A AND B"></div>
+<p class="small mut">AND = flat back, round front. OR = curved back, pointed front. XOR = OR with an extra curved line at the back. A small circle (bubble) means NOT: NAND, NOR.</p>
+<h4>How many rows?</h4>
+<p>2 inputs → 4 rows. 3 inputs → 8 rows. Count in binary: 000, 001, 010, 011, 100, 101, 110, 111.</p>
+<h4>Worked example: X = NOT A OR (A AND NOT B)</h4>
+<ol class="steps"><li>Make working columns: NOT A, NOT B, A AND NOT B.</li><li>Fill each column row by row.</li><li>Last column: X = (NOT A) OR (A AND NOT B).</li></ol>
+<div class="tw"><table class="c"><tr><th>A</th><th>B</th><th>NOT A</th><th>NOT B</th><th>A AND NOT B</th><th>X</th></tr>
+<tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td><b>1</b></td></tr>
+<tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td><b>1</b></td></tr>
+<tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td><b>1</b></td></tr>
+<tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td><b>0</b></td></tr></table></div>
+<p>(This is the same as A NAND B.)</p>
+<h4>Circuit from a statement</h4>
+<ol class="steps"><li>Find the brackets. Each bracket is one gate.</li><li>Draw the gates for the brackets first (on the left).</li><li>Join their outputs into the last gate (on the right).</li><li>Put a NOT gate wherever you see NOT.</li></ol>
+<div class="svgwrap" data-svg="NOT A OR (A AND NOT B)"></div>
+<h4>Statement from words</h4>
+<p>“The alarm (X) sounds if the door is open (A = 1) <b>and</b> the system is on (B = 1), <b>or</b> if the panic button is pressed (C = 1).” → <b>X = (A AND B) OR C</b></p>
+<div class="tip">Read the words carefully: “and”, “or”, “not”. “Is not open” means NOT A.</div>
+</div></details>
+
+<details class="topic" data-theme="4B" data-topic="cpu"><summary>CPU, registers and fetch–decode–execute</summary><div class="in">
+<p>The <b>CPU</b> (Central Processing Unit) processes data and runs instructions.</p>
+<div class="tw"><table>
+<tr><th>Part</th><th>What it does</th></tr>
+<tr><td><b>ALU</b> (Arithmetic Logic Unit)</td><td>Does calculations (+, −) and logic comparisons (AND, OR, &gt;, =).</td></tr>
+<tr><td><b>CU</b> (Control Unit)</td><td>Controls the other parts. Decodes instructions. Sends control signals. Controls the flow of data.</td></tr>
+<tr><td><b>Registers</b></td><td>Very small, very fast memory inside the CPU.</td></tr>
+<tr><td>Clock</td><td>Sends regular pulses to keep all parts in time.</td></tr>
+<tr><td>Buses</td><td>Wires that carry data (data bus), addresses (address bus) and control signals (control bus).</td></tr>
+</table></div>
+<h4>Registers</h4>
+<div class="tw"><table>
+<tr><th>Register</th><th>What it holds</th></tr>
+<tr><td><b>PC</b> Program Counter</td><td>The <b>address</b> of the <b>next</b> instruction.</td></tr>
+<tr><td><b>MAR</b> Memory Address Register</td><td>The <b>ADDRESS</b> of the memory location to read from or write to.</td></tr>
+<tr><td><b>MDR / MBR</b> Memory Data Register / Memory Buffer Register</td><td>The <b>DATA or INSTRUCTION</b> that was read from memory, or will be written to memory.</td></tr>
+<tr><td><b>CIR</b> Current Instruction Register</td><td>The instruction being decoded and executed now.</td></tr>
+<tr><td><b>ACC</b> Accumulator</td><td>The result of a calculation in the ALU.</td></tr>
+</table></div>
+<div class="wrong"><b>MAR holds the ADDRESS.</b> <b>MDR/MBR holds the DATA or INSTRUCTION.</b> MBR and MDR are two names for the <b>same</b> register.</div>
+<h4>Fetch–decode–execute cycle</h4>
+<p><b>Fetch</b></p>
+<ol class="steps">
+<li>The address in the PC is copied to the MAR.</li>
+<li>The PC goes up by 1 (it now points to the next instruction).</li>
+<li>The instruction at that address is copied from memory to the MDR.</li>
+<li>The instruction is copied from the MDR to the CIR.</li>
+</ol>
+<p><b>Decode</b></p>
+<ol class="steps" start="5"><li>The <b>control unit</b> interprets (decodes) the instruction in the CIR. It finds the <b>opcode</b> (what to do) and the <b>operand</b> (the data or address to use).</li></ol>
+<p><b>Execute</b></p>
+<ol class="steps" start="6"><li>The instruction is carried out, e.g. the ALU does a sum and puts the result in the ACC, or data is loaded/stored.</li><li>The cycle repeats.</li></ol>
+<div class="wrong">“Decode” does <b>not</b> mean “translate to binary”. The instruction is already in binary. Decode = the control unit <b>interprets</b> the instruction in the CIR (opcode and operand).</div>
+<h4>Things that make the CPU work faster</h4>
+<ul><li>Higher <b>clock speed</b> (more cycles per second, GHz).</li><li>More <b>cores</b> (more instructions at the same time).</li><li>Bigger <b>cache</b> (less waiting for RAM).</li></ul>
+</div></details>
+
+<details class="topic" data-theme="4B" data-topic="intr"><summary>Interrupts, buffering, spooling, cache</summary><div class="in">
+<h4>Interrupt</h4>
+<p>A signal to the CPU that something needs attention <b>now</b>.</p>
+<p>Examples: printer out of paper, key pressed, mouse moved, a program error (divide by zero), a timer, a power failure.</p>
+<ol class="steps">
+<li>The CPU checks for interrupts at the end of each fetch–decode–execute cycle.</li>
+<li>If there is one, it saves the current job (the registers) on a stack.</li>
+<li>It runs the <b>interrupt service routine</b> (ISR) to deal with it.</li>
+<li>Then it loads the saved job back and carries on.</li>
+</ol>
+<p>Interrupts have <b>priorities</b>. A high-priority interrupt is dealt with first.</p>
+<h4>Buffer</h4>
+<p>A <b>buffer</b> is an area of memory that holds data for a short time while it moves between two devices that work at different speeds (e.g. CPU → printer).</p>
+<p>The CPU fills the buffer quickly and can do other work. The printer empties it slowly. When the buffer is empty, the printer sends an interrupt to ask for more.</p>
+<p>Example: video streaming. The video is buffered so it plays without stopping.</p>
+<h4>Spooling</h4>
+<p>Print jobs are stored on the <b>disk</b> in a queue (the spool). The printer prints them one by one.</p>
+<p>Why: many users can share one printer; jobs do not get mixed up; users do not wait for the printer — they can carry on working.</p>
+<h4>Cache</h4>
+<p><b>Cache</b> is a small, very fast memory close to (or inside) the CPU. It holds data and instructions that are used often.</p>
+<p>The CPU looks in cache first. This is quicker than going to RAM, so the computer works faster.</p>
+<div class="tw"><table><tr><th></th><th>Buffer</th><th>Cache</th></tr>
+<tr><td>Purpose</td><td>Holds data for a short time between devices of different speeds</td><td>Holds often-used data/instructions so the CPU gets them faster</td></tr>
+<tr><td>Example</td><td>Printer buffer, video buffer</td><td>CPU cache, web browser cache</td></tr></table></div>
+</div></details>
+
+<div class="thead" data-theme="4C">Theme 4C · Algorithms and programming</div>
+
+<details class="topic" data-theme="4C" data-topic="algo"><summary>Pseudocode and flowcharts</summary><div class="in">
+<p>An <b>algorithm</b> is a set of steps to solve a problem.</p>
+<h4>Pseudocode words</h4>
+<div class="tw"><table>
+<tr><th>Write</th><th>Meaning</th></tr>
+<tr><td><code>Total ← 0</code></td><td>Put 0 into Total (assignment)</td></tr>
+<tr><td><code>INPUT Mark</code></td><td>Read a value from the user</td></tr>
+<tr><td><code>OUTPUT Total</code> / <code>PRINT</code></td><td>Show a value</td></tr>
+<tr><td><code>IF … THEN … ELSE … ENDIF</code></td><td>Choose (selection)</td></tr>
+<tr><td><code>CASE OF … OTHERWISE … ENDCASE</code></td><td>Choose from many options</td></tr>
+<tr><td><code>FOR i ← 1 TO 10 … NEXT i</code></td><td>Repeat a <b>fixed</b> number of times</td></tr>
+<tr><td><code>WHILE … DO … ENDWHILE</code></td><td>Repeat while a condition is true. Test at the <b>start</b>; may run 0 times</td></tr>
+<tr><td><code>REPEAT … UNTIL …</code></td><td>Repeat until a condition is true. Test at the <b>end</b>; runs at least once</td></tr>
+<tr><td><code>MOD</code></td><td>Remainder: 17 MOD 5 = 2</td></tr>
+<tr><td><code>DIV</code></td><td>Whole-number division: 17 DIV 5 = 3</td></tr>
+<tr><td><code>&lt;&gt;</code></td><td>Not equal to</td></tr>
+</table></div>
+<h4>Standard methods</h4>
+<pre>// Totalling
+Total ← 0
+FOR i ← 1 TO 10
+    INPUT Price
+    Total ← Total + Price
+NEXT i
+
+// Counting
+Count ← 0
+...  IF Mark >= 50 THEN Count ← Count + 1
+
+// Highest
+Highest ← -1   (or the first value)
+...  IF Num > Highest THEN Highest ← Num
+
+// Average
+Average ← Total / Count</pre>
+<h4>Pass or fail algorithm</h4>
+<pre>INPUT Mark
+IF Mark >= 50 THEN
+    OUTPUT "Pass"
+ELSE
+    OUTPUT "Fail"
+ENDIF</pre>
+<div class="wrong">The pass test must be <b>Mark &gt;= 50</b> (50 or more passes). The booklet writes “mark &lt;= 50”, which would pass the low marks.</div>
+<h4>Validation loop (range check)</h4>
+<pre>REPEAT
+    INPUT Mark
+    IF Mark < 0 OR Mark > 100 THEN
+        OUTPUT "Error: enter 0 to 100"
+    ENDIF
+UNTIL Mark >= 0 AND Mark <= 100</pre>
+<div class="wrong">To reject bad marks use <b>Mark &lt; 0 OR Mark &gt; 100</b>. The booklet's “mark &lt; 0 and mark &gt; 0” can never be true and also uses the wrong limit.</div>
+<h4>Flowchart symbols</h4>
+<div class="tw"><table>
+<tr><th>Shape</th><th>Use</th></tr>
+<tr><td>Rounded box (terminator)</td><td>START / STOP</td></tr>
+<tr><td>Parallelogram</td><td>INPUT / OUTPUT</td></tr>
+<tr><td>Rectangle</td><td>Process (e.g. Total ← Total + 1)</td></tr>
+<tr><td>Diamond</td><td>Decision (Yes / No question)</td></tr>
+<tr><td>Arrow</td><td>Direction of flow</td></tr>
+</table></div>
+</div></details>
+
+<details class="topic" data-theme="4C" data-topic="trace"><summary>Trace tables</summary><div class="in">
+<p>A <b>trace table</b> records the value of each variable as an algorithm runs. It is used to test an algorithm and find errors (a “dry run”).</p>
+<ol class="steps">
+<li>Make one column for each variable and one for OUTPUT.</li>
+<li>Go through the code one line at a time.</li>
+<li>When a variable changes, write the new value in its column.</li>
+<li>When something is output, write it in OUTPUT.</li>
+</ol>
+<h4>Worked example</h4>
+<pre>Total ← 0
+FOR i ← 1 TO 3
+    INPUT Num
+    Total ← Total + Num
+NEXT i
+OUTPUT Total</pre>
+<p>Inputs: 4, 7, 2</p>
+<div class="tw"><table class="c"><tr><th>i</th><th>Num</th><th>Total</th><th>OUTPUT</th></tr>
+<tr><td></td><td></td><td>0</td><td></td></tr>
+<tr><td>1</td><td>4</td><td>4</td><td></td></tr>
+<tr><td>2</td><td>7</td><td>11</td><td></td></tr>
+<tr><td>3</td><td>2</td><td>13</td><td>13</td></tr></table></div>
+<div class="tip">Copy the input numbers carefully. Use them in the right order. Check every MOD and DIV twice.</div>
+</div></details>
+
+<details class="topic" data-theme="4C" data-topic="test"><summary>Test data and types of error</summary><div class="in">
+<h4>Test data (example: mark must be 0 to 100)</h4>
+<div class="tw"><table>
+<tr><th>Type</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
+<tr><td><b>Normal</b></td><td>Sensible data inside the range</td><td>45, 73</td><td>Accepted</td></tr>
+<tr><td><b>Extreme</b> (boundary)</td><td>Data <b>ON</b> the boundary: the smallest and largest allowed values</td><td>0 and 100</td><td><b>Accepted</b></td></tr>
+<tr><td><b>Abnormal</b> (erroneous)</td><td>Data <b>outside</b> the range or the wrong type</td><td>−5, 101, "ten"</td><td><b>Rejected</b></td></tr>
+</table></div>
+<div class="wrong">Extreme data is <b>ON</b> the boundary and is <b>accepted</b> (0 and 100). Abnormal data is <b>outside</b> the boundary and is <b>rejected</b> (−1, 101).</div>
+<h4>Types of error</h4>
+<div class="tw"><table>
+<tr><th>Error</th><th>Meaning</th><th>Example</th></tr>
+<tr><td><b>Syntax error</b></td><td>Breaks the rules of the language. The program will not run / translate.</td><td><code>PRNT "Hi"</code>, a missing bracket</td></tr>
+<tr><td><b>Logic error</b></td><td>The program runs but gives the wrong result.</td><td><code>IF Mark &lt;= 50</code> instead of <code>&gt;= 50</code>; <code>Average ← Total * Count</code></td></tr>
+<tr><td><b>Run-time error</b></td><td>The program crashes while running.</td><td>Divide by zero; file not found; out of memory</td></tr>
+</table></div>
+</div></details>
+
+<div class="thead" data-theme="3">Theme 3 · Spreadsheets and databases</div>
+
+<details class="topic" data-theme="3" data-topic="sheet"><summary>Spreadsheets: formulas and functions</summary><div class="in">
+<p>A <b>cell</b> is named by column and row, e.g. <b>B3</b>. A <b>range</b> is a block of cells, e.g. <b>B2:B10</b>.</p>
+<p>A <b>formula</b> starts with <b>=</b>. Example: <code>=B2*C2</code>.</p>
+<h4>Functions</h4>
+<div class="tw"><table>
+<tr><th>Function</th><th>What it does</th><th>Example</th></tr>
+<tr><td>SUM</td><td>Adds a range</td><td><code>=SUM(B2:B10)</code></td></tr>
+<tr><td>AVERAGE</td><td>Mean of a range</td><td><code>=AVERAGE(B2:B10)</code></td></tr>
+<tr><td>MAX / MIN</td><td>Largest / smallest</td><td><code>=MAX(B2:B10)</code></td></tr>
+<tr><td>COUNT</td><td>Counts cells with numbers</td><td><code>=COUNT(B2:B10)</code></td></tr>
+<tr><td>COUNTIF</td><td>Counts cells that meet a condition</td><td><code>=COUNTIF(C2:C30,"Pass")</code><br><code>=COUNTIF(B2:B30,"&gt;=50")</code></td></tr>
+<tr><td>IF</td><td>Gives one result if true, another if false</td><td><code>=IF(B2&gt;=50,"Pass","Fail")</code></td></tr>
+<tr><td>VLOOKUP</td><td>Looks up a value in the first column of a table and returns a value from another column</td><td><code>=VLOOKUP(A2,$F$2:$G$6,2,FALSE)</code></td></tr>
+</table></div>
+<h4>VLOOKUP step by step</h4>
+<p><code>=VLOOKUP(A2, $F$2:$G$6, 2, FALSE)</code></p>
+<ol class="steps"><li><b>A2</b> = the value to look for (e.g. a product code).</li><li><b>$F$2:$G$6</b> = the table to look in. The code must be in its first column.</li><li><b>2</b> = return the value from the 2nd column of that table.</li><li><b>FALSE</b> = find an exact match.</li></ol>
+<h4>Relative and absolute references</h4>
+<ul>
+<li><b>Relative</b> (B2): changes when the formula is copied. =B2*C2 copied down becomes =B3*C3.</li>
+<li><b>Absolute</b> ($B$1): does <b>not</b> change when copied. Use it for one fixed cell, e.g. a VAT rate or exchange rate.</li>
+</ul>
+<p>Example: VAT rate is in B1. In C2: <code>=B2*$B$1</code>. Copied down to C3: <code>=B3*$B$1</code>. The $B$1 stays the same.</p>
+<div class="tip">If a formula is copied and gives wrong answers, the fixed cell probably needs $ signs.</div>
+<h4>Other words</h4>
+<ul><li><b>Replication</b> = copying a formula to other cells.</li><li><b>Modelling / “what if”</b>: change a value and see what happens to the results.</li><li>Charts: bar (compare), line (change over time), pie (parts of a whole).</li></ul>
+</div></details>
+
+<details class="topic" data-theme="3" data-topic="db"><summary>Databases</summary><div class="in">
+<p>A <b>database</b> is an organised store of data.</p>
+<ul><li><b>Table</b>: data about one type of thing (e.g. Students).</li><li><b>Record</b>: one row = all data about one item (one student).</li><li><b>Field</b>: one column = one piece of data (e.g. Surname).</li></ul>
+<h4>Keys</h4>
+<ul>
+<li><b>Primary key</b>: a field that is <b>unique</b> for every record, e.g. StudentID. It identifies each record.</li>
+<li><b>Foreign key</b>: a field in one table that is the primary key of another table. It links (relates) the tables.</li>
+</ul>
+<div class="tip">Surname or Date of birth are <b>bad</b> primary keys: two people can have the same one.</div>
+<h4>Data types</h4>
+<div class="tw"><table>
+<tr><th>Type</th><th>Use</th><th>Example</th></tr>
+<tr><td>Text / alphanumeric</td><td>Letters, or numbers not used for sums (phone numbers, IDs with letters)</td><td>"Ndapewa", "081 234 5678"</td></tr>
+<tr><td>Integer</td><td>Whole numbers</td><td>17</td></tr>
+<tr><td>Real / decimal / currency</td><td>Numbers with decimals, money</td><td>12.50</td></tr>
+<tr><td>Date/Time</td><td>Dates and times</td><td>10/11/2026</td></tr>
+<tr><td>Boolean / Yes-No</td><td>Only two values</td><td>True / False</td></tr>
+</table></div>
+<div class="tip">A phone number is <b>text</b>: it can start with 0, has spaces, and you never do sums with it.</div>
+<h4>Queries (search criteria)</h4>
+<div class="tw"><table>
+<tr><th>Want</th><th>Criteria</th></tr>
+<tr><td>Age over 16</td><td><code>&gt;16</code></td></tr>
+<tr><td>Grade 11 and region Kavango West</td><td><code>Grade = 11 AND Region = "Kavango West"</code></td></tr>
+<tr><td>Price from 100 to 200</td><td><code>&gt;=100 AND &lt;=200</code></td></tr>
+<tr><td>Colour red or blue</td><td><code>"Red" OR "Blue"</code></td></tr>
+<tr><td>Surnames starting with M</td><td><code>LIKE "M*"</code></td></tr>
+</table></div>
+<p>Sorting: <b>ascending</b> = A→Z, 1→9. <b>Descending</b> = Z→A, 9→1.</p>
+</div></details>
+
+<details class="topic" data-theme="3" data-topic="valid"><summary>Validation and verification</summary><div class="in">
+<div class="key"><b>Validation</b> = the <b>computer</b> checks that data is <b>sensible / reasonable</b> and follows rules.<br><b>Verification</b> = checks that data was <b>copied or typed correctly</b> (it matches the original).</div>
+<p>Validation cannot tell if data is <b>true</b>. Age 15 passes a range check even if the person is really 16. Verification can catch that typing error.</p>
+<h4>Validation checks</h4>
+<div class="tw"><table>
+<tr><th>Check</th><th>What it does</th><th>Example</th></tr>
+<tr><td><b>Range</b></td><td>Value is between a lowest and highest value</td><td>Mark 0 to 100</td></tr>
+<tr><td><b>Type</b></td><td>Data is the right data type</td><td>Age must be a whole number, not "ten"</td></tr>
+<tr><td><b>Presence</b></td><td>Field is not left empty</td><td>Surname must be entered</td></tr>
+<tr><td><b>Length</b></td><td>Right number of characters</td><td>Password at least 8 characters; ID exactly 11 digits</td></tr>
+<tr><td><b>Format</b></td><td>Data follows a pattern</td><td>Date as DD/MM/YYYY; code as AA9999</td></tr>
+<tr><td><b>Check digit</b></td><td>Last digit is worked out from the others</td><td>ISBN, barcode</td></tr>
+</table></div>
+<h4>Verification methods</h4>
+<ul>
+<li><b>Double entry</b>: the data is typed twice. The computer compares the two. If different → error. (e.g. “confirm password”, “confirm e-mail”)</li>
+<li><b>Visual check</b>: a person compares the data on screen with the original document.</li>
+</ul>
+<div class="tip"><b>Do not mix them up!</b> “Typing a password twice” is <b>verification</b> (double entry), not validation.</div>
+</div></details>
+
+<div class="thead" data-theme="5">Theme 5 · Hardware, networks and software</div>
+
+<details class="topic" data-theme="5" data-topic="io"><summary>Input devices, output devices and sensors</summary><div class="in">
+<h4>Input devices</h4>
+<div class="tw"><table>
+<tr><th>Device</th><th>Use / note</th></tr>
+<tr><td>Keyboard</td><td>Typing text and numbers</td></tr>
+<tr><td>Mouse, touchpad</td><td>Pointing and selecting on screen</td></tr>
+<tr><td>Touch screen</td><td>Input and output; ATMs, phones, POS</td></tr>
+<tr><td>Barcode scanner</td><td>Reads barcodes in shops; fast and accurate</td></tr>
+<tr><td>QR code reader (camera)</td><td>Reads QR codes, e.g. web links, payments</td></tr>
+<tr><td>Microphone</td><td>Sound, voice commands</td></tr>
+<tr><td>Webcam / digital camera</td><td>Video calls, photos</td></tr>
+<tr><td>Scanner</td><td>Turns a paper document into a digital image</td></tr>
+<tr><td>OCR</td><td>Reads printed text into editable text</td></tr>
+<tr><td>OMR</td><td>Reads marks on forms, e.g. multiple-choice answer sheets</td></tr>
+<tr><td>MICR</td><td>Reads magnetic ink numbers on cheques</td></tr>
+<tr><td>Chip and PIN reader / contactless (RFID/NFC)</td><td>Bank card payments</td></tr>
+<tr><td>Biometric scanner</td><td>Fingerprint, face, iris for security</td></tr>
+</table></div>
+<h4>Output devices</h4>
+<div class="tw"><table>
+<tr><th>Device</th><th>Use / note</th></tr>
+<tr><td>Monitor / screen</td><td>Shows text, images, video</td></tr>
+<tr><td>Laser printer</td><td>Fast, quiet, high quality; good for many pages</td></tr>
+<tr><td>Inkjet printer</td><td>Cheap to buy, good for photos; slow for many pages</td></tr>
+<tr><td>Dot matrix printer</td><td>Impact printer; multi-part (carbon copy) forms; noisy</td></tr>
+<tr><td>3D printer</td><td>Makes solid objects layer by layer</td></tr>
+<tr><td>Speakers / headphones</td><td>Sound</td></tr>
+<tr><td>Projector</td><td>Large image for a class or meeting</td></tr>
+<tr><td>Actuator / motor</td><td>Makes something move in a control system (opens a valve, window)</td></tr>
+</table></div>
+<h4>Sensors</h4>
+<p>A sensor measures a physical quantity and sends the data to a computer. It needs an <b>ADC</b> (analogue-to-digital converter) because the computer only works with digital data.</p>
+<div class="tw"><table>
+<tr><th>Sensor</th><th>Example use</th></tr>
+<tr><td>Temperature</td><td>Greenhouse, air conditioner, oven</td></tr>
+<tr><td>Light</td><td>Street lights, greenhouse</td></tr>
+<tr><td>Moisture / humidity</td><td>Watering crops, greenhouse</td></tr>
+<tr><td>Pressure</td><td>Burglar alarm (stepped on), car tyres</td></tr>
+<tr><td>Infrared / motion</td><td>Burglar alarm, automatic doors</td></tr>
+<tr><td>Sound</td><td>Alarm systems</td></tr>
+<tr><td>pH</td><td>Water quality, soil, fish tanks</td></tr>
+<tr><td>Gas (e.g. CO<sub>2</sub>, smoke)</td><td>Fire alarm, greenhouse</td></tr>
+</table></div>
+<div class="tip">A sensor does <b>not</b> decide anything. It only measures. The <b>computer/microprocessor</b> compares the reading with a set value and decides.</div>
+</div></details>
+
+<details class="topic" data-theme="5" data-topic="stor"><summary>Storage and memory</summary><div class="in">
+<div class="tw"><table>
+<tr><th>Type</th><th>Meaning</th><th>Examples</th></tr>
+<tr><td><b>Primary</b></td><td>Memory the CPU can use directly</td><td>RAM, ROM (and cache)</td></tr>
+<tr><td><b>Secondary</b></td><td>Long-term storage inside the computer; not directly used by the CPU</td><td>Hard disk (HDD), solid state drive (SSD)</td></tr>
+<tr><td><b>Off-line</b></td><td>Storage that can be removed and taken away</td><td>USB flash drive, memory card, CD/DVD/Blu-ray, external hard disk, magnetic tape</td></tr>
+</table></div>
+<h4>RAM and ROM</h4>
+<div class="tw"><table>
+<tr><th></th><th>RAM</th><th>ROM</th></tr>
+<tr><td>Name</td><td>Random Access Memory</td><td>Read Only Memory</td></tr>
+<tr><td>Power off</td><td><b>Volatile</b>: data is lost</td><td><b>Non-volatile</b>: data stays</td></tr>
+<tr><td>Change data?</td><td>Read and write</td><td>Read only (cannot normally be changed)</td></tr>
+<tr><td>Holds</td><td>Programs and data in use now; part of the OS</td><td>The start-up instructions (BIOS / boot program)</td></tr>
+<tr><td>Size</td><td>Bigger (e.g. 8 GB)</td><td>Small</td></tr>
+</table></div>
+<h4>Storage media</h4>
+<div class="tw"><table>
+<tr><th>Medium</th><th>Type</th><th>Good</th><th>Bad</th></tr>
+<tr><td>Hard disk (HDD)</td><td>Magnetic</td><td>Large capacity, low cost per GB</td><td>Moving parts, can break if dropped, slower than SSD</td></tr>
+<tr><td>SSD / flash</td><td>Solid state (flash memory)</td><td>No moving parts, fast access, light, uses little power</td><td>More expensive per GB; limited number of writes</td></tr>
+<tr><td>USB flash drive, memory card</td><td>Solid state</td><td>Small, portable</td><td>Easy to lose / steal</td></tr>
+<tr><td>CD / DVD / Blu-ray</td><td>Optical (laser)</td><td>Cheap, portable</td><td>Small capacity, scratches</td></tr>
+<tr><td>Magnetic tape</td><td>Magnetic</td><td>Huge capacity, cheap; backups</td><td>Serial access: slow to find data</td></tr>
+<tr><td>Cloud storage</td><td>Online servers</td><td>Access from anywhere, automatic backup</td><td>Needs internet; security / privacy risk</td></tr>
+</table></div>
+<p>Capacity order: CD (700 MB) &lt; DVD (4.7 GB) &lt; Blu-ray (25 GB) &lt; flash/SSD/HDD (hundreds of GB to TB).</p>
+<p>Units: 8 bits = 1 byte; 1024 bytes = 1 KB; 1024 KB = 1 MB; 1024 MB = 1 GB; 1024 GB = 1 TB.</p>
+</div></details>
+
+<details class="topic" data-theme="5" data-topic="net"><summary>Networks and network devices</summary><div class="in">
+<h4>Types of network</h4>
+<div class="tw"><table>
+<tr><th>Type</th><th>Meaning</th></tr>
+<tr><td><b>LAN</b> Local Area Network</td><td>Small area: one building or school. Owned by the organisation.</td></tr>
+<tr><td><b>WLAN</b> Wireless LAN</td><td>A LAN that uses Wi-Fi (radio waves) instead of cables.</td></tr>
+<tr><td><b>WAN</b> Wide Area Network</td><td>Large area: towns or countries. The internet is the biggest WAN.</td></tr>
+</table></div>
+<h4>Advantages and disadvantages of networks</h4>
+<ul><li>✓ Share files, printers and the internet connection.</li><li>✓ Users can log on at any computer and communicate (e-mail, messages).</li><li>✓ Software can be installed and backed up centrally.</li><li>✗ Viruses can spread to all computers.</li><li>✗ Hacking risk; a server failure can stop everyone.</li><li>✗ Cost of cables, devices and a network manager.</li></ul>
+<h4>Network devices</h4>
+<div class="tw"><table>
+<tr><th>Device</th><th>What it does</th></tr>
+<tr><td><b>NIC</b> Network Interface Card</td><td>Lets a device connect to a network. Has a MAC address.</td></tr>
+<tr><td><b>Hub</b></td><td>Connects devices in a LAN. Sends data to <b>all</b> devices.</td></tr>
+<tr><td><b>Switch</b></td><td>Connects devices in a LAN. Sends data only to the <b>correct</b> device (uses MAC addresses). Less traffic than a hub.</td></tr>
+<tr><td><b>Router</b></td><td>Connects different networks, e.g. a LAN to the internet. Sends data packets to the correct network using IP addresses.</td></tr>
+<tr><td><b>Modem</b></td><td>Changes digital data to analogue signals (and back) to send over telephone lines.</td></tr>
+<tr><td><b>Wireless access point (WAP)</b></td><td>Lets wireless devices connect to a wired network.</td></tr>
+<tr><td><b>Bridge</b></td><td>Joins two LANs of the same type.</td></tr>
+<tr><td><b>Gateway</b></td><td>Joins networks that use different protocols.</td></tr>
+</table></div>
+<h4>Wired vs wireless</h4>
+<div class="tw"><table><tr><th></th><th>Wired (cable)</th><th>Wireless (Wi-Fi)</th></tr>
+<tr><td>Speed</td><td>Usually faster and steadier</td><td>Can be slower; walls cause interference</td></tr>
+<tr><td>Security</td><td>Harder to tap</td><td>Signals can be picked up; needs encryption</td></tr>
+<tr><td>Movement</td><td>Device stays in one place</td><td>Users can move around</td></tr>
+<tr><td>Cost</td><td>Cables cost money, holes in walls</td><td>No cables</td></tr></table></div>
+<h4>Other terms</h4>
+<ul>
+<li><b>IP address</b>: address given to a device on a network/the internet (e.g. 192.168.1.5). Can change.</li>
+<li><b>MAC address</b>: fixed address of the NIC.</li>
+<li><b>Bluetooth</b>: short-range wireless between two devices (about 10 m).</li>
+<li><b>Intranet</b>: a private network inside an organisation. <b>Internet</b>: the worldwide network.</li>
+<li><b>Protocol</b>: a set of rules for sending data (e.g. HTTP, HTTPS, FTP, TCP/IP).</li>
+<li><b>Bandwidth</b>: how much data can be sent per second.</li>
+<li>Topologies: <b>star</b> (all to a central switch; one cable break affects one device), <b>bus</b> (one main cable; a break stops all), <b>ring</b>, <b>mesh</b>.</li>
+</ul>
+</div></details>
+
+<details class="topic" data-theme="5" data-topic="os"><summary>Operating systems, interfaces and utilities</summary><div class="in">
+<p><b>System software</b> runs the computer (OS, utilities). <b>Application software</b> does a user's task (word processor, spreadsheet, browser).</p>
+<h4>Jobs of the operating system</h4>
+<ul>
+<li>Manages <b>memory</b> (which program uses which part of RAM).</li>
+<li>Manages <b>files</b> (save, open, copy, delete, folders).</li>
+<li>Manages <b>input/output devices</b> (uses drivers).</li>
+<li>Manages <b>processes</b> / multitasking (sharing the CPU).</li>
+<li>Handles <b>interrupts</b>.</li>
+<li>Provides <b>security</b> (user accounts, passwords, access rights).</li>
+<li>Provides the <b>user interface</b>.</li>
+</ul>
+<p>Examples: Windows, macOS, Linux, Android, iOS.</p>
+<h4>User interfaces</h4>
+<div class="tw"><table>
+<tr><th>Interface</th><th>Good</th><th>Bad</th></tr>
+<tr><td><b>CLI</b> Command Line Interface (type commands)</td><td>Uses little memory; experts can do things quickly; full control</td><td>Must learn the commands; typing errors</td></tr>
+<tr><td><b>GUI</b> Graphical User Interface (WIMP: windows, icons, menus, pointer)</td><td>Easy for beginners; no commands to learn</td><td>Uses more memory and processing</td></tr>
+<tr><td><b>Menu-driven</b></td><td>Simple choices, e.g. ATM; few errors</td><td>Can be slow with many menus</td></tr>
+<tr><td><b>Touch / voice</b></td><td>Natural; hands-free (voice)</td><td>Voice can mishear; noise</td></tr>
+</table></div>
+<h4>Utility programs</h4>
+<div class="tw"><table>
+<tr><th>Utility</th><th>What it does</th></tr>
+<tr><td>Anti-virus</td><td>Scans files, finds and removes / quarantines viruses</td></tr>
+<tr><td>Disk defragmenter</td><td>Puts the parts of files back together on a hard disk so files load faster</td></tr>
+<tr><td>Backup</td><td>Makes copies of files to restore if lost</td></tr>
+<tr><td>File compression</td><td>Makes files smaller (e.g. ZIP)</td></tr>
+<tr><td>Disk formatter</td><td>Prepares a disk for use (erases it)</td></tr>
+<tr><td>Firewall</td><td>Checks network traffic and blocks unwanted access</td></tr>
+<tr><td>Encryption software</td><td>Scrambles data so others cannot read it</td></tr>
+</table></div>
+<p><b>Device driver</b>: software that lets the OS talk to a device (e.g. a printer).</p>
+</div></details>
+
+<div class="thead" data-theme="12">Themes 1 and 2 · Systems and society</div>
+
+<details class="topic" data-theme="12" data-topic="sdlc"><summary>System life cycle</summary><div class="in">
+<p>The stages in order: <b>Analysis → Design → Development and testing → Implementation → Documentation → Evaluation</b>.</p>
+<div class="tw"><table>
+<tr><th>Stage</th><th>What happens</th><th>Key words</th></tr>
+<tr><td><b>Analysis</b></td><td>Study the <b>current</b> system. Find the problems. Decide what the new system must do.</td><td>Interviews, questionnaires, observation, looking at documents; user requirements</td></tr>
+<tr><td><b>Design</b></td><td><b>Plan</b> the new system on paper.</td><td>Input forms/screens, output reports, file structure (fields, data types), validation rules, test plan, algorithms/flowcharts</td></tr>
+<tr><td><b>Development and testing</b></td><td><b>Build</b> the system and <b>test</b> it.</td><td>Create the database/program; test with normal, extreme and abnormal data</td></tr>
+<tr><td><b>Implementation</b></td><td><b>Put the new system into use</b> at the organisation.</td><td>Changeover method, train staff, transfer the data</td></tr>
+<tr><td><b>Documentation</b></td><td>Write guides.</td><td>User guide, technical guide</td></tr>
+<tr><td><b>Evaluation</b></td><td>Check the new system works and meets the requirements.</td><td>Compare with the requirements; get user feedback; find limitations</td></tr>
+</table></div>
+<div class="key"><b>Design</b> = plan on paper. <b>Development</b> = build it. <b>Implementation</b> = start using it in the real organisation.</div>
+<h4>Fact-finding methods (Analysis)</h4>
+<div class="tw"><table><tr><th>Method</th><th>Good</th><th>Bad</th></tr>
+<tr><td>Interview</td><td>Can ask follow-up questions; detailed answers</td><td>Takes time; few people</td></tr>
+<tr><td>Questionnaire</td><td>Many people quickly; can be anonymous</td><td>People may not answer or not answer honestly; cannot ask follow-ups</td></tr>
+<tr><td>Observation</td><td>See what really happens</td><td>People may work differently when watched</td></tr>
+<tr><td>Look at documents</td><td>Shows data used now</td><td>Takes time; documents may be out of date</td></tr></table></div>
+<h4>Changeover (implementation) methods</h4>
+<div class="tw"><table>
+<tr><th>Method</th><th>How</th><th>Good</th><th>Bad</th></tr>
+<tr><td><b>Direct</b></td><td>Old system stops; new one starts the next day</td><td>Quick, cheap; benefits at once</td><td>If the new system fails there is no backup</td></tr>
+<tr><td><b>Parallel</b></td><td>Old and new run at the same time for a while</td><td>If the new one fails, the old one is still there; results can be compared</td><td>Double work for staff; costly</td></tr>
+<tr><td><b>Phased</b></td><td>New system is brought in one part at a time</td><td>Each part can be tested; problems only affect one part</td><td>Slow to finish</td></tr>
+<tr><td><b>Pilot</b></td><td>New system is tried in one branch/department first</td><td>Problems found before the whole organisation uses it; staff there can train others</td><td>Slow; the pilot branch takes the risk</td></tr>
+</table></div>
+<h4>Documentation</h4>
+<ul>
+<li><b>User documentation</b>: how to use the system: how to start it, enter data, save, print, error messages, FAQs.</li>
+<li><b>Technical documentation</b>: how the system works, for people who maintain it: program code, algorithms/flowcharts, file structures, hardware/software requirements, test results.</li>
+</ul>
+</div></details>
+
+<details class="topic" data-theme="12" data-topic="apps"><summary>Computer applications (POS, payroll, control, expert systems)</summary><div class="in">
+<h4>Point of sale (POS) in a supermarket</h4>
+<ol class="steps">
+<li>The barcode on the item is scanned.</li>
+<li>The barcode number is looked up in the stock file (database).</li>
+<li>The price and description are sent back to the till and shown/printed on the receipt.</li>
+<li>The stock level is reduced by 1.</li>
+<li>If the stock level is below the re-order level, the item is re-ordered automatically.</li>
+<li>Payment by cash, card (chip and PIN / contactless) or mobile.</li>
+</ol>
+<p>If the barcode will not scan, the cashier types the number in (it has a check digit).</p>
+<h4>Payroll</h4>
+<ul>
+<li>Inputs: employee ID, hours worked, rate of pay (from timesheets or a clock-in system).</li>
+<li>Processing: pay = hours × rate (+ overtime), minus tax and deductions. Done in a <b>batch</b>, e.g. at the end of the month.</li>
+<li>Outputs: payslips, bank payments (to employees' accounts), reports.</li>
+<li><b>Batch processing</b>: data is collected and processed all together later, without people watching. Good for payroll and bills.</li>
+</ul>
+<h4>Control systems</h4>
+<p>Example: greenhouse temperature.</p>
+<ol class="steps">
+<li>A temperature sensor measures the temperature all the time.</li>
+<li>The reading goes through an ADC to the microprocessor.</li>
+<li>The microprocessor compares the reading with the set (pre-set) value.</li>
+<li>If it is too low, it sends a signal to an actuator to switch the heater on (or close the window). If too high, heater off / open the window / fan on.</li>
+<li>This repeats in a loop (feedback).</li>
+</ol>
+<p>Other examples: traffic lights, washing machines, burglar alarms, automatic doors, air conditioning.</p>
+<p><b>Real-time</b> processing: input is processed at once (e.g. control systems, booking seats).</p>
+<h4>Expert systems</h4>
+<p>A program that gives advice like a human expert. Examples: medical diagnosis, car repair, mineral prospecting, financial advice.</p>
+<div class="tw"><table><tr><th>Part</th><th>What it does</th></tr>
+<tr><td>User interface</td><td>Asks questions; user enters answers (symptoms)</td></tr>
+<tr><td>Knowledge base</td><td>Facts collected from experts</td></tr>
+<tr><td>Rule base</td><td>IF … THEN rules</td></tr>
+<tr><td>Inference engine</td><td>Uses the rules and the knowledge base to reach conclusions</td></tr>
+<tr><td>Explanation system</td><td>Explains how it reached the answer, with probabilities</td></tr></table></div>
+<p>How to build one: interview experts → build the knowledge base → make the rules → design the interface → test with known cases.</p>
+</div></details>
+
+<details class="topic" data-theme="12" data-topic="sec"><summary>Computer crime, security, health and safety</summary><div class="in">
+<h4>Threats</h4>
+<div class="tw"><table>
+<tr><th>Threat</th><th>Meaning</th></tr>
+<tr><td><b>Hacking</b></td><td>Getting into a computer system without permission.</td></tr>
+<tr><td><b>Virus / malware</b></td><td>A program that copies itself and damages or deletes data, or slows the computer.</td></tr>
+<tr><td><b>Spyware / key logger</b></td><td>Secretly records key presses to steal passwords.</td></tr>
+<tr><td><b>Phishing</b></td><td>A fake e-mail/SMS that looks real and asks for personal details or a click on a link.</td></tr>
+<tr><td><b>Pharming</b></td><td>Code that sends the user to a fake website even if they type the right address.</td></tr>
+<tr><td><b>Card fraud / skimming</b></td><td>Copying card details (e.g. a device on an ATM; shoulder surfing).</td></tr>
+<tr><td><b>Software piracy</b></td><td>Copying or selling software illegally (breaks copyright).</td></tr>
+<tr><td><b>Identity theft</b></td><td>Using someone's personal details to pretend to be them.</td></tr>
+</table></div>
+<h4>Ways to protect data</h4>
+<div class="tw"><table>
+<tr><th>Method</th><th>How it helps</th></tr>
+<tr><td>Strong passwords / PIN</td><td>Only people who know it can log in. Use letters, numbers and symbols; change it often.</td></tr>
+<tr><td>Biometrics</td><td>Fingerprint/face is unique and cannot be forgotten or easily copied.</td></tr>
+<tr><td>Firewall</td><td>Checks data coming in and going out; blocks unauthorised access.</td></tr>
+<tr><td>Anti-virus software</td><td>Scans for viruses and removes or quarantines them. Keep it updated.</td></tr>
+<tr><td>Encryption</td><td>Scrambles data. If stolen, it cannot be understood without the key.</td></tr>
+<tr><td>Access rights / user levels</td><td>Users can only see or change the data they need.</td></tr>
+<tr><td>Backups</td><td>Copies kept somewhere else, so lost data can be restored.</td></tr>
+<tr><td>Physical security</td><td>Locks, security guards, CCTV, ID cards.</td></tr>
+<tr><td>Two-factor authentication</td><td>A second code (e.g. sent by SMS) as well as the password.</td></tr>
+<tr><td>HTTPS / padlock</td><td>The website uses a secure, encrypted connection.</td></tr>
+</table></div>
+<h4>Health problems</h4>
+<div class="tw"><table>
+<tr><th>Problem</th><th>Cause</th><th>Prevention</th></tr>
+<tr><td>RSI (repetitive strain injury) in wrists/fingers</td><td>Typing / using a mouse for a long time</td><td>Wrist rests, ergonomic keyboard, regular breaks</td></tr>
+<tr><td>Back and neck pain</td><td>Bad posture, wrong chair</td><td>Adjustable chair with back support, screen at eye level</td></tr>
+<tr><td>Eye strain, headaches</td><td>Looking at the screen too long; glare</td><td>Regular breaks, anti-glare screen, good lighting</td></tr>
+</table></div>
+<h4>Safety risks</h4>
+<div class="tw"><table>
+<tr><th>Risk</th><th>Cause</th><th>Prevention</th></tr>
+<tr><td>Electrocution</td><td>Water near computers; bare wires</td><td>No drinks near computers; check cables</td></tr>
+<tr><td>Tripping</td><td>Trailing cables</td><td>Cable ducts; cables under the floor; wireless</td></tr>
+<tr><td>Fire</td><td>Too many plugs in one socket; overheating</td><td>Do not overload sockets; ventilation; CO<sub>2</sub> fire extinguishers</td></tr>
+<tr><td>Heavy equipment falling</td><td>Weak or small desks</td><td>Strong desks; put equipment in the middle</td></tr>
+</table></div>
+<div class="tip"><b>Health</b> = harm to your body over time (RSI, eye strain). <b>Safety</b> = accidents (fire, tripping, electric shock). Do not mix them.</div>
+</div></details>
+
+<details class="topic" data-theme="12" data-topic="howto"><summary>How to answer written questions</summary><div class="in">
+<div class="tw"><table>
+<tr><th>Command word</th><th>What to write</th><th>Example</th></tr>
+<tr><td><b>State / Name / Give</b></td><td>A short answer. A word or phrase is fine.</td><td>“State one input device.” → Barcode scanner</td></tr>
+<tr><td><b>Describe</b></td><td>Say what it is / what happens, step by step.</td><td>“Describe a buffer.” → An area of memory that holds data for a short time while it is sent between two devices that work at different speeds.</td></tr>
+<tr><td><b>Explain</b></td><td>Say <b>why</b> or <b>how</b>. Use “because…”, “so that…”.</td><td>“Explain why an SSD is used in a laptop.” → It has no moving parts, <b>so</b> it is not damaged if the laptop is dropped.</td></tr>
+</table></div>
+<ul>
+<li>Look at the marks: [3] needs 3 different points.</li>
+<li>Naming only gets <b>0</b> for describe/explain.</li>
+<li>“Faster”, “cheaper”, “easier” alone get <b>0</b>. Say faster <b>than what</b> and <b>why</b>.</li>
+<li>Do not repeat the same point in new words.</li>
+<li>Use the scenario: if the question is about a school, write about the school.</li>
+</ul>
+</div></details>
 <!--@@NOTES-MORE@@-->
 </template>
 
@@ -992,6 +1573,160 @@ var BANK = [
   { id: 'cp4', t: 'comp', type: 'mc', q: 'What happens to a photo saved as JPEG?', o: ['Its quality is reduced a little (lossy)', 'Nothing is lost (lossless)', 'It becomes a video'], a: 0, why: 'JPEG is lossy. Some data is removed, so the quality IS reduced.' },
   { id: 'cp5', t: 'comp', m: 3, cmd: 'State', q: 'State <b>three</b> reasons for compressing files.', p: ['Uses less storage space', 'Takes less time to upload / download / send', 'Uses less bandwidth', 'Can attach / send files that would be too big'] },
   { id: 'nm1', t: 'num', m: 2, cmd: 'Explain', f: ['describe'], q: 'Explain why computers use binary.', p: ['Computers are made of switches / transistors / circuits', 'that have only two states: on (1) and off (0)'] }
+  ,
+  // ---------- 4B logic (words) ----------
+  { id: 'lg1', t: 'logic', m: 2, cmd: 'Write', q: 'A pump (X) switches on if the water level is low (A = 1) <b>and</b> the tank is <b>not</b> empty (B = 0). Write the logic statement.', p: ['X = A AND NOT B (1 mark for A AND, 1 mark for NOT B)', 'Correct brackets / correct gates in the right order'] },
+  { id: 'lg2', t: 'logic', type: 'mc', q: 'Which gate gives 1 only when its two inputs are <b>different</b>?', o: ['AND', 'OR', 'XOR', 'NOR'], a: 2, why: 'XOR = exclusive OR: 1 when the inputs are different.' },
+  { id: 'lg3', t: 'logic', type: 'mc', q: 'Which gate gives 0 only when both inputs are 1?', o: ['NAND', 'NOR', 'AND', 'XOR'], a: 0, why: 'NAND is NOT AND. AND gives 1 only for 1,1; so NAND gives 0 only for 1,1.' },
+  { id: 'lg4', t: 'logic', type: 'mc', q: 'A logic circuit has 3 inputs. How many rows does its truth table have?', o: ['3', '6', '8', '9'], a: 2, why: '2 × 2 × 2 = 8 rows (000 to 111).' },
+  { id: 'lg5', t: 'logic', m: 2, cmd: 'Write', q: 'An alarm (X) sounds if a window is open (W = 1) <b>or</b> the door is open (D = 1), but only when the alarm is switched on (S = 1). Write the logic statement.', p: ['(W OR D) …', '… AND S, i.e. X = (W OR D) AND S'] },
+  // ---------- 4B CPU ----------
+  { id: 'cp_1', t: 'cpu', m: 2, cmd: 'State', q: 'State the purpose of the <b>MAR</b> and the <b>MDR</b>.', p: ['MAR holds the ADDRESS of the memory location to be read from / written to', 'MDR holds the DATA or INSTRUCTION read from / to be written to memory'] },
+  { id: 'cp_2', t: 'cpu', m: 4, cmd: 'Describe', q: 'Describe the <b>fetch</b> stage of the fetch–decode–execute cycle.', p: ['The address in the PC is copied to the MAR', 'The PC is incremented (goes up by 1)', 'The instruction at that address is copied from memory into the MDR', 'The instruction is copied from the MDR into the CIR', '(Address sent on the address bus / data comes back on the data bus)'] },
+  { id: 'cp_3', t: 'cpu', m: 2, cmd: 'Describe', q: 'Describe what happens in the <b>decode</b> stage.', p: ['The control unit interprets / decodes the instruction in the CIR', 'It splits it into the opcode (what to do) and operand (data or address)'], note: '“Changes it into binary” scores 0: the instruction is already binary.' },
+  { id: 'cp_4', t: 'cpu', m: 2, cmd: 'State', q: 'State <b>two</b> jobs of the Arithmetic Logic Unit (ALU).', p: ['Does arithmetic / calculations (add, subtract)', 'Does logic operations / comparisons (AND, OR, greater than, equal to)', 'Stores the result in the accumulator'] },
+  { id: 'cp_5', t: 'cpu', m: 2, cmd: 'State', q: 'State <b>two</b> jobs of the Control Unit (CU).', p: ['Decodes instructions', 'Sends control signals to other parts of the computer', 'Controls the flow of data in the CPU / between CPU and memory', 'Manages the fetch–decode–execute cycle / uses the clock'] },
+  { id: 'cp_6', t: 'cpu', type: 'mc', q: 'Which register holds the address of the <b>next</b> instruction?', o: ['PC', 'MAR', 'MDR', 'ACC'], a: 0, why: 'The Program Counter points to the next instruction.' },
+  { id: 'cp_7', t: 'cpu', type: 'mc', q: 'Which register holds the result of a calculation done by the ALU?', o: ['CIR', 'Accumulator (ACC)', 'MAR', 'PC'], a: 1, why: 'The accumulator holds results from the ALU.' },
+  { id: 'cp_8', t: 'cpu', type: 'mc', q: 'MBR and MDR are…', o: ['the same register', 'two different registers', 'types of RAM'], a: 0, why: 'Memory Buffer Register and Memory Data Register are two names for one register.' },
+  { id: 'cp_9', t: 'cpu', m: 3, cmd: 'Explain', q: 'Explain <b>three</b> things that affect how fast a CPU works.', p: ['Clock speed: more cycles per second, so more instructions per second', 'Number of cores: each core can run instructions at the same time', 'Cache size: more data kept close to the CPU, so less waiting for RAM'] },
+  { id: 'cp_10', t: 'cpu', type: 'mc', q: 'Which register holds the instruction that is being decoded and executed now?', o: ['PC', 'CIR', 'MAR', 'ACC'], a: 1, why: 'Current Instruction Register.' },
+  // ---------- 4B interrupts etc ----------
+  { id: 'in1', t: 'intr', m: 2, cmd: 'State', q: 'State <b>two</b> events that cause an interrupt.', p: ['Printer out of paper / paper jam', 'Key pressed / mouse moved', 'Program error, e.g. divide by zero', 'Timer interrupt', 'Power failure', 'Data has arrived / buffer is empty'] },
+  { id: 'in2', t: 'intr', m: 3, cmd: 'Describe', q: 'Describe what the CPU does when it receives an interrupt.', p: ['It finishes the current fetch–decode–execute cycle / checks for interrupts', 'It saves the current task / contents of the registers (on a stack)', 'It runs the interrupt service routine (ISR) to deal with the interrupt', 'Then it restores the saved task and carries on', '(Higher-priority interrupts are dealt with first)'] },
+  { id: 'in3', t: 'intr', m: 3, cmd: 'Explain', q: 'A teacher prints a long document. Explain how a <b>buffer</b> lets the teacher carry on working.', p: ['A buffer is an area of memory that holds data for a short time', 'The CPU sends data to the buffer quickly', 'The printer is slower and takes data from the buffer', 'So the CPU is free to do other tasks / teacher carries on working', 'When the buffer is empty, an interrupt asks for more data'] },
+  { id: 'in4', t: 'intr', m: 3, cmd: 'Explain', q: 'Explain why a school network uses <b>spooling</b> for printing.', p: ['Print jobs are stored on the disk in a queue', 'The printer prints them one at a time / in order', 'Many users can share one printer', 'Jobs do not get mixed up', 'Users do not have to wait for the printer; they can carry on working'] },
+  { id: 'in5', t: 'intr', m: 2, cmd: 'Explain', q: 'Explain how <b>cache</b> memory makes a computer work faster.', p: ['Cache is very fast memory close to / inside the CPU', 'It stores data and instructions that are used often', 'The CPU gets them from cache instead of the slower RAM, so less waiting'] },
+  // ---------- 4C algo ----------
+  { id: 'al1', t: 'algo', m: 2, cmd: 'State', q: 'State the difference between a <b>WHILE</b> loop and a <b>REPEAT … UNTIL</b> loop.', p: ['WHILE tests the condition at the start; it may run zero times', 'REPEAT tests the condition at the end; it always runs at least once'] },
+  { id: 'al2', t: 'algo', type: 'mc', q: 'What is <b>17 MOD 5</b>?', o: ['3', '2', '3.4', '85'], a: 1, why: '17 = 3 × 5 + 2. MOD gives the remainder: 2.' },
+  { id: 'al3', t: 'algo', type: 'mc', q: 'What is <b>17 DIV 5</b>?', o: ['3', '2', '3.4', '12'], a: 0, why: 'DIV gives the whole-number part of the division: 3.' },
+  { id: 'al4', t: 'algo', type: 'mc', q: 'Which loop should you use to repeat something exactly 10 times?', o: ['FOR … NEXT', 'WHILE … ENDWHILE', 'REPEAT … UNTIL', 'IF … ENDIF'], a: 0, why: 'FOR is a count-controlled loop: a fixed number of times.' },
+  { id: 'al5', t: 'algo', type: 'mc', q: 'Which flowchart symbol is used for a decision?', o: ['Diamond', 'Parallelogram', 'Rectangle', 'Rounded rectangle'], a: 0, why: 'Diamond = decision (Yes/No). Parallelogram = input/output. Rectangle = process.' },
+  { id: 'al6', t: 'algo', m: 4, cmd: 'Write', q: 'Write an algorithm in pseudocode to input 20 marks, count how many are 50 or more, and output the count.', p: ['Count set to 0 before the loop', 'Loop that runs 20 times (FOR i ← 1 TO 20)', 'INPUT Mark inside the loop', 'IF Mark >= 50 THEN Count ← Count + 1', 'OUTPUT Count after the loop'] },
+  { id: 'al7', t: 'algo', m: 4, cmd: 'Write', q: 'Write pseudocode to input the prices of 10 items, then output the total and the average price.', p: ['Total ← 0 before the loop', 'FOR loop 1 TO 10 with INPUT Price', 'Total ← Total + Price inside the loop', 'Average ← Total / 10 after the loop', 'OUTPUT Total and Average'] },
+  { id: 'al8', t: 'algo', m: 3, cmd: 'Write', q: 'Write pseudocode that keeps asking for a mark until it is between 0 and 100.', p: ['A loop (REPEAT … UNTIL or WHILE)', 'INPUT Mark inside the loop', 'Condition: Mark < 0 OR Mark > 100 is rejected / UNTIL Mark >= 0 AND Mark <= 100', 'Error message for an invalid mark'] },
+  { id: 'al9', t: 'algo', m: 3, cmd: 'Write', q: 'Write pseudocode to input 50 temperatures and output the highest.', p: ['Highest set to a starting value (first input or a very low number) before the loop', 'Loop 50 times with INPUT Temp', 'IF Temp > Highest THEN Highest ← Temp', 'OUTPUT Highest after the loop'] },
+  { id: 'al10', t: 'algo', type: 'mc', q: 'An algorithm should output "Pass" for marks of 50 and above. Which line is correct?', o: ['IF Mark >= 50 THEN', 'IF Mark <= 50 THEN', 'IF Mark > 50 THEN', 'IF Mark = 50 THEN'], a: 0, why: '50 and above means >= 50. (The booklet wrongly shows <= 50.)' },
+  // ---------- 4C test ----------
+  { id: 'ts1', t: 'test', m: 3, cmd: 'Give', q: 'A program accepts ages from 13 to 19. Give one example each of <b>normal</b>, <b>extreme</b> and <b>abnormal</b> test data.', p: ['Normal: any value 14–18, e.g. 16', 'Extreme: 13 or 19 (on the boundary, accepted)', 'Abnormal: e.g. 12, 20, −3 or "abc" (rejected)'] },
+  { id: 'ts2', t: 'test', type: 'mc', q: 'Marks must be 0 to 100. Which is <b>extreme</b> test data?', o: ['100', '101', '55', '−1'], a: 0, why: 'Extreme = ON the boundary and accepted: 0 or 100. 101 and −1 are abnormal.' },
+  { id: 'ts3', t: 'test', type: 'mc', q: 'Marks must be 0 to 100. What should happen with the test data 101?', o: ['Rejected (abnormal data)', 'Accepted (extreme data)', 'Accepted (normal data)'], a: 0, why: '101 is outside the range, so it is abnormal and must be rejected.' },
+  { id: 'ts4', t: 'test', m: 3, cmd: 'Describe', q: 'Describe a <b>syntax</b> error, a <b>logic</b> error and a <b>run-time</b> error.', p: ['Syntax: breaks the rules/grammar of the language, e.g. misspelt keyword; program will not run', 'Logic: program runs but gives the wrong result, e.g. wrong operator', 'Run-time: program crashes while running, e.g. divide by zero'] },
+  { id: 'ts5', t: 'test', type: 'mc', q: 'A program uses <code>Average ← Total * Count</code> instead of <code>Total / Count</code>. What type of error is this?', o: ['Logic error', 'Syntax error', 'Run-time error'], a: 0, why: 'It runs but gives the wrong answer → logic error.' },
+  { id: 'ts6', t: 'test', type: 'mc', q: 'A program stops when it tries to divide by zero. What type of error is this?', o: ['Run-time error', 'Syntax error', 'Logic error'], a: 0, why: 'It crashes while running → run-time error.' },
+  { id: 'ts7', t: 'test', m: 2, cmd: 'Explain', q: 'Explain why extreme test data is used.', p: ['To check the boundary values are accepted', 'to find errors such as > used instead of >= (boundary/logic errors)'] },
+  // ---------- 3 spreadsheets ----------
+  { id: 'sh1', t: 'sheet', m: 2, cmd: 'Write', q: 'Cell B2 has a mark. Write a formula for C2 that shows "Pass" if the mark is 50 or more, and "Fail" if not.', p: ['=IF(B2>=50 …', '…,"Pass","Fail")'] },
+  { id: 'sh2', t: 'sheet', m: 2, cmd: 'Write', q: 'Column C (C2:C40) shows "Pass" or "Fail". Write a formula to count the number of passes.', p: ['=COUNTIF(', 'C2:C40,"Pass")'] },
+  { id: 'sh3', t: 'sheet', m: 3, cmd: 'Explain', q: 'The VAT rate is in cell B1. D2 contains <code>=C2*$B$1</code>. Explain why $B$1 is used.', p: ['$B$1 is an absolute reference', 'it does not change when the formula is copied/replicated down', 'so every row uses the VAT rate in B1 (C2 changes to C3, C4…)'] },
+  { id: 'sh4', t: 'sheet', m: 4, cmd: 'Describe', q: 'Describe what this formula does: <code>=VLOOKUP(A2,$F$2:$G$10,2,FALSE)</code>', p: ['It looks up the value in A2', 'in the first column of the table F2:G10', 'and returns the value from the 2nd column (column G) of that row', 'FALSE means it must be an exact match'] },
+  { id: 'sh5', t: 'sheet', type: 'mc', q: 'The formula <code>=B2*C2</code> in D2 is copied to D3. What does D3 contain?', o: ['=B3*C3', '=B2*C2', '=C3*D3', '=B3*C2'], a: 0, why: 'Relative references change by one row when copied down.' },
+  { id: 'sh6', t: 'sheet', type: 'mc', q: 'The formula <code>=B2*$E$1</code> in C2 is copied to C5. What does C5 contain?', o: ['=B5*$E$1', '=B5*$E$4', '=B2*$E$1', '=E5*B1'], a: 0, why: 'B2 is relative (becomes B5). $E$1 is absolute (stays).' },
+  { id: 'sh7', t: 'sheet', m: 2, cmd: 'Write', q: 'Write a formula to find the average of the marks in B2 to B30.', p: ['=AVERAGE(', 'B2:B30)'], note: '=SUM(B2:B30)/29 also scores if the count is right.' },
+  { id: 'sh8', t: 'sheet', m: 2, cmd: 'Write', q: 'Write a formula to count how many marks in B2:B30 are <b>above 75</b>.', p: ['=COUNTIF(B2:B30,', '">75")'] },
+  { id: 'sh9', t: 'sheet', m: 2, cmd: 'Explain', q: 'A shop uses a spreadsheet to model prices. Explain what “what if” modelling means.', p: ['Changing values (e.g. price or cost)', 'to see the effect on the results (e.g. profit) without real risk'] },
+  { id: 'sh10', t: 'sheet', type: 'mc', q: 'Which chart is best to show how temperature changes over a week?', o: ['Line graph', 'Pie chart', 'Table'], a: 0, why: 'Line graphs show change over time.' },
+  // ---------- 3 databases ----------
+  { id: 'db1', t: 'db', m: 2, cmd: 'Explain', q: 'Explain what a <b>primary key</b> is. Give an example for a STUDENTS table.', p: ['A field that is unique for every record / identifies each record', 'Example: StudentID / admission number (not name)'] },
+  { id: 'db2', t: 'db', m: 2, cmd: 'Explain', q: 'Explain what a <b>foreign key</b> is.', p: ['A field in one table that is the primary key in another table', 'It is used to link / relate the two tables'] },
+  { id: 'db3', t: 'db', type: 'mc', q: 'Which data type is best for a phone number like 081 234 5678?', o: ['Text / alphanumeric', 'Integer', 'Real', 'Boolean'], a: 0, why: 'It starts with 0, has spaces, and is never used in sums → text.' },
+  { id: 'db4', t: 'db', type: 'mc', q: 'Which data type is best for a field “Paid?” (yes or no)?', o: ['Boolean', 'Text', 'Date', 'Real'], a: 0, why: 'Only two values → Boolean / Yes-No.' },
+  { id: 'db5', t: 'db', m: 3, cmd: 'Write', q: 'A table has fields Name, Grade, Region, Age. Write the search criteria to find learners in Grade 11 from the Kavango West region who are older than 16.', p: ['Grade = 11', 'AND Region = "Kavango West"', 'AND Age > 16'] },
+  { id: 'db6', t: 'db', type: 'mc', q: 'In a database table, one <b>row</b> about one learner is called a…', o: ['Record', 'Field', 'Table', 'Key'], a: 0, why: 'Row = record. Column = field.' },
+  { id: 'db7', t: 'db', m: 2, cmd: 'Explain', q: 'Explain why Surname is not a good primary key.', p: ['Two people can have the same surname', 'so it is not unique / cannot identify one record'] },
+  { id: 'db8', t: 'db', type: 'mc', q: 'Which criteria finds prices from 100 to 200 (including both)?', o: ['>=100 AND <=200', '>100 AND <200', '>=100 OR <=200', '100 TO 200 OR'], a: 0, why: '“From 100 to 200 including both” needs >= and <=, joined with AND.' },
+  // ---------- 3 validation ----------
+  { id: 'va1', t: 'valid', m: 2, cmd: 'Explain', f: ['valver'], q: 'Explain the difference between <b>validation</b> and <b>verification</b>.', p: ['Validation: the computer checks that data is sensible / follows rules (e.g. range check)', 'Verification: checks that data has been copied/typed correctly, matching the original (e.g. double entry)'] },
+  { id: 'va2', t: 'valid', type: 'mc', f: ['valver'], q: 'A website asks you to type your e-mail address twice. This is…', o: ['Verification (double entry)', 'Validation (presence check)', 'Validation (format check)'], a: 0, why: 'Typing twice and comparing = double entry verification.' },
+  { id: 'va3', t: 'valid', type: 'mc', f: ['valver'], q: 'A mark must be from 0 to 100. Which check is this?', o: ['Range check', 'Length check', 'Double entry', 'Visual check'], a: 0, why: 'Between a lowest and highest value = range check (validation).' },
+  { id: 'va4', t: 'valid', type: 'mc', f: ['valver'], q: 'A form will not let you leave the Surname box empty. Which check is this?', o: ['Presence check', 'Type check', 'Range check', 'Verification'], a: 0, why: 'Not empty = presence check.' },
+  { id: 'va5', t: 'valid', type: 'mc', f: ['valver'], q: 'A date must be typed as DD/MM/YYYY. Which check is this?', o: ['Format check', 'Range check', 'Double entry', 'Check digit'], a: 0, why: 'A pattern = format check.' },
+  { id: 'va6', t: 'valid', type: 'mc', f: ['valver'], q: 'A password must have at least 8 characters. Which check is this?', o: ['Length check', 'Range check', 'Presence check', 'Visual check'], a: 0, why: 'Number of characters = length check.' },
+  { id: 'va7', t: 'valid', type: 'mc', f: ['valver'], q: 'A clerk compares the data on screen with the paper form. This is…', o: ['Verification (visual check)', 'Validation (format check)', 'A check digit'], a: 0, why: 'A person comparing with the original = visual check (verification).' },
+  { id: 'va8', t: 'valid', m: 2, cmd: 'Explain', f: ['valver'], q: 'A learner’s age is typed as 15, but it should be 16. Explain why validation does not find this error.', p: ['15 is still a sensible / reasonable value', 'so it passes the validation (e.g. range) check; validation cannot check data is correct/true'] },
+  { id: 'va9', t: 'valid', m: 4, cmd: 'Describe', f: ['valver'], q: 'Describe <b>two</b> validation checks for a field “Learner ID” that is always 2 letters followed by 4 digits, e.g. KW1234.', p: ['Format check', 'checks the data is 2 letters then 4 digits', 'Length check', 'checks there are exactly 6 characters', '(Presence check: checks the ID is not left empty)'] },
+  { id: 'va10', t: 'valid', m: 2, cmd: 'Describe', f: ['valver'], q: 'Describe how <b>double entry</b> verification works.', p: ['The data is entered twice (by the same or another person)', 'The computer compares the two entries; if they are different, an error is shown'] },
+  // ---------- 5 io ----------
+  { id: 'io1', t: 'io', m: 4, cmd: 'Describe', q: 'Describe how a computer uses sensors to keep a greenhouse at the right temperature.', p: ['A temperature sensor measures the temperature (continuously)', 'The reading is changed by an ADC into digital data', 'The microprocessor compares the reading with a pre-set value', 'If too low, it sends a signal to switch the heater on / close windows (actuator)', 'If too high, heater off / windows open / fan on', 'This repeats continuously (loop)'] },
+  { id: 'io2', t: 'io', m: 2, cmd: 'State', q: 'State <b>two</b> sensors used in a burglar alarm system.', p: ['Infrared / motion sensor', 'Pressure sensor', 'Sound sensor', '(Light sensor)'] },
+  { id: 'io3', t: 'io', type: 'mc', q: 'Which device reads the answers on a multiple-choice answer sheet?', o: ['OMR', 'OCR', 'MICR', 'Barcode reader'], a: 0, why: 'OMR = Optical Mark Recognition: reads marks on forms.' },
+  { id: 'io4', t: 'io', type: 'mc', q: 'Banks read the numbers at the bottom of cheques with…', o: ['MICR', 'OMR', 'OCR', 'RFID'], a: 0, why: 'MICR reads magnetic ink characters.' },
+  { id: 'io5', t: 'io', m: 2, cmd: 'Explain', q: 'Explain why a sensor needs an ADC to send data to a computer.', p: ['Sensors give analogue data (continuous values)', 'Computers only work with digital (binary) data, so it must be converted'] },
+  { id: 'io6', t: 'io', m: 2, cmd: 'Explain', q: 'A school office prints 500 report cards every term. Explain why a laser printer is better than an inkjet printer.', p: ['Laser printers print many pages fast', 'Cost per page is low / toner lasts longer for large volumes', 'High quality, quiet'], note: 'Just "faster" scores 0. Say what is faster and why it matters here.' },
+  { id: 'io7', t: 'io', type: 'mc', q: 'Which printer can print on multi-part (carbon copy) forms?', o: ['Dot matrix', 'Laser', 'Inkjet', '3D'], a: 0, why: 'Dot matrix is an impact printer, so it presses through the copies.' },
+  { id: 'io8', t: 'io', m: 2, cmd: 'State', q: 'State <b>two</b> input devices used at a supermarket checkout.', p: ['Barcode scanner', 'Keyboard / keypad', 'Touch screen', 'Chip and PIN reader / contactless card reader', 'Weighing scale'] },
+  { id: 'io9', t: 'io', type: 'mc', q: 'Which of these is an <b>output</b> device?', o: ['Actuator', 'Sensor', 'Scanner', 'Microphone'], a: 0, why: 'An actuator is controlled by the computer (output). The others give data to the computer.' },
+  { id: 'io10', t: 'io', m: 3, cmd: 'Explain', q: 'Explain why a touch screen is used for an information kiosk at a hospital.', p: ['Easy to use / no training needed: users just touch options', 'No separate keyboard or mouse that can be stolen or damaged', 'Screen can be sealed / easy to clean (hygiene)', 'Saves space'] },
+  // ---------- 5 storage ----------
+  { id: 'st1', t: 'stor', m: 4, cmd: 'Describe', q: 'Describe <b>two</b> differences between RAM and ROM.', p: ['RAM is volatile (loses data when the power is off)', 'ROM is non-volatile (keeps data)', 'RAM can be read and written', 'ROM can only be read', 'RAM holds programs/data in use now; ROM holds the start-up (boot) instructions', 'RAM is usually larger than ROM'], note: 'Each difference needs both sides for 2 marks.' },
+  { id: 'st2', t: 'stor', m: 3, cmd: 'Explain', q: 'Explain why an SSD is better than a hard disk for a laptop.', p: ['No moving parts, so it is not damaged if the laptop is dropped / moved', 'Faster access to data, so the laptop starts and loads quickly', 'Uses less power, so the battery lasts longer', 'Lighter / smaller / silent'] },
+  { id: 'st3', t: 'stor', type: 'mc', q: 'Which is <b>off-line</b> storage?', o: ['USB flash drive', 'RAM', 'Internal hard disk', 'Cache'], a: 0, why: 'Off-line = can be removed and taken away.' },
+  { id: 'st4', t: 'stor', type: 'mc', q: 'Which memory holds the start-up (boot) instructions?', o: ['ROM', 'RAM', 'Cache', 'Hard disk'], a: 0, why: 'ROM is non-volatile, so the boot program is there when power comes on.' },
+  { id: 'st5', t: 'stor', m: 2, cmd: 'Explain', q: 'Explain why RAM is called <b>volatile</b>.', p: ['The contents are lost', 'when the power is switched off'] },
+  { id: 'st6', t: 'stor', m: 3, cmd: 'Explain', q: 'A company backs up its data every night onto magnetic tape. Explain why tape is used.', p: ['Very large capacity for all the data', 'Low cost per GB', 'Fast data is not needed: backups are read in order (serial access is OK)', 'Tapes can be removed and stored off-site / safely'] },
+  { id: 'st7', t: 'stor', m: 2, cmd: 'State', q: 'State <b>two</b> examples of secondary storage.', p: ['Hard disk drive (HDD)', 'Solid state drive (SSD)'] },
+  { id: 'st8', t: 'stor', type: 'mc', q: 'Which has the largest capacity?', o: ['Blu-ray (25 GB)', 'DVD (4.7 GB)', 'CD (700 MB)'], a: 0, why: 'CD < DVD < Blu-ray.' },
+  { id: 'st9', t: 'stor', m: 3, cmd: 'Explain', q: 'A learner keeps school work in cloud storage. Give <b>one</b> advantage and <b>one</b> disadvantage, with reasons.', p: ['Advantage: can be accessed from any device with internet / anywhere', 'Advantage: data is backed up by the provider, so not lost if the phone breaks', 'Disadvantage: needs an internet connection to get the work', 'Disadvantage: security / privacy risk because data is on someone else’s server / can be hacked'] },
+  { id: 'st10', t: 'stor', type: 'mc', q: 'How many bytes are in 1 kilobyte (KB)?', o: ['1024', '1000 000', '8', '100'], a: 0, why: '1 KB = 1024 bytes.' },
+  // ---------- 5 networks ----------
+  { id: 'nt1', t: 'net', m: 3, cmd: 'Describe', q: 'Describe the difference between a <b>switch</b> and a <b>hub</b>.', p: ['Both connect devices in a LAN', 'A hub sends data to all devices on the network', 'A switch sends data only to the device it is meant for (uses MAC addresses)', 'So a switch causes less traffic / is more secure'] },
+  { id: 'nt2', t: 'net', m: 2, cmd: 'Describe', q: 'Describe the purpose of a <b>router</b>.', p: ['Connects different networks together, e.g. a LAN to the internet', 'Sends (routes) data packets to the correct network using IP addresses'] },
+  { id: 'nt3', t: 'net', m: 2, cmd: 'State', q: 'State the difference between a LAN and a WAN.', p: ['LAN covers a small area (one building / site)', 'WAN covers a large area (towns / countries), e.g. the internet'] },
+  { id: 'nt4', t: 'net', m: 4, cmd: 'Explain', q: 'A school wants to network its computers. Explain <b>two</b> advantages of a network for the school.', p: ['Share printers and the internet connection', 'so the school buys fewer printers / one connection', 'Share files / learners log on at any computer', 'so work is available in any lab', 'Software can be installed / backed up centrally', 'so less work for the technician'] },
+  { id: 'nt5', t: 'net', m: 2, cmd: 'Explain', q: 'Explain one disadvantage of a network for a school.', p: ['Viruses can spread quickly to all computers', 'Hackers can get into the network / data may be stolen', 'If the server fails, nobody can work', 'Costly to set up / needs a network manager'], note: 'Max 2: 1 for the disadvantage, 1 for the reason/expansion.' },
+  { id: 'nt6', t: 'net', type: 'mc', q: 'Which device changes digital data to analogue signals to send on a telephone line?', o: ['Modem', 'Switch', 'Hub', 'Bridge'], a: 0, why: 'MOdulator–DEModulator.' },
+  { id: 'nt7', t: 'net', type: 'mc', q: 'Which device lets laptops connect wirelessly to the school’s wired network?', o: ['Wireless access point', 'Hub', 'Modem', 'Bridge'], a: 0, why: 'A WAP connects wireless devices to a wired network.' },
+  { id: 'nt8', t: 'net', m: 4, cmd: 'Explain', q: 'Explain <b>two</b> advantages of a wired network compared with a wireless one.', p: ['Usually faster / steadier connection', 'because there is less interference from walls / other devices', 'More secure', 'because someone must connect a cable; signals cannot be picked up from outside'] },
+  { id: 'nt9', t: 'net', type: 'mc', q: 'What is an IP address?', o: ['An address given to a device on a network / the internet', 'A fixed number on the network card set by the maker', 'A website name'], a: 0, why: 'The fixed one on the NIC is the MAC address.' },
+  { id: 'nt10', t: 'net', m: 2, cmd: 'State', q: 'State the difference between the internet and an intranet.', p: ['The internet is a worldwide network open to the public', 'An intranet is a private network inside one organisation (only its members can use it)'] },
+  { id: 'nt11', t: 'net', m: 2, cmd: 'Describe', q: 'Describe a <b>star</b> topology.', p: ['Each computer is connected to a central device (switch / hub / server)', 'If one cable breaks, only that computer is affected (but if the centre fails all stop)'] },
+  // ---------- 5 OS ----------
+  { id: 'os1', t: 'os', m: 3, cmd: 'State', q: 'State <b>three</b> tasks of an operating system.', p: ['Memory management', 'File management', 'Managing input/output devices / peripherals (drivers)', 'Process management / multitasking', 'Handling interrupts', 'Security / user accounts', 'Providing a user interface'] },
+  { id: 'os2', t: 'os', m: 4, cmd: 'Explain', q: 'Explain one advantage and one disadvantage of a <b>command line interface</b>.', p: ['Advantage: uses little memory / processing', 'or: an expert can type commands quickly / has full control', 'Disadvantage: the user must learn and remember the commands', 'so it is hard for beginners / typing errors cause problems'] },
+  { id: 'os3', t: 'os', type: 'mc', q: 'Which utility makes files on a hard disk load faster by putting the parts of each file together?', o: ['Disk defragmenter', 'Anti-virus', 'Backup', 'Compression'], a: 0, why: 'Defragmenting joins the fragments of files.' },
+  { id: 'os4', t: 'os', type: 'mc', q: 'Software that lets the OS communicate with a printer is a…', o: ['Device driver', 'Compiler', 'Utility', 'Spreadsheet'], a: 0, why: 'A device driver.' },
+  { id: 'os5', t: 'os', m: 2, cmd: 'State', q: 'State the difference between system software and application software. Give an example of each.', p: ['System software runs/manages the computer, e.g. Windows / anti-virus', 'Application software does a task for the user, e.g. word processor / spreadsheet'] },
+  { id: 'os6', t: 'os', m: 2, cmd: 'Explain', q: 'Explain why most phones use a GUI rather than a CLI.', p: ['Users use icons/menus by touching them, so no commands must be learnt', 'Easy for people with no training / any age to use'] },
+  { id: 'os7', t: 'os', m: 2, cmd: 'Describe', q: 'Describe what anti-virus software does.', p: ['Scans files / memory for viruses (compares with known virus signatures)', 'Removes or quarantines infected files; must be updated often'] },
+  // ---------- 1&2 SDLC ----------
+  { id: 'sd1', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'In which stage are the input screens and file structure <b>planned</b>?', o: ['Design', 'Development', 'Implementation', 'Analysis'], a: 0, why: 'Planning on paper = design.' },
+  { id: 'sd2', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'In which stage is the new system <b>built and tested</b>?', o: ['Development and testing', 'Design', 'Implementation', 'Evaluation'], a: 0, why: 'Building = development.' },
+  { id: 'sd3', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'In which stage are staff trained and the data transferred to the new system?', o: ['Implementation', 'Design', 'Development', 'Analysis'], a: 0, why: 'Putting the system into use = implementation.' },
+  { id: 'sd4', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'In which stage does the analyst interview users about the current system?', o: ['Analysis', 'Design', 'Evaluation', 'Implementation'], a: 0, why: 'Studying the current system = analysis.' },
+  { id: 'sd5', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'Which happens in the <b>evaluation</b> stage?', o: ['Compare the new system with the requirements', 'Write the program code', 'Design the input forms', 'Choose a changeover method'], a: 0, why: 'Evaluation checks that the system meets the requirements.' },
+  { id: 'sd6', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'Choosing direct, parallel, phased or pilot changeover happens during…', o: ['Implementation', 'Design', 'Development', 'Analysis'], a: 0, why: 'Changeover is how the system is put into use.' },
+  { id: 'sd7', t: 'sdlc', m: 3, cmd: 'Describe', f: ['sdlcst'], q: 'Describe what happens in the <b>design</b> stage of the life cycle.', p: ['Input forms / screens are planned', 'Output (reports / screens) is planned', 'File/database structure planned: fields, data types, keys', 'Validation rules are planned', 'A test plan is made', 'Algorithms / flowcharts are designed'] },
+  { id: 'sd8', t: 'sdlc', m: 4, cmd: 'Explain', f: ['sdlcst'], q: 'A hospital is changing to a new patient records system. Explain why <b>parallel</b> changeover is a good choice.', p: ['Old and new systems run at the same time', 'If the new system fails, the old system still has the patient records', 'Patient data is important / lives at risk, so it must not be lost', 'Results from the two systems can be compared to check the new one'] },
+  { id: 'sd9', t: 'sdlc', m: 2, cmd: 'Describe', q: 'Describe <b>direct</b> changeover and one disadvantage.', p: ['The old system is stopped and the new system starts at once', 'Disadvantage: if the new system fails there is no backup / data can be lost'] },
+  { id: 'sd10', t: 'sdlc', m: 4, cmd: 'State', q: 'State <b>two</b> items in user documentation and <b>two</b> items in technical documentation.', p: ['User: how to load/run the software', 'User: how to enter / save / print data; error messages / FAQs', 'Technical: program code / algorithms / flowcharts', 'Technical: file structures / hardware and software requirements / test results'] },
+  { id: 'sd11', t: 'sdlc', m: 4, cmd: 'Explain', q: 'Explain one advantage and one disadvantage of using a <b>questionnaire</b> to find out about the current system.', p: ['Advantage: many people can be asked in a short time', 'or: people can answer anonymously, so they are more honest', 'Disadvantage: people may not return it / may not answer the questions properly', 'or: the analyst cannot ask follow-up questions'] },
+  { id: 'sd12', t: 'sdlc', m: 2, cmd: 'Describe', q: 'Describe <b>pilot</b> changeover.', p: ['The new system is used in one branch / department first', 'When it works, it is brought into the rest of the organisation'] },
+  // ---------- 1&2 apps ----------
+  { id: 'ap1', t: 'apps', m: 4, cmd: 'Describe', q: 'Describe how a supermarket POS system uses the barcode to update the stock.', p: ['The barcode is scanned / read', 'The barcode number is searched for in the stock database', 'The price and description are sent to the till / receipt', 'The stock level is reduced by 1', 'If stock is below the re-order level, the item is re-ordered automatically'] },
+  { id: 'ap2', t: 'apps', m: 3, cmd: 'Describe', q: 'Describe how a payroll system works out workers’ pay.', p: ['Inputs: employee ID, hours worked (timesheet / clock-in)', 'Rate of pay read from the employee file', 'Pay = hours × rate (+ overtime); tax and deductions taken off', 'Output: payslips / money paid into bank accounts', 'Done by batch processing'] },
+  { id: 'ap3', t: 'apps', m: 2, cmd: 'Explain', q: 'Explain why payroll uses <b>batch processing</b>.', p: ['All the pay is worked out together at one time (e.g. end of month)', 'No user needs to be there / no need for an immediate result, so it can run overnight'] },
+  { id: 'ap4', t: 'apps', m: 4, cmd: 'Describe', q: 'Describe the parts of an <b>expert system</b>.', p: ['User interface: asks questions and shows answers', 'Knowledge base: facts from experts', 'Rule base: IF … THEN rules', 'Inference engine: uses the rules to reach a conclusion', 'Explanation system: explains how the answer was reached'] },
+  { id: 'ap5', t: 'apps', m: 2, cmd: 'State', q: 'State <b>two</b> uses of expert systems.', p: ['Medical diagnosis', 'Car / machine fault finding', 'Mineral / oil prospecting', 'Financial / tax advice', 'Plant and animal identification'] },
+  { id: 'ap6', t: 'apps', type: 'mc', q: 'Which is an example of <b>real-time</b> processing?', o: ['A computer controlling traffic lights', 'Printing monthly bills', 'Payroll at month end'], a: 0, why: 'Control systems process input at once.' },
+  { id: 'ap7', t: 'apps', m: 3, cmd: 'Explain', q: 'Explain why a computer-controlled greenhouse is better than a person doing the work.', p: ['The computer measures and reacts 24 hours a day / never sleeps', 'Readings are more accurate / reacts at once', 'Saves the cost of a worker / the worker can do other jobs', 'Plants grow well because conditions stay correct'], note: 'Just "faster" or "cheaper" scores 0.' },
+  { id: 'ap8', t: 'apps', m: 2, cmd: 'Explain', q: 'A barcode will not scan at the till. Explain what the cashier does and why errors are still found.', p: ['The cashier types the barcode number in with the keyboard', 'The check digit is recalculated, so a typing mistake is found'] },
+  // ---------- 1&2 security ----------
+  { id: 'sc1', t: 'sec', m: 2, cmd: 'Describe', q: 'Describe <b>phishing</b>.', p: ['A fake e-mail / message that looks like it comes from a real company (bank)', 'It tricks the user into giving personal details / clicking a link to a fake site'] },
+  { id: 'sc2', t: 'sec', m: 2, cmd: 'Describe', q: 'Describe <b>pharming</b>.', p: ['Malicious code is installed on the computer / server', 'It sends the user to a fake website even when they type the correct address'] },
+  { id: 'sc3', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain how a <b>firewall</b> protects a school network.', p: ['It checks data coming into and going out of the network', 'and blocks data / connections that are not allowed (stops hackers)'] },
+  { id: 'sc4', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain how <b>encryption</b> protects data.', p: ['Data is scrambled / coded using a key', 'If it is stolen or intercepted, it cannot be understood without the key'], note: 'Encryption does NOT stop data being stolen. It makes it unreadable.' },
+  { id: 'sc5', t: 'sec', m: 4, cmd: 'Describe', q: 'Describe <b>two</b> ways a bank customer can protect their online account.', p: ['Use a strong password', 'with letters, numbers and symbols; do not share it; change it often', 'Do not click links in e-mails', 'type the bank’s address / check for https and the padlock', 'Use two-factor authentication', 'a code is sent to the phone as well as the password'] },
+  { id: 'sc6', t: 'sec', m: 3, cmd: 'Describe', q: 'Describe <b>one</b> health problem caused by using computers and how to prevent it.', p: ['RSI / eye strain / back pain (named)', 'Cause, e.g. typing for a long time / looking at the screen too long / bad posture', 'Prevention, e.g. wrist rests / regular breaks / anti-glare screen / adjustable chair'] },
+  { id: 'sc7', t: 'sec', m: 4, cmd: 'Describe', q: 'Describe <b>two</b> safety risks in a computer lab and how to prevent each.', p: ['Tripping over trailing cables', 'use cable ducts / put cables under the floor', 'Electrocution from drinks spilt on equipment', 'no drinks in the lab', 'Fire from overloaded sockets', 'do not overload sockets / have a CO2 fire extinguisher'] },
+  { id: 'sc8', t: 'sec', type: 'mc', q: 'Eye strain is a…', o: ['Health problem', 'Safety risk'], a: 0, why: 'Health = harm to the body over time. Safety = accidents.' },
+  { id: 'sc9', t: 'sec', type: 'mc', q: 'Tripping over cables is a…', o: ['Safety risk', 'Health problem'], a: 0, why: 'It is an accident → safety.' },
+  { id: 'sc10', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain why <b>biometrics</b> are more secure than passwords.', p: ['Biometric data (fingerprint / face) is unique to the person', 'It cannot be forgotten, guessed or easily shared/copied'] },
+  { id: 'sc11', t: 'sec', m: 2, cmd: 'Describe', q: 'Describe <b>hacking</b>.', p: ['Getting into a computer system without permission', 'to steal, change or delete data'] },
+  { id: 'sc12', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain why a company makes regular <b>backups</b>.', p: ['A copy of the data is kept (off-site / in the cloud)', 'so data can be restored if the original is lost, deleted, damaged or attacked by a virus'] },
+  { id: 'sc13', t: 'sec', type: 'mc', q: 'Software that secretly records your key presses is called…', o: ['Spyware / key logger', 'Firewall', 'Anti-virus', 'Encryption'], a: 0, why: 'Spyware / key loggers steal passwords.' },
+  { id: 'sc14', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain what <b>software piracy</b> is.', p: ['Copying / distributing / selling software without permission (licence)', 'It breaks copyright law; the makers lose money'] }
+
   /*@@BANK-MORE@@*/
 ];
 
@@ -1161,6 +1896,11 @@ var LOGIC_STATEMENTS = [
       var okTheme = noteTheme === 'all' || t.dataset.theme === noteTheme;
       var txt = t.textContent.toLowerCase(), okQ = words.every(function (w) { return txt.indexOf(w) >= 0; });
       if (!okTheme || !okQ) t.remove(); else { shown++; if (words.length) { t.open = true; highlight(t, words); } }
+    });
+    $$('.svgwrap[data-svg]', out).forEach(function (w) {
+      var src = w.getAttribute('data-svg');
+      if (src === 'A AND B') w.innerHTML = ['AND', 'OR', 'NAND', 'NOR', 'XOR'].map(function (op) { return '<div style="display:inline-block;margin:4px 8px;text-align:center">' + Core.circuitSVG(Core.parseLogic('A ' + op + ' B'), { names: false }) + '<div><b>' + op + '</b></div></div>'; }).join('') + '<div style="display:inline-block;margin:4px 8px;text-align:center">' + Core.circuitSVG(Core.parseLogic('NOT A'), { names: false }) + '<div><b>NOT</b></div></div>';
+      else w.innerHTML = Core.circuitSVG(Core.parseLogic(src), { names: true });
     });
     $$('.thead', out).forEach(function (hd) { var n = hd.nextElementSibling; if (!n || !n.classList.contains('topic')) hd.remove(); });
     $('#noteCount').textContent = words.length ? shown + ' topic(s) match' : '';

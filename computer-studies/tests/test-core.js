@@ -118,6 +118,22 @@ for (let i = 0; i < 200; i++) Core.TRACE.forEach(p => {
   eq(lastOut, want, 'trace ' + p.id + ' ' + JSON.stringify(d));
   t.rows.forEach(r => eq(r.length, t.cols.length, 'trace row width ' + p.id));
 });
+
+// ---- question bank integrity ----
+{
+  const ids = new Set(), topics = new Set(ctx.TOPICS.map(x => x.id)), focus = new Set(ctx.FOCUS.map(x => x.id));
+  ctx.BANK.forEach(b => {
+    eq(ids.has(b.id), false, 'unique id ' + b.id); ids.add(b.id);
+    eq(topics.has(b.t), true, 'topic ' + b.id + ' ' + b.t);
+    (b.f || []).forEach(f => eq(focus.has(f), true, 'focus ' + b.id));
+    if (b.type === 'mc') { eq(Array.isArray(b.o) && b.a >= 0 && b.a < b.o.length, true, 'mc answer ' + b.id); }
+    else { eq(b.m > 0 && Array.isArray(b.p) && b.p.length >= b.m, true, 'enough points ' + b.id); }
+    eq(!b.y || b.y <= 2022, true, 'no 2023-25 questions in quiz bank ' + b.id);
+  });
+  // every topic has questions
+  ctx.TOPICS.forEach(tp => { const n = ctx.BANK.filter(b => b.t === tp.id).length + (['num', 'err', 'chk', 'logic', 'trace'].includes(tp.id) ? 5 : 0); eq(n >= 3, true, 'topic has questions ' + tp.id); });
+  console.log('Bank:', ctx.BANK.length, 'questions');
+}
 /*@@TEST-MORE@@*/
 
 console.log(fails ? `\n${fails} FAILED of ${checks} checks` : `All ${checks} checks passed.`);
