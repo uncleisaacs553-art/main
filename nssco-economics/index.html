@@ -1,0 +1,1736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NSSCO Economics Study Dashboard</title>
+<style>
+:root{
+  --bg:#f6f7f9; --card:#ffffff; --ink:#111827; --muted:#4b5563; --line:#d1d5db;
+  --brand:#1d4ed8; --brand-soft:#e0e7ff; --red:#b91c1c; --red-soft:#fee2e2;
+  --amber:#b45309; --amber-soft:#fef3c7; --green:#15803d; --green-soft:#dcfce7;
+  --radius:12px; --tap:48px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header.top{background:var(--brand);color:#fff;padding:12px 16px}
+header.top h1{margin:0;font-size:1.15rem}
+header.top p{margin:2px 0 0;font-size:.85rem;opacity:.9}
+nav.tabs{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);display:flex;overflow-x:auto;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;min-height:var(--tap);padding:0 16px;border:0;background:none;font:600 1rem system-ui,sans-serif;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer}
+nav.tabs button[aria-selected="true"]{color:var(--brand);border-bottom-color:var(--brand)}
+main{max-width:920px;margin:0 auto;padding:16px}
+section.view{display:none}
+section.view.active{display:block}
+h2{font-size:1.35rem;margin:8px 0 12px}
+h3{font-size:1.12rem;margin:20px 0 8px}
+h4{font-size:1rem;margin:14px 0 6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:0 0 14px}
+.muted{color:var(--muted)}
+.small{font-size:.88rem}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{min-height:var(--tap);padding:0 18px;border-radius:10px;border:2px solid var(--brand);background:var(--brand);color:#fff;font:600 1rem system-ui,sans-serif;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--brand)}
+.btn.good{background:var(--green);border-color:var(--green)}
+.btn.bad{background:var(--red);border-color:var(--red)}
+.btn.warn{background:#fff;color:var(--red);border-color:var(--red)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.chip{min-height:44px;padding:0 14px;border-radius:22px;border:2px solid var(--line);background:#fff;font:600 .95rem system-ui,sans-serif;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);color:var(--brand)}
+table{border-collapse:collapse;width:100%;margin:8px 0 12px;font-size:.95rem}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:#eef2ff}
+.tablewrap{overflow-x:auto}
+.box{border-left:5px solid var(--brand);background:var(--brand-soft);padding:10px 12px;border-radius:8px;margin:10px 0}
+.box.fix{border-color:var(--red);background:var(--red-soft)}
+.box.fix::before{content:"Correction: ";font-weight:700;color:var(--red)}
+.box.tip{border-color:var(--green);background:var(--green-soft)}
+.box.ex{border-color:var(--amber);background:var(--amber-soft)}
+.calc{background:#fff;border:2px dashed var(--line);border-radius:8px;padding:10px 12px;margin:10px 0;font-variant-numeric:tabular-nums}
+.calc b.ans{color:var(--green)}
+ol.steps li,ul li{margin:3px 0}
+figure.dia{margin:10px 0;text-align:center}
+figure.dia svg{width:100%;max-width:380px;height:auto;background:#fff;border:1px solid var(--line);border-radius:8px}
+figure.dia figcaption{font-size:.85rem;color:var(--muted)}
+/* dashboard */
+.countdown{display:flex;gap:10px;flex-wrap:wrap}
+.countdown div{flex:1 1 70px;background:var(--brand-soft);border-radius:10px;padding:10px;text-align:center}
+.countdown b{display:block;font-size:1.8rem;color:var(--brand);line-height:1.1}
+.bar{height:14px;background:#e5e7eb;border-radius:7px;overflow:hidden}
+.bar span{display:block;height:100%}
+.r-red{background:var(--red)} .r-amber{background:#d97706} .r-green{background:var(--green)}
+.t-red{color:var(--red)} .t-amber{color:var(--amber)} .t-green{color:var(--green)}
+.ready-row{margin:10px 0}
+.ready-row .lab{display:flex;justify-content:space-between;gap:8px;font-size:.95rem;margin-bottom:3px}
+.big{font-size:2.2rem;font-weight:800}
+/* flashcards */
+.flash{min-height:220px;border:2px solid var(--brand);border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;cursor:pointer;font-size:1.15rem;user-select:none}
+.flash.back{background:var(--brand-soft)}
+.flash .term{font-size:1.5rem;font-weight:800}
+/* quiz */
+.opt{display:block;width:100%;text-align:left;min-height:var(--tap);padding:10px 14px;margin:8px 0;border:2px solid var(--line);border-radius:10px;background:#fff;font:1rem system-ui,sans-serif;color:var(--ink);cursor:pointer}
+.opt.right{border-color:var(--green);background:var(--green-soft)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft)}
+.feedback{padding:10px 12px;border-radius:8px;margin-top:8px}
+.feedback.ok{background:var(--green-soft)} .feedback.no{background:var(--red-soft)}
+/* exams */
+.timer{position:sticky;top:48px;z-index:15;background:#111827;color:#fff;border-radius:10px;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.timer b{font-size:1.3rem;font-variant-numeric:tabular-nums}
+.timer.low b{color:#fca5a5}
+.q{border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:14px;margin:0 0 14px}
+.q.off{opacity:.55}
+.q .stem{background:#f9fafb;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:8px 0}
+.part{border-top:1px dashed var(--line);padding-top:10px;margin-top:10px}
+.part .pq{font-weight:600}
+.marks{float:right;font-weight:700;color:var(--brand);margin-left:8px}
+textarea{width:100%;min-height:110px;font:1rem/1.5 system-ui,sans-serif;padding:10px;border:2px solid var(--line);border-radius:8px;margin:8px 0;resize:vertical}
+textarea:focus,button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
+.scheme{background:var(--green-soft);border-radius:8px;padding:10px 12px;margin:8px 0}
+.scheme h5{margin:0 0 4px;font-size:.95rem}
+.model{background:#f0f9ff;border-radius:8px;padding:10px 12px;margin:8px 0}
+.markpick{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.markpick button{min-width:46px;min-height:46px;border:2px solid var(--line);border-radius:10px;background:#fff;font:700 1rem system-ui,sans-serif;cursor:pointer}
+.markpick button[aria-pressed="true"]{background:var(--brand);border-color:var(--brand);color:#fff}
+.pill{display:inline-block;padding:1px 9px;border-radius:12px;font-size:.8rem;font-weight:700;background:#e5e7eb;color:var(--ink)}
+.hist td,.hist th{font-size:.9rem}
+select{min-height:var(--tap);font:1rem system-ui,sans-serif;padding:0 10px;border:2px solid var(--line);border-radius:10px;background:#fff;max-width:100%}
+label.check{display:flex;align-items:center;gap:8px;min-height:44px;font-weight:600}
+label.check input{width:24px;height:24px}
+.hide{display:none!important}
+footer{text-align:center;color:var(--muted);font-size:.8rem;padding:20px 16px 40px}
+@media (min-width:700px){body{font-size:17.5px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}}
+@media print{nav.tabs,.timer,.btn{display:none}}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>NSSCO Economics Study Dashboard</h1>
+  <p>Paper 1 &amp; Paper 2, 11 November 2026. Your progress is saved on this device only.</p>
+</header>
+<nav class="tabs" role="tablist" id="tabs">
+  <button role="tab" data-view="dash" aria-selected="true">Dashboard</button>
+  <button role="tab" data-view="notes">Notes</button>
+  <button role="tab" data-view="flash">Flashcards</button>
+  <button role="tab" data-view="quiz">Quizzes</button>
+  <button role="tab" data-view="exam">Practice exams</button>
+  <button role="tab" data-view="tech">Exam technique</button>
+</nav>
+<main>
+  <section class="view active" id="view-dash"></section>
+  <section class="view" id="view-notes"></section>
+  <section class="view" id="view-flash"></section>
+  <section class="view" id="view-quiz"></section>
+  <section class="view" id="view-exam"></section>
+  <section class="view" id="view-tech"></section>
+</main>
+<footer>Works offline. Progress is stored in this browser (localStorage). Clearing browser data deletes it.</footer>
+<script>
+/* =====================================================================
+   DATA SECTION: edit this part to add content.
+   - THEMES: the 9 syllabus themes (id 1-9). Notes are HTML strings.
+     Write [[dia:NAME]] to insert a diagram from DIAGRAMS.
+   - FLASHCARDS, QUIZZES, EXAMS are defined further down.
+   ===================================================================== */
+const THEMES = [
+{ id:1, name:"The basic economic problem", short:"Basic problem", notes:`
+<h3>1. Scarcity and choice</h3>
+<ul>
+<li><b>Economic problem:</b> wants are unlimited but resources are limited (scarce).</li>
+<li><b>Scarcity</b> forces <b>choice</b>. Every choice has an <b>opportunity cost</b>.</li>
+<li><b>Opportunity cost:</b> the next best alternative given up when a choice is made.</li>
+<li>Example: the Government of Namibia spends N$500 million on a new hospital. The opportunity cost is the next best use, e.g. building new schools.</li>
+<li><b>Needs</b> = things required to survive (food, water, shelter). <b>Wants</b> = things we would like to have.</li>
+<li><b>Economic goods</b> are scarce and have an opportunity cost. <b>Free goods</b> (e.g. air, sunlight) are not scarce and have no opportunity cost.</li>
+</ul>
+<h3>2. Factors of production and their rewards</h3>
+<div class="tablewrap"><table>
+<tr><th>Factor</th><th>Meaning</th><th>Namibian example</th><th>Reward</th></tr>
+<tr><td>Land</td><td>Natural resources</td><td>Diamonds, uranium, fish, farmland</td><td>Rent</td></tr>
+<tr><td>Labour</td><td>Human effort, physical and mental</td><td>Miners at Rössing, teachers</td><td>Wages / salaries</td></tr>
+<tr><td>Capital</td><td>Man-made goods used to produce other goods</td><td>Fishing trawlers, machines, factories</td><td>Interest</td></tr>
+<tr><td>Enterprise</td><td>Organising the other factors and taking risk</td><td>Owner of a guesthouse in Swakopmund</td><td>Profit</td></tr>
+</table></div>
+<ul>
+<li><b>Mobility of labour:</b> <i>occupational</i> (moving between jobs) and <i>geographical</i> (moving between places).</li>
+<li>Quality and quantity of factors can change, e.g. education and training improve labour; investment increases capital.</li>
+</ul>
+<h3>3. Production possibility curve (PPC)</h3>
+[[dia:ppc]]
+<ul>
+<li>A PPC shows the maximum combinations of two goods that can be produced with all resources fully and efficiently used.</li>
+<li>Point <b>on</b> the curve (A, B) = efficient. Point <b>inside</b> (C) = unemployed or wasted resources. Point <b>outside</b> (D) = unattainable now.</li>
+<li>Moving from A to B: more of one good means less of the other. This is the opportunity cost.</li>
+<li>The PPC <b>shifts outward</b> with more or better resources (e.g. new oil discovery, better education, new technology). It shifts inward after disasters or loss of resources.</li>
+</ul>
+<div class="calc"><b>Calculation: opportunity cost from a PPC</b><br>
+Formula: opportunity cost = units of good X given up ÷ units of good Y gained<br>
+Working: moving from A (Maize 100, Cattle 20) to B (Maize 70, Cattle 30). Maize given up = 30. Cattle gained = 10. 30 ÷ 10 = 3<br>
+<b class="ans">Answer: opportunity cost of 1 unit of cattle = 3 units of maize.</b></div>
+<h3>4. Economic systems</h3>
+<div class="tablewrap"><table>
+<tr><th></th><th>Market economy</th><th>Planned (command) economy</th><th>Mixed economy</th></tr>
+<tr><td>Who decides?</td><td>Private sector, through prices</td><td>Government</td><td>Both</td></tr>
+<tr><td>Ownership</td><td>Private</td><td>State</td><td>Private and public sectors</td></tr>
+<tr><td>Advantages</td><td>Choice, efficiency, innovation, profit motive</td><td>Basic needs for all, less inequality, less unemployment</td><td>Combines benefits; government corrects market failure</td></tr>
+<tr><td>Disadvantages</td><td>Inequality, merit goods under-provided, public goods not provided, external costs</td><td>Shortages, little choice, low incentive, slow decisions</td><td>Taxes may be high; government failure possible</td></tr>
+</table></div>
+<p>Namibia is a <b>mixed economy</b>: private firms (e.g. retail shops) and state-owned enterprises (e.g. NamPower, NamWater).</p>
+<h3>5. Market failure</h3>
+<ul>
+<li><b>Market failure:</b> when the market does not allocate resources efficiently.</li>
+<li>Causes: <b>public goods</b> not provided (street lights, national defence: non-excludable, non-rival); <b>merit goods</b> under-consumed (education, health care); <b>demerit goods</b> over-consumed (alcohol, cigarettes); <b>external costs</b> (pollution); <b>monopoly</b> power; immobility of factors.</li>
+<li>Government responses: provide public goods, subsidise merit goods, tax demerit goods, regulations, fines, laws against monopoly.</li>
+</ul>
+<h3>6. Specialisation and division of labour</h3>
+<ul>
+<li><b>Specialisation:</b> when a person, firm, region or country concentrates on producing one good or service, or a narrow range.</li>
+<li><b>Division of labour:</b> production is split into separate tasks, each done by a different worker.</li>
+</ul>
+<div class="tablewrap"><table>
+<tr><th>Advantages</th><th>Disadvantages</th></tr>
+<tr><td>Higher output and productivity<br>Workers become skilled faster<br>Less time wasted moving between tasks<br>Use of machines is easier</td><td>Boring, repetitive work, low motivation<br>Workers lack other skills (less occupational mobility)<br>One stoppage can stop the whole line<br>Less variety of products</td></tr>
+</table></div>
+<p>Countries also specialise: Namibia specialises in mining (diamonds, uranium), fishing and tourism.</p>
+`},
+{ id:2, name:"Economic organisations and finance", short:"Organisations & finance", notes:`
+<h3>1. Types of business organisation</h3>
+<div class="tablewrap"><table>
+<tr><th>Type</th><th>Owners</th><th>Liability</th><th>Advantages</th><th>Disadvantages</th></tr>
+<tr><td>Sole trader</td><td>1 person</td><td>Unlimited</td><td>Easy to start, keeps all profit, quick decisions</td><td>Limited capital, long hours, unlimited liability</td></tr>
+<tr><td>Partnership</td><td>2 to 20</td><td>Unlimited (usually)</td><td>More capital and skills, shared work</td><td>Disagreements, profit shared, unlimited liability</td></tr>
+<tr><td>Private company (Pty) Ltd</td><td>Shareholders (shares not sold to public)</td><td>Limited</td><td>Limited liability, more capital, continuity</td><td>Cannot sell shares to the public, legal costs</td></tr>
+<tr><td>Public company Ltd</td><td>Shareholders (shares sold to public, e.g. on the NSX)</td><td>Limited</td><td>Very large capital, economies of scale</td><td>Must publish accounts, risk of takeover, slow decisions</td></tr>
+<tr><td>Co-operative</td><td>Members</td><td>Limited</td><td>Members share benefits, e.g. farmers buy inputs together</td><td>Slow decisions, limited capital</td></tr>
+<tr><td>Public corporation / SOE</td><td>Government</td><td>-</td><td>Provides essential services (NamPower, NamWater, TransNamib)</td><td>May be inefficient, needs subsidies</td></tr>
+</table></div>
+<ul>
+<li><b>Limited liability:</b> owners can only lose the money they invested. <b>Unlimited liability:</b> owners can lose personal assets to pay business debts.</li>
+<li><b>Multinational company (MNC):</b> a firm with production in more than one country (e.g. a mining MNC in Namibia). Benefits: jobs, tax, investment, skills. Costs: profits sent abroad, may exploit resources, may close quickly.</li>
+</ul>
+<h3>2. Trade unions</h3>
+<ul>
+<li><b>Trade union:</b> an organisation of workers formed to protect and improve the pay and working conditions of its members. Example: Mineworkers Union of Namibia (MUN), Namibia National Teachers' Union (NANTU). Umbrella body: NUNW.</li>
+<li>Functions: negotiate wages (<b>collective bargaining</b>), improve working conditions, protect jobs, give legal advice, training.</li>
+<li>Actions: negotiation, overtime ban, work-to-rule, go-slow, strike.</li>
+<li>Strong when: many members, skilled workers, support of public, firm is profitable, demand for the product is inelastic.</li>
+<li>Possible bad effects: strikes cut output and exports, wage rises may cause firms to cut jobs or raise prices (cost-push inflation).</li>
+</ul>
+<h3>3. Money</h3>
+<ul>
+<li><b>Money:</b> anything generally accepted as a means of payment for goods and services.</li>
+<li><b>Barter</b> = swapping goods without money. Problem: needs a <b>double coincidence of wants</b>.</li>
+<li><b>Functions:</b> medium of exchange, measure (unit) of value, store of value, standard of deferred payment.</li>
+<li><b>Characteristics:</b> acceptable, durable, portable, divisible, homogeneous (uniform), scarce (limited supply), hard to forge.</li>
+<li>The Namibia Dollar (N$, code NAD) is pegged 1:1 to the South African rand (Common Monetary Area). The rand is also legal tender in Namibia.</li>
+</ul>
+<h3>4. Central bank: Bank of Namibia</h3>
+<ul>
+<li>Issues notes and coins (sole issuer of N$).</li>
+<li>Banker to the government.</li>
+<li>Banker to the commercial banks; lender of last resort.</li>
+<li>Controls monetary policy: sets the <b>repo rate</b> (the rate it lends to commercial banks).</li>
+<li>Supervises and regulates commercial banks.</li>
+<li>Manages foreign exchange reserves and keeps the N$ peg.</li>
+</ul>
+<h3>5. Commercial banks</h3>
+<p>Examples: Bank Windhoek, First National Bank Namibia, Standard Bank Namibia, Nedbank Namibia.</p>
+<ul>
+<li>Accept deposits (current, savings, fixed deposit accounts).</li>
+<li>Lend money: loans, overdrafts, mortgages.</li>
+<li>Payment services: debit cards, EFTs, mobile banking.</li>
+<li>Foreign exchange, safe custody, financial advice.</li>
+<li>Aim: <b>profit</b>. They earn the difference between interest charged on loans and interest paid on deposits.</li>
+</ul>
+<h3>6. Stock exchange: Namibian Stock Exchange (NSX)</h3>
+<ul>
+<li>A market where second-hand shares (and bonds) of public companies are bought and sold. Based in Windhoek.</li>
+<li>Helps companies raise capital, gives savers a way to invest, shows confidence in the economy.</li>
+<li>Shareholders earn a <b>dividend</b> (share of profit) and may gain if the share price rises (capital gain).</li>
+</ul>
+<h3>7. Exchange-rate calculations</h3>
+<div class="calc"><b>Converting foreign currency to N$</b><br>
+Formula: N$ = foreign amount × rate (N$ per 1 unit of foreign currency)<br>
+Working: a US tourist changes US$400 when US$1 = N$18.50. 400 × 18.50 = 7 400<br>
+<b class="ans">Answer: N$7 400</b></div>
+<div class="calc"><b>Converting N$ to foreign currency</b><br>
+Formula: foreign amount = N$ amount ÷ rate (N$ per 1 unit)<br>
+Working: a Namibian buys a laptop costing N$13 000 from Germany. €1 = N$20.00. 13 000 ÷ 20 = 650<br>
+<b class="ans">Answer: €650</b></div>
+<div class="box tip">Check your answer: a dollar is worth more than a Namibia dollar, so you get <b>more</b> N$ than US$. If your N$ number is smaller, you divided when you should multiply.</div>
+`},
+{ id:3, name:"The market system", short:"The market", notes:`
+<h3>1. Demand</h3>
+<ul>
+<li><b>Demand:</b> the quantity of a good that consumers are willing and able to buy at each price over a given period of time. (<b>Effective demand</b> = want + ability to pay.)</li>
+<li><b>Law of demand:</b> when price rises, quantity demanded falls (and the other way). The demand curve slopes downward.</li>
+</ul>
+[[dia:movement]]
+<div class="box fix">A change in the good's <b>own price</b> causes a <b>movement along</b> the curve. Call it an <b>extension</b> (price falls, more bought) or a <b>contraction</b> (price rises, less bought) = a <b>change in quantity demanded</b>. Only "an increase/decrease in <b>demand</b>" means the whole curve <b>shifts</b>.</div>
+<p><b>Factors that SHIFT demand</b> (not the good's own price):</p>
+<ul>
+<li>Income (normal goods: income up → demand up; inferior goods: income up → demand down)</li>
+<li>Prices of substitutes (price of beef up → demand for chicken up)</li>
+<li>Prices of complements (price of cars up → demand for petrol down)</li>
+<li>Tastes and fashion, advertising</li>
+<li>Population size and age structure</li>
+<li>Expectations of future prices, interest rates and credit, taxes on income</li>
+</ul>
+[[dia:dshift]]
+<h3>2. Supply</h3>
+<ul>
+<li><b>Supply:</b> the quantity of a good that producers are willing and able to sell at each price over a given period of time.</li>
+<li><b>Law of supply:</b> when price rises, quantity supplied rises. The supply curve slopes upward.</li>
+</ul>
+<p><b>Factors that SHIFT supply:</b></p>
+<ul>
+<li>Costs of production (wages, raw materials, fuel)</li>
+<li>Technology and productivity</li>
+<li>Weather and natural disasters (drought in Namibia reduces supply of maize and beef)</li>
+<li>Indirect taxes (shift left) and subsidies (shift right)</li>
+<li>Number of firms, prices of other goods the firm could make</li>
+</ul>
+<div class="box fix">The good's <b>own price is NOT a factor that shifts supply</b>. A change in price causes a <b>movement along</b> the supply curve (extension or contraction = change in quantity supplied).</div>
+[[dia:sshift]]
+<h3>3. Equilibrium</h3>
+<ul>
+<li><b>Equilibrium price:</b> the price where quantity demanded equals quantity supplied. The market "clears".</li>
+<li>Price above equilibrium → <b>surplus</b> (excess supply) → price falls. Price below → <b>shortage</b> (excess demand) → price rises.</li>
+</ul>
+<div class="tablewrap"><table>
+<tr><th>Change</th><th>Curve</th><th>Equilibrium price</th><th>Equilibrium quantity</th></tr>
+<tr><td>Increase in demand</td><td>D shifts right</td><td>Rises</td><td>Rises</td></tr>
+<tr><td>Decrease in demand</td><td>D shifts left</td><td>Falls</td><td>Falls</td></tr>
+<tr><td>Increase in supply</td><td>S shifts right</td><td>Falls</td><td>Rises</td></tr>
+<tr><td>Decrease in supply</td><td>S shifts left</td><td>Rises</td><td>Falls</td></tr>
+</table></div>
+<h3>4. Indirect tax and subsidy</h3>
+<ul>
+<li><b>Indirect tax</b> (e.g. VAT 15%, excise duty on alcohol) raises firms' costs → supply shifts <b>left</b> → price rises, quantity falls.</li>
+<li><b>Subsidy:</b> money paid by government to producers to lower costs → supply shifts <b>right</b> → price falls, quantity rises.</li>
+<li>The more <b>inelastic</b> the demand, the more of a tax the consumer pays.</li>
+</ul>
+[[dia:tax]]
+<h3>5. Price controls</h3>
+[[dia:maxprice]]
+<ul>
+<li><b>Maximum price</b> (price ceiling) is set <b>below</b> equilibrium to help consumers (e.g. on maize meal or bread). Result: <b>shortage</b>, queues, black markets.</li>
+<li><b>Minimum price</b> (price floor) is set <b>above</b> equilibrium to help producers (e.g. a minimum price for farmers' crops; a minimum wage in labour markets). Result: <b>surplus</b>.</li>
+</ul>
+[[dia:minprice]]
+<h3>6. Price elasticity of demand (PED)</h3>
+<div class="calc"><b>PED</b><br>
+Formula: PED = % change in quantity demanded ÷ % change in price<br>
+% change = (new − old) ÷ old × 100<br>
+Working: price rises from N$20 to N$25: (25 − 20) ÷ 20 × 100 = +25%. Quantity falls from 400 to 360: (360 − 400) ÷ 400 × 100 = −10%. PED = −10 ÷ 25 = −0.4<br>
+<b class="ans">Answer: PED = −0.4 → inelastic (ignore the minus sign when you judge size: 0.4 &lt; 1)</b></div>
+<div class="tablewrap"><table>
+<tr><th>Value (ignore sign)</th><th>Name</th><th>Meaning</th></tr>
+<tr><td>&gt; 1</td><td>Elastic</td><td>Qd changes by a bigger % than price</td></tr>
+<tr><td>&lt; 1</td><td>Inelastic</td><td>Qd changes by a smaller % than price</td></tr>
+<tr><td>= 1</td><td>Unitary</td><td>Same %</td></tr>
+<tr><td>0</td><td>Perfectly inelastic</td><td>Qd does not change</td></tr>
+</table></div>
+<p><b>Determinants of PED:</b> number and closeness of substitutes; necessity or luxury; % of income spent; habit/addiction; time period; how widely the product is defined.</p>
+<h4>Revenue rule (total revenue = price × quantity)</h4>
+<div class="tablewrap"><table>
+<tr><th>Demand</th><th>Price rises</th><th>Price falls</th></tr>
+<tr><td>Elastic</td><td>TR falls</td><td>TR rises</td></tr>
+<tr><td>Inelastic</td><td>TR rises</td><td>TR falls</td></tr>
+<tr><td>Unitary</td><td>TR unchanged</td><td>TR unchanged</td></tr>
+</table></div>
+<div class="calc">Check with numbers: P N$20 × Q 400 = N$8 000. P N$25 × Q 360 = N$9 000. TR rose by N$1 000, as the rule predicts for inelastic demand.</div>
+<h3>7. Price elasticity of supply (PES)</h3>
+<div class="calc"><b>PES</b><br>
+Formula: PES = % change in quantity supplied ÷ % change in price<br>
+Working: price of fish rises 10%, quantity supplied rises 4%. 4 ÷ 10 = 0.4<br>
+<b class="ans">Answer: PES = 0.4 → inelastic supply</b></div>
+<p><b>Determinants of PES:</b> time period, spare capacity, stocks held, ease of moving factors, how perishable the good is. Example: fish supply is inelastic in the short run because of fishing quotas and boat capacity.</p>
+<h3>8. Market structures</h3>
+<div class="tablewrap"><table>
+<tr><th>Feature</th><th>Perfect competition</th><th>Monopoly</th><th>Oligopoly</th></tr>
+<tr><td>Number of firms</td><td>Very many</td><td>One (dominant)</td><td>A few large firms</td></tr>
+<tr><td>Product</td><td>Identical (homogeneous)</td><td>Unique, no close substitutes</td><td>Similar or branded</td></tr>
+<tr><td>Barriers to entry</td><td>None</td><td>Very high</td><td>High</td></tr>
+<tr><td>Price</td><td><b>Price taker</b></td><td>Price maker</td><td>Prices often similar; non-price competition</td></tr>
+<tr><td>Information</td><td>Perfect</td><td>Imperfect</td><td>Imperfect</td></tr>
+<tr><td>Example (Namibia)</td><td>Close to it: open-air market vegetable sellers</td><td>NamPower (electricity transmission), NamWater</td><td>Mobile phone networks (e.g. MTC and a few rivals), commercial banks</td></tr>
+</table></div>
+<p><b>Monopoly</b> advantages: economies of scale, money for research. Disadvantages: higher prices, less choice, less incentive to be efficient.</p>
+<h3>9. Advertising</h3>
+<ul>
+<li><b>Informative</b> advertising gives facts (price, features). <b>Persuasive</b> advertising tries to convince people to buy (brand image).</li>
+<li>Aims: increase demand (shift D right) and make demand more <b>inelastic</b> (brand loyalty).</li>
+<li>For: informs consumers, creates jobs, funds media. Against: raises costs and prices, can mislead, encourages demerit goods.</li>
+</ul>
+<h3>10. Pricing policies</h3>
+<ul>
+<li><b>Price skimming:</b> a high price for a new product, then lowered later (e.g. new phones).</li>
+<li><b>Penetration pricing:</b> a low price to enter a market and win customers, then raised.</li>
+<li><b>Price discrimination:</b> charging different prices to different groups for the same product (e.g. lower park fees for Namibian residents than for foreign tourists, student fares).</li>
+<li><b>Competitive pricing:</b> setting a price close to rivals' prices. <b>Predatory pricing:</b> a very low price to force rivals out. <b>Cost-plus pricing:</b> average cost + a % mark-up.</li>
+</ul>
+<div class="box fix">Pricing policies such as skimming, penetration and price discrimination need <b>market power</b> (some control over price). They are used by monopolies, oligopolies and firms with branded products. They are <b>not</b> features of <b>perfect competition</b>, where every firm is a price taker and must accept the market price.</div>
+`},
+{ id:4, name:"Occupation, income and expenditure", short:"Income & spending", notes:`
+<h3>1. Choosing an occupation</h3>
+<div class="tablewrap"><table>
+<tr><th>Wage (financial) factors</th><th>Non-wage factors</th></tr>
+<tr><td>Basic pay<br>Overtime, bonuses, commission<br>Fringe benefits (housing, car, medical aid, pension)</td><td>Job satisfaction<br>Working conditions and hours<br>Training and promotion chances<br>Job security<br>Location and travel<br>Holidays, status</td></tr>
+</table></div>
+<h3>2. Wage determination</h3>
+<ul>
+<li>In a free market, the wage is set where <b>demand for labour</b> equals <b>supply of labour</b>.</li>
+<li>Demand for labour is a <b>derived demand</b>: it comes from demand for the product the worker makes.</li>
+<li><b>High wages</b> when demand for the skill is high and supply is low (doctors, engineers, pilots): long training, rare skills, high productivity.</li>
+<li><b>Low wages</b> when supply is large and demand is low (unskilled jobs): little training needed, many workers available.</li>
+<li>Other influences: trade unions, government minimum wage, discrimination, location, public vs private sector.</li>
+<li><b>Minimum wage:</b> the lowest legal wage. Namibia has a national minimum wage and sector minimum wages (e.g. domestic workers, farm workers). It can raise living standards, but if set above equilibrium it may cause unemployment.</li>
+</ul>
+<h3>3. Why earnings differ</h3>
+<p>Skill and qualifications, experience, gender or other discrimination, sector (mining pays more than agriculture), region (Windhoek vs rural), age, trade union strength.</p>
+<h3>4. Spending, saving and borrowing</h3>
+<ul>
+<li><b>Disposable income</b> = income after direct taxes, used to spend or save.</li>
+<li><b>Saving</b> = disposable income not spent.</li>
+<li>Low-income households spend a <b>bigger %</b> of income on necessities (food, rent) and save little. High-income households save a bigger %.</li>
+</ul>
+<div class="tablewrap"><table>
+<tr><th>Factor</th><th>Effect on spending</th><th>Effect on saving</th><th>Effect on borrowing</th></tr>
+<tr><td>Income rises</td><td>Up</td><td>Up</td><td>Up (can repay)</td></tr>
+<tr><td>Interest rate rises</td><td>Down</td><td>Up (better reward)</td><td>Down (more expensive)</td></tr>
+<tr><td>Consumer confidence falls</td><td>Down</td><td>Up</td><td>Down</td></tr>
+<tr><td>Inflation expected</td><td>Up (buy before prices rise)</td><td>Down</td><td>Up</td></tr>
+</table></div>
+<p>Other influences on saving: age, culture, availability of banks and pension schemes, social security. Other influences on borrowing: ease of credit, cards, confidence, age.</p>
+<div class="calc"><b>Simple interest</b><br>
+Formula: interest = principal × rate × time (years)<br>
+Working: N$5 000 saved at 8% a year for 3 years: 5 000 × 0.08 × 3 = 1 200<br>
+<b class="ans">Answer: interest = N$1 200; total = N$6 200</b></div>
+<div class="calc"><b>Percentage of income spent</b><br>
+Formula: % = spending on item ÷ total income × 100<br>
+Working: a household earns N$8 000 a month and spends N$2 400 on food. 2 400 ÷ 8 000 × 100 = 30<br>
+<b class="ans">Answer: 30%</b></div>
+`},
+{ id:5, name:"Production", short:"Production", notes:`
+<h3>1. Production and productivity</h3>
+<ul>
+<li><b>Production:</b> using factors of production to make goods and services that satisfy wants.</li>
+<li>Sectors: <b>primary</b> (extracting: mining, fishing, farming), <b>secondary</b> (manufacturing, construction, e.g. fish processing in Walvis Bay), <b>tertiary</b> (services: tourism, banking, transport).</li>
+<li><b>Productivity:</b> output per unit of input per period. <b>Labour productivity</b> = total output ÷ number of workers.</li>
+<li>Raise productivity by: training, better technology/capital, division of labour, motivation and incentives, better management.</li>
+<li><b>Labour-intensive</b> (many workers, e.g. hand craft) vs <b>capital-intensive</b> (many machines, e.g. mining).</li>
+</ul>
+<div class="calc"><b>Labour productivity</b><br>
+Formula: productivity = total output ÷ number of workers<br>
+Working: a factory makes 12 000 cans with 40 workers. 12 000 ÷ 40 = 300<br>
+<b class="ans">Answer: 300 cans per worker</b></div>
+<h3>2. Costs of production</h3>
+<ul>
+<li><b>Fixed costs (FC):</b> do not change with output (rent, insurance, loan interest).</li>
+<li><b>Variable costs (VC):</b> change with output (raw materials, fuel, piece-rate wages).</li>
+<li>Total cost: <b>TC = TFC + TVC</b>. Average cost: <b>AC = TC ÷ Q</b>. Also AFC = TFC ÷ Q and AVC = TVC ÷ Q.</li>
+</ul>
+<h3>3. Revenue and profit</h3>
+<ul>
+<li>Total revenue: <b>TR = P × Q</b>. Average revenue: <b>AR = TR ÷ Q</b> (= price).</li>
+<li>Profit = TR − TC. If TC &gt; TR, it is a <b>loss</b>.</li>
+<li>Firms aim to maximise profit, but may also aim for growth, survival, market share or social goals.</li>
+</ul>
+<div class="calc"><b>Full cost and profit example</b><br>
+Data: a bakery makes 500 loaves. TFC = N$2 000. TVC = N$3 000. Price = N$12 per loaf.<br>
+1) TC = TFC + TVC = 2 000 + 3 000 = <b class="ans">N$5 000</b><br>
+2) AC = TC ÷ Q = 5 000 ÷ 500 = <b class="ans">N$10 per loaf</b><br>
+3) TR = P × Q = 12 × 500 = <b class="ans">N$6 000</b><br>
+4) Profit = TR − TC = 6 000 − 5 000 = <b class="ans">N$1 000</b></div>
+<h3>4. Economies and diseconomies of scale</h3>
+<ul>
+<li><b>Economies of scale:</b> average cost <b>falls</b> as a firm grows (increases output).</li>
+<li><b>Diseconomies of scale:</b> average cost <b>rises</b> as a firm grows too big.</li>
+</ul>
+<div class="tablewrap"><table>
+<tr><th>Internal economies (inside the firm)</th><th>External economies (whole industry in an area)</th></tr>
+<tr><td><b>Purchasing (bulk buying)</b> discounts<br><b>Technical</b>: bigger, better machines<br><b>Financial</b>: cheaper loans<br><b>Marketing</b>: advertising cost spread<br><b>Managerial</b>: specialist managers<br><b>Risk-bearing</b>: many products/markets</td><td>Skilled labour pool nearby<br>Good infrastructure (Walvis Bay port, roads)<br>Supplier firms locate nearby<br>Shared research and training colleges</td></tr>
+</table></div>
+<p><b>Diseconomies of scale:</b> poor communication, slow decisions, low worker motivation, coordination problems. External diseconomies: traffic congestion, higher land prices, shortage of workers in the area.</p>
+<h3>5. Mergers (integration)</h3>
+<div class="tablewrap"><table>
+<tr><th>Type</th><th>Meaning</th><th>Example</th></tr>
+<tr><td>Horizontal</td><td>Two firms at the <b>same stage</b> of the same industry</td><td>Two supermarkets join</td></tr>
+<tr><td>Vertical backward</td><td>Firm joins a firm at an <b>earlier</b> stage (a supplier)</td><td>A fish processor buys a fishing fleet</td></tr>
+<tr><td>Vertical forward</td><td>Firm joins a firm at a <b>later</b> stage (closer to the customer)</td><td>A fishing company buys a fish canning factory or shops</td></tr>
+<tr><td>Conglomerate (lateral)</td><td>Firms in <b>unrelated</b> industries</td><td>A mining company buys a hotel group</td></tr>
+</table></div>
+<p>Reasons: economies of scale, bigger market share, secure supplies or outlets, spread risk. Possible problems: job losses, higher prices (less competition), diseconomies of scale. The Namibian Competition Commission (NaCC) checks mergers.</p>
+<h3>6. Why small firms survive</h3>
+<p>Personal service, serve small or local markets, flexible, government support (e.g. SME loans), supply larger firms.</p>
+`},
+{ id:6, name:"Role of government in the economy", short:"Government", notes:`
+<h3>1. Aims (macroeconomic objectives)</h3>
+<ul>
+<li>Economic growth (rising real GDP)</li>
+<li>Low unemployment (full employment)</li>
+<li>Low and stable inflation (price stability)</li>
+<li>Balance of payments stability</li>
+<li>Fair (more equal) distribution of income; protection of the environment</li>
+</ul>
+<p>Aims can <b>conflict</b>: e.g. faster growth can raise inflation; cutting inflation with higher interest rates can raise unemployment.</p>
+<h3>2. Fiscal policy</h3>
+<ul>
+<li><b>Fiscal policy:</b> changing government spending and taxation to influence the economy. Run by the Ministry of Finance.</li>
+<li><b>Expansionary</b>: more spending, lower taxes → more aggregate demand → growth and jobs (but risk of inflation and debt).</li>
+<li><b>Contractionary</b>: less spending, higher taxes → lower demand → lower inflation (but risk of unemployment).</li>
+</ul>
+<h3>3. The budget</h3>
+<ul>
+<li><b>Budget:</b> the government's plan of expected revenue and spending for the next financial year (Namibia: 1 April to 31 March), presented by the Minister of Finance.</li>
+<li><b>Budget deficit:</b> spending &gt; revenue (financed by borrowing). <b>Budget surplus:</b> revenue &gt; spending. <b>Balanced budget:</b> equal.</li>
+<li>Main revenue sources in Namibia: income tax, VAT, <b>SACU receipts</b> (customs and excise revenue shared by Botswana, Eswatini, Lesotho, Namibia and South Africa), mining royalties.</li>
+<li>Main spending: education, health, defence, infrastructure, social grants (e.g. old-age pension), interest on debt.</li>
+</ul>
+<div class="calc"><b>Budget balance</b><br>
+Formula: balance = total revenue − total spending<br>
+Working: revenue N$80 billion, spending N$88 billion. 80 − 88 = −8<br>
+<b class="ans">Answer: budget deficit of N$8 billion</b></div>
+<h3>4. Taxes</h3>
+<div class="tablewrap"><table>
+<tr><th>Type</th><th>Meaning</th><th>Namibian examples</th></tr>
+<tr><td>Direct tax</td><td>Tax on income or wealth, paid directly to the government (Namibia Revenue Agency, NamRA)</td><td>Personal income tax (PAYE), company (corporate) tax</td></tr>
+<tr><td>Indirect tax</td><td>Tax on spending; paid by the seller, passed on in the price</td><td>VAT (15%), excise duty (alcohol, tobacco, fuel), customs/import duty</td></tr>
+<tr><td>Progressive</td><td>% paid <b>rises</b> as income rises</td><td>Personal income tax</td></tr>
+<tr><td>Proportional</td><td>Same % at all incomes</td><td>A flat-rate tax</td></tr>
+<tr><td>Regressive</td><td>% of income paid <b>falls</b> as income rises</td><td>VAT and excise take a bigger share of a poor person's income</td></tr>
+</table></div>
+<p><b>Canons (qualities) of a good tax:</b> equity (fair), certainty, convenience, economy (cheap to collect), efficiency (does not harm incentives).</p>
+<p>Reasons for taxes: raise revenue, reduce inequality, discourage demerit goods, correct external costs, protect local industries (tariffs), manage demand.</p>
+<div class="calc"><b>Tax as a % of income</b><br>
+Formula: average tax rate = tax paid ÷ income × 100<br>
+Working: income N$20 000, tax N$3 000. 3 000 ÷ 20 000 × 100 = 15<br>
+<b class="ans">Answer: 15%</b></div>
+<div class="calc"><b>VAT</b><br>
+Formula: VAT = price before VAT × 15 ÷ 100<br>
+Working: a shirt costs N$200 before VAT. 200 × 0.15 = 30. Price with VAT = 230<br>
+<b class="ans">Answer: VAT = N$30; selling price = N$230</b></div>
+<h3>5. Monetary policy and interest rates</h3>
+<ul>
+<li><b>Monetary policy:</b> changing interest rates and the money supply to influence the economy. Run by the <b>Bank of Namibia</b> (Monetary Policy Committee). Because the N$ is pegged to the rand, the Bank of Namibia usually follows the South African Reserve Bank's repo rate closely.</li>
+<li><b>Interest rate:</b> the price of borrowing money / the reward for saving.</li>
+<li><b>Higher repo rate</b> → commercial banks raise lending rates → borrowing costs more, saving pays more → spending and investment fall → demand falls → <b>inflation falls</b> (but growth slows and unemployment may rise).</li>
+<li><b>Lower repo rate</b> → cheaper loans → more spending and investment → growth and jobs (risk: inflation).</li>
+</ul>
+<h3>6. Supply-side policies</h3>
+<p>Policies to increase the economy's productive capacity: education and training (e.g. vocational training centres), infrastructure, lower company tax, privatisation, deregulation, support for SMEs. They shift the PPC outward.</p>
+`},
+{ id:7, name:"Economic indicators", short:"Indicators", notes:`
+<h3>1. Inflation</h3>
+<ul>
+<li><b>Inflation:</b> a sustained rise in the general price level over time. <b>Deflation:</b> a fall in the general price level.</li>
+<li>Measured by the <b>Consumer Price Index (CPI)</b>, calculated in Namibia by the Namibia Statistics Agency (NSA).</li>
+<li><b>Demand-pull inflation:</b> aggregate demand grows faster than supply ("too much money chasing too few goods").</li>
+<li><b>Cost-push inflation:</b> higher production costs (wages, oil and fuel prices, imported inputs, weaker N$) are passed on as higher prices.</li>
+<li><b>Effects:</b> lower purchasing power (fixed incomes hurt), savers lose if interest &lt; inflation, borrowers gain, exports less competitive, uncertainty, menu and shoe-leather costs.</li>
+<li><b>Control:</b> higher interest rates, less government spending, higher taxes, supply-side policies.</li>
+</ul>
+<div class="calc"><b>Building a CPI (price index)</b><br>
+Formula: index = cost of basket in current year ÷ cost in base year × 100<br>
+Working: basket costs N$1 200 in 2024 (base) and N$1 290 in 2025. 1 290 ÷ 1 200 × 100 = 107.5<br>
+<b class="ans">Answer: CPI 2025 = 107.5 (base year 2024 = 100)</b></div>
+<div class="calc"><b>Inflation rate from a CPI</b><br>
+Formula: inflation rate = (CPI this year − CPI last year) ÷ CPI last year × 100<br>
+Working: CPI rises from 107.5 to 112.0. (112.0 − 107.5) ÷ 107.5 × 100 = 4.5 ÷ 107.5 × 100 = 4.19<br>
+<b class="ans">Answer: inflation ≈ 4.2%</b></div>
+<div class="calc"><b>Weighted price index</b> (each item's price index × its weight, add, ÷ total weight)<br>
+Working: Food index 110 × weight 5 = 550; Transport 120 × 3 = 360; Clothing 100 × 2 = 200. Total = 1 110. 1 110 ÷ 10 = 111<br>
+<b class="ans">Answer: weighted CPI = 111 → prices rose 11% since the base year</b></div>
+<h3>2. Unemployment</h3>
+<ul>
+<li><b>Unemployed:</b> people of working age who are willing and able to work and actively looking for work, but have no job.</li>
+<li><b>Labour force</b> = employed + unemployed.</li>
+</ul>
+<div class="calc"><b>Unemployment rate</b><br>
+Formula: unemployment rate = number unemployed ÷ labour force × 100<br>
+Working: labour force 1 000 000, unemployed 330 000. 330 000 ÷ 1 000 000 × 100 = 33<br>
+<b class="ans">Answer: 33%</b></div>
+<div class="tablewrap"><table>
+<tr><th>Type</th><th>Cause</th><th>Example</th></tr>
+<tr><td>Frictional</td><td>Short time between jobs</td><td>A graduate looking for a first job</td></tr>
+<tr><td>Structural</td><td>Decline of an industry; skills no longer needed</td><td>Workers after a mine closes (e.g. a copper mine)</td></tr>
+<tr><td>Cyclical (demand-deficient)</td><td>Low demand in a recession</td><td>Construction workers laid off in a downturn</td></tr>
+<tr><td>Seasonal</td><td>Demand changes with seasons</td><td>Tourism workers in the low season; harvest workers</td></tr>
+<tr><td>Technological</td><td>Machines replace workers</td><td>Self-service tills replace cashiers</td></tr>
+</table></div>
+<p><b>Effects:</b> lost output, lower income and living standards, less tax and more spending on support, crime and social problems, skills lost. Youth unemployment is a major problem in Namibia.</p>
+<p><b>Policies:</b> expansionary fiscal and monetary policy (cyclical), education and training (structural), job centres and information (frictional), support for SMEs and labour-intensive projects.</p>
+<h3>3. GDP and national income</h3>
+<ul>
+<li><b>GDP (Gross Domestic Product):</b> the total value of all final goods and services produced in a country in one year.</li>
+<li>Measured by output, income or expenditure method. Expenditure: <b>GDP = C + I + G + (X − M)</b>.</li>
+<li><b>Real GDP</b> is adjusted for inflation. <b>Nominal GDP</b> is at current prices.</li>
+<li><b>GDP per capita</b> = GDP ÷ population. Used to compare living standards.</li>
+<li><b>Economic growth:</b> an increase in real GDP over time.</li>
+</ul>
+<div class="calc"><b>GDP per capita</b><br>
+Formula: GDP per capita = GDP ÷ population<br>
+Working: GDP N$250 000 million, population 3 million. 250 000 000 000 ÷ 3 000 000 = 83 333.33<br>
+<b class="ans">Answer: about N$83 333 per person</b></div>
+<div class="calc"><b>Economic growth rate</b><br>
+Formula: growth rate = (real GDP this year − last year) ÷ last year × 100<br>
+Working: real GDP rises from N$200 bn to N$206 bn. 6 ÷ 200 × 100 = 3<br>
+<b class="ans">Answer: 3%</b></div>
+<p>Limits of GDP per capita: ignores inequality, informal sector, quality of life, environment, leisure; prices differ between countries.</p>
+<h3>4. The business cycle</h3>
+[[dia:cycle]]
+<ul>
+<li><b>Boom</b> (peak): high output, low unemployment, rising inflation.</li>
+<li><b>Recession</b> (downturn): real GDP falls for two quarters in a row, unemployment rises.</li>
+<li><b>Slump</b> (trough): lowest output, high unemployment.</li>
+<li><b>Recovery</b> (upturn): output and jobs rise again.</li>
+</ul>
+<h3>5. International trade</h3>
+<ul>
+<li><b>Exports:</b> goods/services sold to other countries (diamonds, uranium, fish, beef, grapes, tourism). <b>Imports:</b> bought from other countries (fuel, vehicles, machinery, food).</li>
+<li>Benefits: wider choice, lower prices, bigger markets and economies of scale, access to resources not available locally, foreign currency.</li>
+<li>Risks: dependence on a few exports (commodity prices change), job losses in import-competing industries.</li>
+<li>Namibia trades in <b>SACU</b> (customs union: free trade and a common external tariff) and <b>SADC</b>, and has the AfCFTA.</li>
+</ul>
+<h3>6. Comparative advantage</h3>
+<ul>
+<li><b>Absolute advantage:</b> a country can produce more of a good than another with the same resources.</li>
+<li><b>Comparative advantage:</b> a country can produce a good at a <b>lower opportunity cost</b> than another country. Trade benefits both if each specialises in its comparative advantage.</li>
+</ul>
+<div class="calc"><b>Comparative advantage</b><br>
+Data (one worker, one day): Namibia: 6 tonnes fish or 2 tonnes maize. Zambia: 2 tonnes fish or 4 tonnes maize.<br>
+Namibia: 1 fish costs 2 ÷ 6 = 0.33 maize. Zambia: 1 fish costs 4 ÷ 2 = 2 maize.<br>
+Zambia: 1 maize costs 2 ÷ 4 = 0.5 fish. Namibia: 1 maize costs 6 ÷ 2 = 3 fish.<br>
+<b class="ans">Answer: Namibia has comparative advantage in fish (0.33 &lt; 2); Zambia in maize (0.5 &lt; 3).</b></div>
+<h3>7. Balance of payments</h3>
+<ul>
+<li><b>Balance of payments:</b> a record of all financial transactions between one country and the rest of the world over a year.</li>
+<li><b>Current account</b>: trade in goods (visible trade), trade in services (invisible trade, e.g. tourism, transport), primary income (wages, interest, profits, dividends), secondary income (transfers, e.g. SACU receipts are recorded here, aid, remittances).</li>
+<li><b>Financial/capital account</b>: investment flows (FDI, shares, loans).</li>
+<li><b>Current account deficit:</b> more money flows out than in on the current account.</li>
+<li>Fix a deficit: raise competitiveness (supply-side), reduce demand for imports (contractionary policy), tariffs/quotas, devaluation (not used in Namibia because of the peg).</li>
+</ul>
+<div class="calc"><b>Balance of trade in goods</b><br>
+Formula: visible balance = exports of goods − imports of goods<br>
+Working: exports N$60 bn, imports N$75 bn. 60 − 75 = −15<br>
+<b class="ans">Answer: trade deficit of N$15 billion</b></div>
+<h3>8. Exchange rates</h3>
+<ul>
+<li><b>Exchange rate:</b> the price of one currency in terms of another (e.g. US$1 = N$18.50).</li>
+<li><b>Floating</b>: set by demand and supply. <b>Fixed / pegged</b>: set by government/central bank. N$ is pegged 1:1 to the rand, so the N$ floats against the US$ when the rand floats.</li>
+<li><b>Appreciation</b> (N$ stronger): imports cheaper, exports dearer → lower inflation but exports fall.</li>
+<li><b>Depreciation</b> (N$ weaker): exports cheaper (good for mining, fishing, tourism), imports dearer (fuel) → risk of cost-push inflation.</li>
+</ul>
+<div class="box tip">Memory aid: <b>SPICED</b>: Strong Pound/currency, Imports Cheaper, Exports Dearer.</div>
+<h3>9. Protection</h3>
+<ul>
+<li>Methods: <b>tariffs</b> (taxes on imports), <b>quotas</b> (limit on quantity), <b>subsidies</b> to local firms, <b>embargo</b> (ban), red tape and standards.</li>
+<li>Namibian example: infant industry protection for local products under SACU rules (e.g. on poultry, pasta, UHT milk).</li>
+<li>Reasons: protect <b>infant industries</b>, protect jobs, stop <b>dumping</b>, improve the balance of payments, raise revenue, protect strategic industries, health and safety.</li>
+<li>Against: higher prices and less choice for consumers, local firms become inefficient, other countries <b>retaliate</b>, breaks trade agreements.</li>
+</ul>
+`},
+{ id:8, name:"Developed and developing economies", short:"Development", notes:`
+<h3>1. Developed vs developing</h3>
+<div class="tablewrap"><table>
+<tr><th>Feature</th><th>Developed (e.g. Germany, Japan)</th><th>Developing (e.g. Namibia, Angola)</th></tr>
+<tr><td>GDP per capita</td><td>High</td><td>Low or middle (Namibia: upper-middle income, but very unequal)</td></tr>
+<tr><td>Main sector</td><td>Tertiary (services)</td><td>Primary (farming, mining) is important</td></tr>
+<tr><td>Population growth</td><td>Low</td><td>High</td></tr>
+<tr><td>Age structure</td><td>Ageing population</td><td>Young population</td></tr>
+<tr><td>Life expectancy / literacy</td><td>High</td><td>Lower</td></tr>
+<tr><td>Infrastructure</td><td>Good</td><td>Weaker, especially in rural areas</td></tr>
+<tr><td>Inequality</td><td>Usually lower</td><td>Often high (Namibia has one of the highest Gini coefficients in the world)</td></tr>
+</table></div>
+<h3>2. Living standards and HDI</h3>
+<ul>
+<li><b>Standard of living:</b> the level of welfare/material comfort of people (income, goods and services, health, education).</li>
+<li><b>Human Development Index (HDI)</b> (United Nations) combines three measures: <b>health</b> (life expectancy at birth), <b>education</b> (mean and expected years of schooling), <b>income</b> (GNI per capita).</li>
+<li>HDI is between 0 and 1. Closer to 1 = more developed. Namibia is in the <b>medium</b> human development group.</li>
+<li>HDI is better than GDP per capita alone because it includes health and education. Limits: ignores inequality, environment, freedom, informal sector.</li>
+</ul>
+<h3>3. Poverty</h3>
+<ul>
+<li><b>Absolute poverty:</b> cannot afford basic needs (food, shelter, clothing). <b>Relative poverty:</b> poor compared to others in the same society.</li>
+<li>Causes: unemployment, low skills, large families, illness, drought, unequal land and income distribution.</li>
+<li>Policies: education and training, job creation, social grants, progressive taxes, minimum wage, land reform, rural development, foreign aid.</li>
+</ul>
+<h3>4. Population</h3>
+<ul>
+<li>Population growth depends on <b>birth rate</b>, <b>death rate</b> and <b>net migration</b>.</li>
+<li><b>Natural increase</b> = birth rate − death rate.</li>
+<li><b>Dependency ratio</b> = dependants (young + old) ÷ working population. A young population means many dependants on few workers.</li>
+<li>Effects of rapid population growth: pressure on schools, clinics, water and jobs; urban migration and informal settlements; but also a larger future labour force and market.</li>
+<li>Optimum population: the size that gives the highest output per head.</li>
+</ul>
+<div class="calc"><b>Rate of natural increase</b><br>
+Formula: natural increase (per 1 000) = birth rate − death rate; as % = ÷ 10<br>
+Working: birth rate 28 per 1 000, death rate 8 per 1 000. 28 − 8 = 20 per 1 000 = 2.0%<br>
+<b class="ans">Answer: 2.0% per year</b></div>
+<div class="calc"><b>Dependency ratio</b><br>
+Formula: dependants ÷ working-age population × 100<br>
+Working: 0-14 years: 1.0 m, 65+: 0.1 m, 15-64: 1.9 m. (1.0 + 0.1) ÷ 1.9 × 100 = 57.9<br>
+<b class="ans">Answer: ≈ 57.9 dependants per 100 workers</b></div>
+<h3>5. Why some countries stay less developed</h3>
+<p>Low savings and investment, low skills, poor infrastructure, dependence on a few primary exports, debt, corruption, climate and drought, rapid population growth.</p>
+`},
+{ id:9, name:"Conflicts of interest and sustainability", short:"Conflicts & environment", notes:`
+<h3>1. Private, external and social costs and benefits</h3>
+<div class="tablewrap"><table>
+<tr><th>Term</th><th>Meaning</th><th>Example: a new uranium mine near Arandis</th></tr>
+<tr><td>Private cost</td><td>Cost paid by the producer or consumer who makes the decision</td><td>Machines, wages, fuel</td></tr>
+<tr><td>External cost (negative externality)</td><td>Cost paid by a <b>third party</b> who is not involved</td><td>Dust, radiation risk, water use from aquifers, damage to the desert</td></tr>
+<tr><td>Social cost</td><td><b>Private cost + external cost</b></td><td>The full cost to society</td></tr>
+<tr><td>Private benefit</td><td>Benefit to the decision maker</td><td>Mine's profit; workers' wages</td></tr>
+<tr><td>External benefit (positive externality)</td><td>Benefit to a third party</td><td>New roads, local shops gain customers, clinics built</td></tr>
+<tr><td>Social benefit</td><td><b>Private benefit + external benefit</b></td><td>The full benefit to society</td></tr>
+</table></div>
+<div class="calc"><b>Social cost and net social benefit</b><br>
+Formula: social cost = private cost + external cost; net social benefit = social benefit − social cost<br>
+Working: private cost N$40 m, external cost N$15 m → social cost = 55 m. Private benefit N$50 m, external benefit N$10 m → social benefit = 60 m. 60 − 55 = 5<br>
+<b class="ans">Answer: net social benefit = +N$5 million → the project benefits society overall.</b></div>
+<ul>
+<li>Market failure: firms ignore external costs, so they over-produce goods that pollute. Merit goods with external benefits are under-produced.</li>
+<li>Government responses: taxes or fines on polluters ("polluter pays"), regulations and laws, environmental impact assessments (EIA), permits and quotas, subsidies for clean technology.</li>
+</ul>
+<h3>2. Renewable and non-renewable resources</h3>
+<div class="tablewrap"><table>
+<tr><th>Renewable</th><th>Non-renewable</th></tr>
+<tr><td>Can be replaced naturally (if not overused). Solar, wind, fish stocks, forests, water, wildlife. Namibia has huge solar and wind potential and green hydrogen plans.</td><td>Finite: once used they cannot be replaced. Diamonds, uranium, gold, zinc, oil and gas.</td></tr>
+</table></div>
+<p>Fish are renewable but can be <b>depleted by over-fishing</b>. Namibia uses <b>fishing quotas</b> (Total Allowable Catch) to protect stocks.</p>
+<h3>3. Sustainability</h3>
+<ul>
+<li><b>Sustainable development:</b> meeting the needs of the present without reducing the ability of future generations to meet their needs.</li>
+<li>Examples: community conservancies (local people benefit from wildlife and tourism), fishing quotas, solar energy, recycling, planting trees, water recycling in Windhoek.</li>
+</ul>
+<h3>4. Conflicts of interest</h3>
+<div class="tablewrap"><table>
+<tr><th>Group</th><th>What they want</th></tr>
+<tr><td>Owners/shareholders</td><td>High profit</td></tr>
+<tr><td>Workers</td><td>High wages, safe jobs</td></tr>
+<tr><td>Consumers</td><td>Low prices, good quality</td></tr>
+<tr><td>Local community</td><td>Jobs but a clean, safe environment</td></tr>
+<tr><td>Government</td><td>Tax revenue, growth, jobs, protection of the environment</td></tr>
+</table></div>
+<p>Example: a new mine brings jobs and exports (growth) but may damage tourism, farming land and water. The government must weigh the costs and benefits (cost-benefit analysis).</p>
+`}
+];
+
+/* DIAGRAMS: coordinates run 0-100 on both axes (0,0 = origin).
+   lines: straight curves; points: equilibrium points with guide lines to the axes;
+   hlines: horizontal price lines; arrows: show shifts; texts: free labels. */
+const DIAGRAMS = {
+  movement:{x:"Quantity demanded",y:"Price (N$)",
+    lines:[{a:[10,85],b:[85,10],label:"D"}],
+    points:[{x:30,y:65,label:"A",p:"P1",q:"Q1"},{x:60,y:35,label:"B",p:"P2",q:"Q2"}],
+    arrows:[{a:[36,66],b:[60,42]}],
+    caption:"Own price falls P1 → P2: extension of demand (movement along D from A to B). The curve does NOT shift."},
+  dshift:{x:"Quantity",y:"Price (N$)",
+    lines:[{a:[10,10],b:[90,90],label:"S"},{a:[10,80],b:[80,10],label:"D1"},{a:[30,90],b:[95,25],label:"D2",color:"#1d4ed8"}],
+    points:[{x:45,y:45,label:"E1",p:"P1",q:"Q1"},{x:60,y:60,label:"E2",p:"P2",q:"Q2"}],
+    arrows:[{a:[63,28],b:[86,28]}],
+    caption:"Increase in demand (e.g. income rises, normal good): D shifts right D1 → D2. Price rises P1 → P2, quantity rises Q1 → Q2."},
+  sshift:{x:"Quantity",y:"Price (N$)",
+    lines:[{a:[15,85],b:[85,15],label:"D"},{a:[10,10],b:[85,85],label:"S1"},{a:[5,25],b:[70,90],label:"S2",color:"#b91c1c"}],
+    points:[{x:50,y:50,label:"E1",p:"P1",q:"Q1"},{x:40,y:60,label:"E2",p:"P2",q:"Q2"}],
+    arrows:[{a:[73,78],b:[60,78]}],
+    caption:"Decrease in supply (e.g. drought cuts beef supply): S shifts left S1 → S2. Price rises P1 → P2, quantity falls Q1 → Q2."},
+  tax:{x:"Quantity",y:"Price (N$)",
+    lines:[{a:[15,85],b:[85,15],label:"D"},{a:[10,10],b:[85,85],label:"S"},{a:[5,25],b:[70,90],label:"S + tax",color:"#b91c1c"}],
+    points:[{x:50,y:50,label:"E1",p:"P1",q:"Q1"},{x:40,y:60,label:"E2",p:"P2",q:"Q2"}],
+    arrows:[{a:[73,78],b:[60,78]}],
+    caption:"Indirect tax raises costs: supply shifts left (vertical gap = tax per unit). Price rises P1 → P2, quantity falls Q1 → Q2. A subsidy does the opposite (S shifts right)."},
+  maxprice:{x:"Quantity",y:"Price (N$)",
+    lines:[{a:[10,10],b:[90,90],label:"S"},{a:[10,90],b:[90,10],label:"D"}],
+    points:[{x:50,y:50,label:"E",p:"Pe",q:"Qe"},{x:35,y:35,q:"Qs"},{x:65,y:35,q:"Qd"}],
+    hlines:[{y:35,label:"Max price"}],
+    texts:[{x:50,y:25,t:"Shortage"}],
+    caption:"Maximum price set BELOW equilibrium: quantity demanded (Qd) > quantity supplied (Qs) → shortage."},
+  minprice:{x:"Quantity",y:"Price (N$)",
+    lines:[{a:[10,10],b:[90,90],label:"S"},{a:[10,90],b:[90,10],label:"D"}],
+    points:[{x:50,y:50,label:"E",p:"Pe",q:"Qe"},{x:35,y:65,q:"Qd"},{x:65,y:65,q:"Qs"}],
+    hlines:[{y:65,label:"Min price"}],
+    texts:[{x:45,y:70,t:"Surplus"}],
+    caption:"Minimum price set ABOVE equilibrium: quantity supplied (Qs) > quantity demanded (Qd) → surplus."},
+  ppc:{x:"Cattle (units)",y:"Maize (units)",quarter:88,
+    points:[{x:44,y:76.2,label:"A"},{x:72,y:50.6,label:"B"},{x:30,y:35,label:"C"},{x:82,y:80,label:"D"}],
+    caption:"A and B: efficient (on the PPC). C: unemployed resources. D: unattainable with current resources."},
+  cycle:{x:"Time",y:"Real GDP",wave:true,
+    texts:[{x:15,y:59,t:"Boom"},{x:35,y:56,t:"Recession"},{x:42.5,y:24,t:"Slump"},{x:69,y:45,t:"Recovery"},{x:67.5,y:79,t:"Boom"}],
+    caption:"The business cycle: boom → recession → slump → recovery. The dashed line is the long-run trend growth."}
+};
+
+/* FLASHCARDS: [term, definition] for each theme id. */
+const FLASHCARDS = {
+1:[["Scarcity","Wants are unlimited but resources are limited, so not all wants can be satisfied."],
+["Opportunity cost","The next best alternative given up when a choice is made."],
+["Economic good","A good that is scarce and has an opportunity cost."],
+["Free good","A good that is not scarce and has no opportunity cost, e.g. air."],
+["Factors of production","Land, labour, capital and enterprise: the resources used to produce goods and services."],
+["Rewards of factors","Land → rent; labour → wages; capital → interest; enterprise → profit."],
+["Capital","Man-made goods used to produce other goods and services, e.g. machines, trawlers."],
+["Enterprise","Organising the other factors of production and taking the risk of the business."],
+["Production possibility curve","A curve showing the maximum combinations of two goods an economy can produce with all resources fully and efficiently used."],
+["Market economy","An economic system where resources are allocated by the price mechanism and owned mainly by the private sector."],
+["Mixed economy","An economy where both the private sector and the government (public sector) allocate resources. Namibia is an example."],
+["Market failure","When the market does not allocate resources efficiently, e.g. public goods not provided or pollution."],
+["Public good","A good that is non-excludable and non-rival, e.g. street lighting; the market will not provide it."],
+["Merit good","A good that is under-consumed if left to the market, e.g. education, health care."],
+["Specialisation","Concentrating on producing one good or a narrow range of goods or services."],
+["Division of labour","Splitting production into separate tasks, each done by a different worker."]],
+2:[["Sole trader","A business owned and controlled by one person, with unlimited liability."],
+["Limited liability","Owners can lose only the money they invested in the business, not personal assets."],
+["Public limited company","A company owned by shareholders whose shares can be sold to the public, e.g. on the NSX."],
+["Co-operative","A business owned and run by its members, who share the benefits."],
+["Multinational company","A firm that produces in more than one country."],
+["Trade union","An organisation of workers formed to protect and improve members' pay and working conditions."],
+["Collective bargaining","Negotiation between a trade union and employers about pay and conditions."],
+["Money","Anything generally accepted as a means of payment for goods and services."],
+["Barter","Exchanging goods directly for other goods without money."],
+["Double coincidence of wants","In barter, each person must want what the other person offers."],
+["Functions of money","Medium of exchange, unit of value, store of value, standard of deferred payment."],
+["Central bank","The Bank of Namibia: issues currency, banker to government and banks, controls monetary policy."],
+["Repo rate","The interest rate at which the Bank of Namibia lends to commercial banks."],
+["Commercial bank","A profit-making bank that accepts deposits and gives loans, e.g. Bank Windhoek."],
+["Stock exchange","A market for buying and selling second-hand shares, e.g. the NSX in Windhoek."],
+["Dividend","The part of a company's profit paid to shareholders."]],
+3:[["Demand","The quantity of a good consumers are willing and able to buy at each price over a given period."],
+["Effective demand","A want backed by the ability to pay."],
+["Extension of demand","A rise in quantity demanded caused by a fall in the good's own price (movement along the curve)."],
+["Increase in demand","The whole demand curve shifts right because of a non-price factor, e.g. higher income."],
+["Supply","The quantity of a good producers are willing and able to sell at each price over a given period."],
+["Equilibrium price","The price where quantity demanded equals quantity supplied."],
+["Shortage (excess demand)","When quantity demanded is greater than quantity supplied at a given price."],
+["Subsidy","Money paid by the government to producers to lower costs; supply shifts right."],
+["Maximum price","A legal price ceiling set below equilibrium to help consumers; causes a shortage."],
+["Minimum price","A legal price floor set above equilibrium to help producers; causes a surplus."],
+["PED","Price elasticity of demand = % change in quantity demanded ÷ % change in price."],
+["Inelastic demand","PED less than 1: quantity demanded changes by a smaller % than price."],
+["PES","Price elasticity of supply = % change in quantity supplied ÷ % change in price."],
+["Perfect competition","Many firms selling identical products, no barriers to entry, perfect information; firms are price takers."],
+["Monopoly","A market with one dominant seller, no close substitutes and high barriers to entry."],
+["Oligopoly","A market dominated by a few large firms."],
+["Price discrimination","Charging different prices to different groups for the same product; needs market power."],
+["Price skimming","Setting a high price for a new product and lowering it later."]],
+4:[["Wage","Payment to labour, usually per hour or week."],
+["Salary","A fixed yearly payment to labour, paid monthly."],
+["Fringe benefits","Non-wage rewards such as housing, a car, medical aid or pension."],
+["Non-wage factors","Things other than pay that affect job choice, e.g. job satisfaction, hours, location, security."],
+["Derived demand","Demand for labour comes from demand for the goods and services that labour produces."],
+["Minimum wage","The lowest wage an employer may legally pay a worker."],
+["Disposable income","Income left after direct taxes are paid."],
+["Saving","The part of disposable income that is not spent."],
+["Borrowing","Taking money now and paying it back later with interest."],
+["Interest rate","The price of borrowing money and the reward for saving."],
+["Overdraft","Permission from a bank to spend more than is in a current account, up to a limit."],
+["Mortgage","A long-term loan to buy property, with the property as security."]],
+5:[["Production","Using factors of production to make goods and services that satisfy wants."],
+["Productivity","Output per unit of input per period, e.g. output per worker."],
+["Primary sector","Extracting natural resources: mining, fishing, farming."],
+["Secondary sector","Manufacturing and construction, e.g. fish processing."],
+["Tertiary sector","Providing services, e.g. tourism, banking, transport."],
+["Fixed cost","A cost that does not change with output, e.g. rent."],
+["Variable cost","A cost that changes with output, e.g. raw materials."],
+["Total cost","TC = total fixed cost + total variable cost."],
+["Average cost","AC = total cost ÷ quantity produced."],
+["Total revenue","TR = price × quantity sold."],
+["Profit","Total revenue − total cost."],
+["Economies of scale","Falling average costs as a firm increases its scale of production."],
+["Diseconomies of scale","Rising average costs when a firm grows too large."],
+["Horizontal merger","Two firms at the same stage of production in the same industry join."],
+["Vertical merger","Firms at different stages of production in the same industry join (forward or backward)."],
+["Conglomerate merger","Firms in unrelated industries join."]],
+6:[["Fiscal policy","Changing government spending and taxation to influence the economy."],
+["Monetary policy","Changing interest rates and the money supply to influence the economy (Bank of Namibia)."],
+["Budget","The government's plan of revenue and spending for the next financial year."],
+["Budget deficit","When government spending is greater than government revenue."],
+["Budget surplus","When government revenue is greater than government spending."],
+["Direct tax","A tax on income or wealth paid directly to the government, e.g. income tax."],
+["Indirect tax","A tax on spending, collected by the seller, e.g. VAT."],
+["Progressive tax","A tax where the % paid rises as income rises."],
+["Regressive tax","A tax that takes a bigger % of income from the poor than from the rich."],
+["Proportional tax","A tax where the same % is paid at all income levels."],
+["SACU","Southern African Customs Union: Botswana, Eswatini, Lesotho, Namibia, South Africa. Shares customs revenue."],
+["Supply-side policy","A policy that increases the economy's productive capacity, e.g. education and training."],
+["Macroeconomic aims","Economic growth, low unemployment, stable prices, balance of payments stability, fair income distribution."]],
+7:[["Inflation","A sustained rise in the general price level over time."],
+["Deflation","A sustained fall in the general price level."],
+["CPI","Consumer Price Index: a weighted index of the prices of a basket of goods and services bought by households."],
+["Demand-pull inflation","Inflation caused by aggregate demand growing faster than supply."],
+["Cost-push inflation","Inflation caused by rising production costs passed on as higher prices."],
+["Unemployment","People willing and able to work and actively looking for work, but without a job."],
+["Unemployment rate","Unemployed ÷ labour force × 100."],
+["Structural unemployment","Unemployment caused by the long-term decline of an industry."],
+["Frictional unemployment","Short-term unemployment while people move between jobs."],
+["Cyclical unemployment","Unemployment caused by low demand during a recession."],
+["GDP","The total value of all final goods and services produced in a country in one year."],
+["Real GDP","GDP adjusted for inflation."],
+["GDP per capita","GDP ÷ population."],
+["Recession","A fall in real GDP for two quarters in a row."],
+["Balance of payments","A record of all financial transactions between a country and the rest of the world."],
+["Current account","Part of the BoP: trade in goods, trade in services, primary income and secondary income."],
+["Exchange rate","The price of one currency in terms of another."],
+["Depreciation","A fall in the value of a floating currency against another currency."],
+["Comparative advantage","Producing a good at a lower opportunity cost than another country."],
+["Tariff","A tax on imported goods."],
+["Quota","A limit on the quantity of a good that can be imported."],
+["Dumping","Selling exports abroad at a price below the cost of production."]],
+8:[["Developing economy","A country with low or middle income per head, a large primary sector and lower living standards."],
+["Standard of living","The level of welfare or material comfort of people."],
+["HDI","Human Development Index: combines life expectancy, years of schooling and GNI per capita (0 to 1)."],
+["Absolute poverty","Being unable to afford basic needs such as food, shelter and clothing."],
+["Relative poverty","Being poor compared with others in the same society."],
+["Birth rate","Number of live births per 1 000 people per year."],
+["Death rate","Number of deaths per 1 000 people per year."],
+["Natural increase","Birth rate minus death rate."],
+["Net migration","Immigrants minus emigrants."],
+["Dependency ratio","Number of dependants (young and old) compared with the working-age population."],
+["Optimum population","The population size that gives the highest output per head."],
+["Ageing population","When the average age rises because of low birth rates and longer life expectancy."]],
+9:[["Private cost","The cost paid by the person or firm who makes the decision."],
+["External cost","A cost paid by a third party not involved in the decision, e.g. pollution."],
+["Social cost","Private cost + external cost."],
+["Private benefit","The benefit received by the person or firm who makes the decision."],
+["External benefit","A benefit received by a third party, e.g. a new road built by a mine."],
+["Social benefit","Private benefit + external benefit."],
+["Externality","A cost or benefit that affects a third party."],
+["Renewable resource","A resource that can be replaced naturally, e.g. solar energy, fish stocks."],
+["Non-renewable resource","A finite resource that cannot be replaced once used, e.g. diamonds, uranium."],
+["Sustainable development","Meeting present needs without reducing the ability of future generations to meet theirs."],
+["Fishing quota","A legal limit on the amount of fish that can be caught, to protect fish stocks."],
+["Cost-benefit analysis","Comparing all social costs and social benefits of a project before deciding."]]
+};
+
+/* QUIZZES: {q: question, o: [4 options], a: index of correct option (0-3), e: one-line explanation} */
+const QUIZZES = {
+1:[
+{q:"What is the basic economic problem?",o:["Prices are too high","Unlimited wants and limited resources","Too much money","Low wages"],a:1,e:"Scarcity: resources are limited but wants are unlimited, so choices must be made."},
+{q:"Maria chooses to study instead of working a shift that pays N$300. What is her opportunity cost?",o:["The cost of books","N$300 of wages given up","The school fees","Nothing"],a:1,e:"Opportunity cost is the next best alternative given up: the shift wages."},
+{q:"The reward for capital is…",o:["Rent","Wages","Interest","Profit"],a:2,e:"Land → rent, labour → wages, capital → interest, enterprise → profit."},
+{q:"A fishing trawler is an example of which factor of production?",o:["Land","Labour","Capital","Enterprise"],a:2,e:"It is a man-made good used to produce other goods, so it is capital."},
+{q:"A point inside the PPC shows…",o:["Efficient use of resources","Unattainable output","Unemployed or wasted resources","Economic growth"],a:2,e:"Inside the curve, the economy could produce more: some resources are idle."},
+{q:"Which would shift Namibia's PPC outward?",o:["A rise in unemployment","Discovery of new oil reserves","A drought","A fall in prices"],a:1,e:"More resources increase productive capacity and shift the PPC out."},
+{q:"In a planned economy, resources are allocated mainly by…",o:["The price mechanism","Consumers","The government","Trade unions"],a:2,e:"In a command economy the state decides what, how and for whom to produce."},
+{q:"Street lighting is an example of a…",o:["Merit good","Public good","Demerit good","Free good"],a:1,e:"It is non-excludable and non-rival, so the market does not provide it."},
+{q:"A disadvantage of division of labour is…",o:["Higher output","Workers gain skills quickly","Work becomes boring and repetitive","Less time is wasted"],a:2,e:"Doing one task over and over lowers motivation; the others are advantages."},
+{q:"Which is a feature of a market economy?",o:["Prices set by the state","Private ownership and the profit motive","Equal incomes for all","No choice for consumers"],a:1,e:"Market economies rely on private ownership and prices."}],
+2:[
+{q:"A sole trader has…",o:["Limited liability","Unlimited liability","Shareholders","Shares on the NSX"],a:1,e:"The owner can lose personal assets to pay business debts."},
+{q:"Which business can sell shares to the public on the NSX?",o:["Sole trader","Partnership","Private limited company","Public limited company"],a:3,e:"Only public limited companies offer shares to the public."},
+{q:"Which is a function of the Bank of Namibia?",o:["Giving mortgages to households","Issuing Namibia dollar notes and coins","Selling shares","Collecting VAT"],a:1,e:"The central bank is the sole issuer of N$ currency."},
+{q:"The main aim of a commercial bank such as Bank Windhoek is to…",o:["Control inflation","Make a profit","Print money","Set the repo rate"],a:1,e:"Commercial banks are private firms that aim for profit."},
+{q:"Barter needs a…",o:["Stock exchange","Central bank","Double coincidence of wants","Store of value"],a:2,e:"Each person must want what the other has."},
+{q:"Money used to compare the value of goods is acting as a…",o:["Medium of exchange","Unit (measure) of value","Store of value","Standard of deferred payment"],a:1,e:"Prices let us compare values: unit of account."},
+{q:"A tourist changes US$200. US$1 = N$18.00. How many N$ does she receive?",o:["N$11.11","N$218","N$3 600","N$1 800"],a:2,e:"200 × 18.00 = N$3 600 (multiply when going from US$ to N$)."},
+{q:"A Namibian importer must pay €500. €1 = N$20. What is the cost in N$?",o:["N$25","N$10 000","N$520","N$1 000"],a:1,e:"500 × 20 = N$10 000."},
+{q:"Which action by a trade union involves workers doing only the minimum the contract requires?",o:["Strike","Work-to-rule","Overtime ban","Picketing"],a:1,e:"Work-to-rule means following every rule exactly, which slows work."},
+{q:"A trade union is likely to be strongest when…",o:["Few workers are members","Workers are easily replaced","Members are skilled and demand for the product is inelastic","The firm is making a loss"],a:2,e:"Skilled workers are hard to replace and the firm can pass wage costs on."}],
+3:[
+{q:"A fall in the price of bread (other things equal) causes…",o:["The demand curve to shift right","An extension of demand (movement along)","A decrease in supply","An increase in demand"],a:1,e:"A change in the good's own price is a movement along the curve, not a shift."},
+{q:"Which would shift the demand curve for chicken to the right?",o:["A fall in the price of chicken","A rise in the price of beef","A rise in the cost of chicken feed","A tax on chicken"],a:1,e:"Beef is a substitute: dearer beef increases demand for chicken."},
+{q:"Which does NOT shift the supply curve of maize?",o:["A drought","New farm technology","A change in the price of maize","A subsidy to farmers"],a:2,e:"The good's own price causes a movement along supply, not a shift."},
+{q:"If the government sets a maximum price below equilibrium, the result is…",o:["A surplus","A shortage","No effect","Higher prices"],a:1,e:"At the low price, quantity demanded is greater than quantity supplied."},
+{q:"Price rises by 10% and quantity demanded falls by 20%. PED is…",o:["−0.5 (inelastic)","−0.5 (elastic)","−2 (elastic)","−2 (inelastic)"],a:2,e:"−20 ÷ 10 = −2. The size is greater than 1, so demand is elastic."},
+{q:"Demand for petrol is inelastic. If a firm raises the price, total revenue will…",o:["Fall","Rise","Stay the same","Fall to zero"],a:1,e:"With inelastic demand, the % fall in quantity is smaller than the % rise in price, so TR rises."},
+{q:"An indirect tax on sugar causes…",o:["Supply to shift right","Demand to shift left","Supply to shift left, price up, quantity down","Price to fall"],a:2,e:"The tax raises costs, so supply shifts left."},
+{q:"Which is a feature of perfect competition?",o:["Price discrimination","Firms are price takers","High barriers to entry","Branded products"],a:1,e:"Many firms sell identical goods, so each must accept the market price."},
+{q:"A new smartphone is launched at a high price which falls later. This is…",o:["Penetration pricing","Price skimming","Competitive pricing","Cost-plus pricing"],a:1,e:"Skimming takes high profit from early buyers first."},
+{q:"Which factor makes demand for a product more price elastic?",o:["It is a necessity","It has many close substitutes","It is habit-forming","It takes a small % of income"],a:1,e:"With close substitutes, buyers switch easily when the price rises."},
+{q:"Persuasive advertising aims to…",o:["Make demand more elastic","Make demand more inelastic and increase demand","Reduce demand","Lower costs"],a:1,e:"Brand loyalty shifts demand right and makes it less sensitive to price."}],
+4:[
+{q:"Which is a non-wage factor in choosing a job?",o:["Overtime pay","Bonus","Job security","Commission"],a:2,e:"Job security is not a money payment; the others are financial."},
+{q:"Demand for labour is a derived demand. This means…",o:["It depends on the minimum wage","It comes from demand for the product labour makes","It is set by trade unions","It never changes"],a:1,e:"Firms hire workers because people buy the goods those workers make."},
+{q:"Why do surgeons earn more than cleaners?",o:["Supply of surgeons is high","Long training means low supply of surgeons and high demand","Cleaners work fewer hours","Surgeons belong to unions"],a:1,e:"High demand and low supply of a skill give a high wage."},
+{q:"A minimum wage set above the equilibrium wage may cause…",o:["A shortage of workers","Unemployment","Lower wages","More demand for labour"],a:1,e:"At a higher wage, more people want work but firms hire fewer."},
+{q:"If interest rates rise, households are most likely to…",o:["Borrow more","Save more","Spend more on credit","Save less"],a:1,e:"Saving earns more and borrowing costs more."},
+{q:"N$10 000 is saved at 6% simple interest for 2 years. The interest is…",o:["N$600","N$1 200","N$10 600","N$12 000"],a:1,e:"10 000 × 0.06 × 2 = N$1 200."},
+{q:"Low-income households usually…",o:["Save a large % of income","Spend a large % of income on necessities","Pay the most income tax","Borrow nothing"],a:1,e:"Most of a small income goes on food, rent and transport."},
+{q:"Disposable income is…",o:["Income before tax","Income after direct taxes","Income from savings only","Total wealth"],a:1,e:"It is what is left to spend or save after direct taxes."},
+{q:"Which would most likely reduce household saving?",o:["Higher income","Higher interest rates","Expected rise in prices soon","Lower consumer confidence"],a:2,e:"People buy now before prices rise, so they save less."}],
+5:[
+{q:"Labour productivity is…",o:["Total output × workers","Total output ÷ number of workers","Wages ÷ output","Profit ÷ workers"],a:1,e:"Output per worker = total output ÷ number of workers."},
+{q:"Which is a fixed cost for a guesthouse?",o:["Food for guests","Electricity per guest","Monthly rent","Laundry per room"],a:2,e:"Rent does not change with the number of guests."},
+{q:"TFC = N$4 000, TVC = N$6 000, output = 500. Average cost is…",o:["N$8","N$12","N$20","N$10 000"],a:2,e:"TC = 10 000; AC = 10 000 ÷ 500 = N$20."},
+{q:"A firm sells 300 units at N$15. Total cost is N$4 000. Profit is…",o:["N$500","N$4 500","N$-500","N$300"],a:0,e:"TR = 15 × 300 = 4 500; profit = 4 500 − 4 000 = N$500."},
+{q:"A large mine gets a lower interest rate on its loans. This is a…",o:["Technical economy","Financial economy of scale","Diseconomy of scale","Marketing economy"],a:1,e:"Big firms are lower-risk borrowers, so loans are cheaper."},
+{q:"Poor communication in a very large firm is a…",o:["Purchasing economy","Diseconomy of scale","External economy","Risk-bearing economy"],a:1,e:"It raises average cost as the firm grows."},
+{q:"A fishing company buys a fish canning factory. This is a…",o:["Horizontal merger","Vertical backward merger","Vertical forward merger","Conglomerate merger"],a:2,e:"It moves to a later stage of production, nearer the consumer."},
+{q:"Two supermarket chains join together. This is a…",o:["Horizontal merger","Vertical merger","Conglomerate merger","Partnership"],a:0,e:"Same industry, same stage of production."},
+{q:"Fish processing in Walvis Bay is part of the…",o:["Primary sector","Secondary sector","Tertiary sector","Public sector only"],a:1,e:"Processing turns raw fish into products: manufacturing."},
+{q:"Which is an external economy of scale?",o:["Bulk buying","A pool of skilled workers in the area","Specialist managers","Bigger machines"],a:1,e:"External economies come from the industry's location, not the firm itself."}],
+6:[
+{q:"Fiscal policy uses…",o:["Interest rates","Government spending and taxes","Exchange rates only","The money supply"],a:1,e:"Fiscal = budget: spending and taxation."},
+{q:"Who sets the repo rate in Namibia?",o:["Ministry of Finance","NamRA","Bank of Namibia","NSX"],a:2,e:"The Bank of Namibia's Monetary Policy Committee sets it."},
+{q:"VAT is an example of a…",o:["Direct tax","Progressive tax","Indirect tax","Wealth tax"],a:2,e:"VAT is a tax on spending collected by sellers."},
+{q:"A tax where higher earners pay a higher % of income is…",o:["Regressive","Proportional","Progressive","Indirect"],a:2,e:"Personal income tax in Namibia is progressive."},
+{q:"Revenue N$70 bn, spending N$76 bn. The budget shows…",o:["A surplus of N$6 bn","A deficit of N$6 bn","A balanced budget","A deficit of N$146 bn"],a:1,e:"70 − 76 = −6: spending is greater than revenue."},
+{q:"To reduce inflation, the Bank of Namibia is most likely to…",o:["Lower the repo rate","Raise the repo rate","Print more money","Cut taxes"],a:1,e:"Higher rates reduce borrowing and spending, so demand falls."},
+{q:"Which is an expansionary fiscal policy?",o:["Raising income tax","Cutting government spending","Building more roads and schools","Raising interest rates"],a:2,e:"More government spending raises aggregate demand."},
+{q:"An important revenue source unique to Namibia and its neighbours is…",o:["NSX dividends","SACU receipts","Oil exports","Tourism visas only"],a:1,e:"SACU shares customs and excise revenue among its five members."},
+{q:"A shirt costs N$300 before 15% VAT. The VAT is…",o:["N$15","N$45","N$345","N$4.50"],a:1,e:"300 × 0.15 = N$45."},
+{q:"Which is a supply-side policy?",o:["Higher interest rates","Vocational training for youth","Raising VAT","Cutting the money supply"],a:1,e:"Training raises the quality of labour and productive capacity."}],
+7:[
+{q:"Inflation is…",o:["A rise in the price of one good","A sustained rise in the general price level","A fall in the price level","Higher wages"],a:1,e:"It is the general price level over time, not one price."},
+{q:"A basket costs N$800 in the base year and N$880 now. The price index is…",o:["80","108","110","880"],a:2,e:"880 ÷ 800 × 100 = 110."},
+{q:"CPI rises from 120 to 126. The inflation rate is…",o:["6%","5%","4.8%","126%"],a:1,e:"(126 − 120) ÷ 120 × 100 = 5%."},
+{q:"Higher fuel prices leading to higher prices of goods is…",o:["Demand-pull inflation","Cost-push inflation","Deflation","Structural unemployment"],a:1,e:"Rising costs of production are passed on as higher prices."},
+{q:"Labour force 900 000; unemployed 270 000. Unemployment rate =",o:["27%","30%","33%","3%"],a:1,e:"270 000 ÷ 900 000 × 100 = 30%."},
+{q:"Workers lose jobs when a mine closes and their skills are not needed elsewhere. This is…",o:["Frictional","Seasonal","Structural","Cyclical"],a:2,e:"Long-term decline of an industry causes structural unemployment."},
+{q:"GDP per capita is…",o:["GDP × population","GDP ÷ population","GDP − imports","Exports ÷ population"],a:1,e:"It is average output (income) per person."},
+{q:"Tourist spending in Namibia is recorded in the current account as…",o:["Trade in goods","Trade in services (export)","Primary income","Financial account"],a:1,e:"Tourism is an invisible (service) export."},
+{q:"If the N$ depreciates against the US$, Namibian exports become…",o:["Dearer abroad","Cheaper abroad","Banned","Unchanged"],a:1,e:"Foreign buyers need fewer US$ to buy the same N$ price."},
+{q:"A tax on imported goods is a…",o:["Quota","Subsidy","Tariff","Embargo"],a:2,e:"A tariff raises the price of imports."},
+{q:"Country A gives up less of other goods to make fish than country B. Country A has a…",o:["Absolute advantage in fish","Comparative advantage in fish","Trade deficit","Quota on fish"],a:1,e:"Lower opportunity cost = comparative advantage."}],
+8:[
+{q:"Which is NOT part of the HDI?",o:["Life expectancy","Years of schooling","GNI per capita","Unemployment rate"],a:3,e:"HDI uses health, education and income only."},
+{q:"A typical feature of a developing economy is…",o:["An ageing population","A large tertiary sector","High population growth","Very high GDP per capita"],a:2,e:"Developing countries usually have high birth rates."},
+{q:"Birth rate 30 per 1 000, death rate 9 per 1 000. Natural increase is…",o:["39 per 1 000","21 per 1 000 (2.1%)","3.9%","0.21%"],a:1,e:"30 − 9 = 21 per 1 000 = 2.1%."},
+{q:"Absolute poverty means…",o:["Being poorer than neighbours","Not being able to afford basic needs","Having no savings","Earning the minimum wage"],a:1,e:"Basic needs (food, shelter, clothing) cannot be met."},
+{q:"Why is HDI a better measure of living standards than GDP per capita alone?",o:["It is easier to calculate","It includes health and education","It measures inequality","It ignores income"],a:1,e:"It looks at more than income."},
+{q:"A high dependency ratio means…",o:["Few dependants per worker","Many dependants per worker","Low birth rate","High productivity"],a:1,e:"Workers must support many young and old people."},
+{q:"Rapid population growth in Windhoek is most likely to cause…",o:["Fewer informal settlements","Pressure on housing, water and jobs","Lower demand for schools","An ageing population"],a:1,e:"More people need more services and jobs."},
+{q:"Namibia's very high Gini coefficient shows…",o:["Low inflation","High income inequality","High HDI","Low population"],a:1,e:"The Gini coefficient measures inequality of income."}],
+9:[
+{q:"Social cost equals…",o:["Private cost − external cost","Private cost + external cost","External cost only","Private benefit + external benefit"],a:1,e:"Social cost is the full cost to society."},
+{q:"Dust from a mine that harms nearby farmers is…",o:["A private cost","An external cost","A private benefit","A social benefit"],a:1,e:"Farmers are third parties who did not make the decision."},
+{q:"A new road built by a mine that local people also use is…",o:["An external benefit","A private cost","An external cost","A social cost"],a:0,e:"Third parties gain without paying."},
+{q:"Which is a non-renewable resource?",o:["Solar energy","Wind","Uranium","Fish stocks"],a:2,e:"Uranium is finite and cannot be replaced."},
+{q:"Namibia uses fishing quotas mainly to…",o:["Raise fish prices","Prevent over-fishing and protect fish stocks","Increase exports quickly","Create a monopoly"],a:1,e:"Quotas keep catches at a sustainable level."},
+{q:"Sustainable development means…",o:["Using all resources now","Meeting present needs without harming future generations","Stopping all mining","Maximum GDP growth"],a:1,e:"This is the standard definition."},
+{q:"Private cost N$30 m; external cost N$10 m; social benefit N$45 m. Net social benefit is…",o:["N$5 m","N$15 m","N$35 m","−N$5 m"],a:0,e:"Social cost = 40 m; 45 − 40 = N$5 m."},
+{q:"Which government action makes the polluter pay?",o:["A subsidy to the polluter","A tax or fine on pollution","Lower interest rates","Removing regulations"],a:1,e:"A tax adds the external cost to the firm's private cost."},
+{q:"A conflict of interest between a mine and local people is most likely about…",o:["Wages vs profit only","Jobs vs damage to water and land","Exchange rates","Inflation"],a:1,e:"The community wants jobs but also a clean environment."}]
+};
+
+/* EXAMS: mock papers.
+   Each question: {id, theme, stem (optional HTML), parts:[{l, q, m (marks), cw (command word), scheme:[...], model:"..."}]}
+   Paper 2 Section B uses choose:3 (learner answers any 3). */
+const RUBRIC7_DISCUSS = ["Knowledge (1): correct definition or key term.","Application (1): linked to the context (Namibia / the case).","Analysis (3): developed chains of reasoning on BOTH sides (point → because → so → effect).","Evaluation (2): a justified judgement that weighs both sides (it depends on… so overall…). A third one-sided point is NOT evaluation."];
+const RUBRIC7_ANALYSE = ["Knowledge (1): correct term or definition.","Application (1): linked to the context.","Analysis (5): one mark per clear link in the chain of cause and effect (aim for 5 links), or 2 developed chains."];
+
+const EXAMS = [
+{ id:"p1a", paper:1, title:"Paper 1: Mock A", minutes:150, total:80,
+  intro:"Answer ALL questions. Section A: 40 marks. Section B: two data-response questions, 20 marks each. Show all working in calculations.",
+  sections:[
+  { name:"Section A (40 marks)", questions:[
+    {id:"a1",theme:1,parts:[
+      {l:"(a)",q:"Define opportunity cost.",m:2,cw:"Define",scheme:["The next best alternative (1)","given up / forgone when a choice is made (1)"],model:"Opportunity cost is the next best alternative that is given up when a choice is made."},
+      {l:"(b)",q:"A farmer near Rehoboth uses her land to grow grapes instead of maize. Identify the opportunity cost of her choice.",m:1,cw:"Identify",scheme:["The maize that could have been grown (1)"],model:"The maize she could have grown on the same land."},
+      {l:"(c)",q:"State the reward for land and the reward for capital.",m:2,cw:"State",scheme:["Land: rent (1)","Capital: interest (1)"],model:"Land earns rent. Capital earns interest."}]},
+    {id:"a2",theme:2,parts:[
+      {l:"(a)",q:"A tourist from the USA changes US$400 into Namibia dollars. The exchange rate is US$1 = N$18.50. Calculate how many N$ the tourist receives. Show your working.",m:2,cw:"Calculate",scheme:["Working: 400 × 18.50 (1)","Answer: N$7 400 with unit (1)"],model:"N$ = 400 × 18.50 = N$7 400"},
+      {l:"(b)",q:"State two functions of the Bank of Namibia.",m:2,cw:"State",scheme:["Any two (1 each): issues notes and coins; banker to government; banker to commercial banks / lender of last resort; controls monetary policy / sets repo rate; supervises banks; manages foreign reserves / maintains the peg"],model:"1. It issues Namibia dollar notes and coins. 2. It sets the repo rate (monetary policy)."},
+      {l:"(c)",q:"State one function of money.",m:1,cw:"State",scheme:["Medium of exchange / unit of value / store of value / standard of deferred payment (1)"],model:"Medium of exchange."}]},
+    {id:"a3",theme:3,parts:[
+      {l:"(a)",q:"The price of a loaf of bread rises from N$20 to N$25. Quantity demanded falls from 400 to 360 loaves a day. Calculate the price elasticity of demand. Show your working.",m:3,cw:"Calculate",scheme:["% change in Qd = (360 − 400) ÷ 400 × 100 = −10% (1)","% change in P = (25 − 20) ÷ 20 × 100 = 25% (1)","PED = −10 ÷ 25 = −0.4 (1)"],model:"%ΔQd = −40 ÷ 400 × 100 = −10%. %ΔP = 5 ÷ 20 × 100 = 25%. PED = −10 ÷ 25 = −0.4"},
+      {l:"(b)",q:"State whether demand for bread is price elastic or inelastic, and what happens to the bakery's total revenue after the price rise.",m:2,cw:"State",scheme:["Inelastic (because 0.4 < 1) (1)","Total revenue rises (from N$8 000 to N$9 000) (1)"],model:"Demand is inelastic (0.4 is less than 1). Total revenue rises from N$8 000 to N$9 000."}]},
+    {id:"a4",theme:4,parts:[
+      {l:"(a)",q:"State two non-wage factors that affect a person's choice of occupation.",m:2,cw:"State",scheme:["Any two (1 each): job satisfaction; working conditions; hours; job security; promotion/training chances; location; holidays; status"],model:"Job security and working conditions."},
+      {l:"(b)",q:"Explain why a doctor earns more than a cleaner.",m:3,cw:"Explain",scheme:["Supply of doctors is low because training is long / needs high qualifications (1)","Demand for doctors is high / their productivity or value of service is high (1)","Supply of cleaners is high because few skills are needed, so wage is low (1)"],model:"Few people can become doctors because the training takes many years, so the supply of doctors is low. Demand for doctors is high because health care is very important. Many people can do cleaning because it needs few skills, so supply is high and the wage is low."}]},
+    {id:"a5",theme:5,parts:[
+      {l:"(a)",q:"A fish-processing firm produces 100 tonnes. Its total fixed cost is N$2 000 and its total variable cost is N$3 000. Calculate its total cost.",m:1,cw:"Calculate",scheme:["TC = 2 000 + 3 000 = N$5 000 (1)"],model:"TC = TFC + TVC = 2 000 + 3 000 = N$5 000"},
+      {l:"(b)",q:"Calculate its average cost per tonne. Show your working.",m:2,cw:"Calculate",scheme:["AC = TC ÷ Q = 5 000 ÷ 100 (1)","= N$50 per tonne (1)"],model:"AC = 5 000 ÷ 100 = N$50 per tonne"},
+      {l:"(c)",q:"State one internal economy of scale.",m:1,cw:"State",scheme:["Purchasing/bulk buying; technical; financial; marketing; managerial; risk-bearing (1)"],model:"Bulk buying (purchasing economy)."},
+      {l:"(d)",q:"The firm buys a fishing trawler company. Identify the type of merger.",m:1,cw:"Identify",scheme:["Vertical backward merger (1)"],model:"Vertical backward merger (it joins its supplier)."}]},
+    {id:"a6",theme:6,parts:[
+      {l:"(a)",q:"Distinguish between a direct tax and an indirect tax. Give a Namibian example of each.",m:4,cw:"Distinguish",scheme:["Direct tax: tax on income or wealth paid directly to government (1)","Example: income tax / company tax (1)","Indirect tax: tax on spending, collected by sellers and passed on in prices (1)","Example: VAT / excise duty / import duty (1)"],model:"A direct tax is a tax on income or wealth that is paid straight to the government, e.g. personal income tax. An indirect tax is a tax on spending that the seller collects and adds to the price, e.g. VAT at 15%."},
+      {l:"(b)",q:"State one aim of government fiscal policy.",m:1,cw:"State",scheme:["Economic growth / reduce unemployment / control inflation / redistribute income / BoP stability (1)"],model:"To reduce unemployment."}]},
+    {id:"a7",theme:7,parts:[
+      {l:"(a)",q:"A basket of goods cost N$1 200 in 2024 (base year) and N$1 290 in 2025. Calculate the price index for 2025.",m:2,cw:"Calculate",scheme:["1 290 ÷ 1 200 × 100 (1)","= 107.5 (1)"],model:"Index = 1 290 ÷ 1 200 × 100 = 107.5"},
+      {l:"(b)",q:"Calculate the rate of inflation between 2024 and 2025.",m:2,cw:"Calculate",scheme:["(107.5 − 100) ÷ 100 × 100 (1)","= 7.5% (with % sign) (1)"],model:"(107.5 − 100) ÷ 100 × 100 = 7.5%"},
+      {l:"(c)",q:"State one cause of cost-push inflation.",m:1,cw:"State",scheme:["Higher wages / higher fuel or oil prices / higher import prices / weaker N$ / higher indirect taxes (1)"],model:"A rise in the price of imported fuel."}]},
+    {id:"a8",theme:8,parts:[
+      {l:"(a)",q:"State the three measures combined in the Human Development Index (HDI).",m:3,cw:"State",scheme:["Life expectancy / health (1)","Education / years of schooling (1)","Income / GNI per capita (1)"],model:"Life expectancy, years of schooling and GNI per capita."},
+      {l:"(b)",q:"Define external cost.",m:2,cw:"Define",scheme:["A cost paid by a third party (1)","who is not involved in the decision / not paid by the producer or consumer (1)"],model:"An external cost is a cost paid by a third party who was not part of the decision, e.g. pollution from a factory."}]}
+  ]},
+  { name:"Section B (40 marks)", questions:[
+    {id:"b1",theme:3,stem:`<p><b>Extract: The beef market in Namibia</b> <span class="small muted">(practice data)</span></p>
+<p>Namibia exports beef to Europe and China. In 2024 a drought hit the northern and central regions. Many farmers sold cattle early because there was no grazing. Later the number of cattle fell and beef prices in local butcheries rose from N$110 to N$132 per kg. At the same time, more Namibians were buying chicken. The Meat Board said that a government subsidy for animal feed would help farmers.</p>`,parts:[
+      {l:"(a)",q:"Using the extract, calculate the percentage increase in the price of beef.",m:2,cw:"Calculate",scheme:["(132 − 110) ÷ 110 × 100 (1)","= 20% (1)"],model:"(132 − 110) ÷ 110 × 100 = 22 ÷ 110 × 100 = 20%"},
+      {l:"(b)",q:"Define equilibrium price.",m:2,cw:"Define",scheme:["The price where quantity demanded (1)","equals quantity supplied (1)"],model:"The price at which quantity demanded equals quantity supplied."},
+      {l:"(c)",q:"Draw a demand and supply diagram to show the effect of the drought on the market for beef.",m:4,cw:"Draw",scheme:["Axes labelled Price and Quantity (1)","Original D and S curves and equilibrium P1 Q1 (1)","Supply shifts LEFT, S1 to S2 (1)","New equilibrium: price rises to P2, quantity falls to Q2 (1)"],model:"Diagram: price on vertical axis, quantity on horizontal axis. D and S1 cross at P1, Q1. S shifts left to S2. New equilibrium at higher price P2 and lower quantity Q2. (See Notes → The market → supply shift diagram.)"},
+      {l:"(d)",q:"Explain two reasons, other than price, why the demand for beef may change.",m:4,cw:"Explain",scheme:["Reason 1 identified (1) + explained (1), e.g. price of substitutes: if chicken becomes cheaper, people switch to chicken, so demand for beef falls","Reason 2 identified (1) + explained (1), e.g. income: higher incomes mean people can afford more beef (normal good); tastes/health concerns; population; advertising"],model:"1. Price of a substitute: if chicken becomes cheaper, consumers switch from beef to chicken, so demand for beef falls. 2. Income: if incomes rise, people can afford more beef because it is a normal good, so demand for beef rises."},
+      {l:"(e)",q:"Analyse how a subsidy for animal feed could affect the market for beef.",m:4,cw:"Analyse",scheme:["Subsidy lowers farmers' costs of production (1)","so supply of beef increases / S shifts right (1)","which lowers the equilibrium price of beef (1)","so quantity bought rises / consumers gain / farmers' incomes protected / exports may rise (1)"],model:"The subsidy lowers the cost of feeding cattle. Because costs are lower, farmers can keep and raise more cattle, so the supply of beef increases (shifts right). With more supply, the equilibrium price of beef falls. As a result, consumers buy more beef and farmers can stay in business."},
+      {l:"(f)",q:"Discuss whether the government should set a maximum price for beef.",m:4,cw:"Discuss",scheme:["For (up to 2): beef becomes affordable for poor households, so living standards / nutrition improve","Against (up to 2): price below equilibrium causes a shortage, queues and black markets; farmers earn less and may produce less","Max 3 if only one side"],model:"For: a maximum price would make beef cheaper, so low-income households could still afford protein. Against: if the maximum price is below equilibrium, quantity demanded is greater than quantity supplied, so there is a shortage and a black market may develop. Farmers' income falls, so in the long run they may keep fewer cattle, making supply even lower."}]},
+    {id:"b2",theme:7,stem:`<p><b>Extract: Namibia's economy</b> <span class="small muted">(practice data, not official figures)</span></p>
+<div class="tablewrap"><table><tr><th>Year</th><th>Real GDP growth (%)</th><th>Inflation (%)</th><th>Repo rate (%)</th></tr>
+<tr><td>2021</td><td>3.5</td><td>3.6</td><td>3.75</td></tr><tr><td>2022</td><td>5.3</td><td>6.1</td><td>6.25</td></tr>
+<tr><td>2023</td><td>4.2</td><td>5.9</td><td>7.75</td></tr><tr><td>2024</td><td>3.7</td><td>4.2</td><td>7.25</td></tr></table></div>
+<p>Unemployment remains high, especially among young people. A survey found 360 000 people unemployed out of a labour force of 1 200 000. Local manufacturers have asked the government for more protection against cheap imports.</p>`,parts:[
+      {l:"(a)",q:"Identify the year with the highest inflation rate.",m:1,cw:"Identify",scheme:["2022 (1)"],model:"2022 (6.1%)."},
+      {l:"(b)",q:"Define unemployment.",m:2,cw:"Define",scheme:["People of working age who are willing and able to work (1)","and actively looking for work but do not have a job (1)"],model:"People of working age who are willing and able to work and are looking for work, but have no job."},
+      {l:"(c)",q:"Using the extract, calculate the unemployment rate. Show your working.",m:3,cw:"Calculate",scheme:["Formula: unemployed ÷ labour force × 100 (1)","360 000 ÷ 1 200 000 × 100 (1)","= 30% (1)"],model:"Unemployment rate = 360 000 ÷ 1 200 000 × 100 = 30%"},
+      {l:"(d)",q:"Explain two types of unemployment that may exist in Namibia.",m:4,cw:"Explain",scheme:["Type 1 (1) + explanation (1), e.g. structural: decline of an industry (mine closure), skills no longer needed","Type 2 (1) + explanation (1), e.g. seasonal: tourism/agriculture jobs only in some months; frictional: school leavers/graduates between jobs; cyclical: low demand in recession"],model:"1. Structural unemployment: when a mine closes, miners lose their jobs and their skills are not needed in other industries. 2. Seasonal unemployment: some workers in tourism and farming only have work in the busy season, so they are unemployed for part of the year."},
+      {l:"(e)",q:"Analyse how the change in the repo rate between 2021 and 2023 may have affected inflation.",m:4,cw:"Analyse",scheme:["Repo rate rose from 3.75% to 7.75% (1)","commercial banks raise lending rates, so borrowing is more expensive (1)","consumers and firms spend/invest less; saving is more attractive (1)","aggregate demand falls, so inflation falls (data: 6.1% → 5.9% → 4.2%) (1)"],model:"The repo rate rose from 3.75% to 7.75%. Commercial banks then raised their lending rates, so loans became more expensive. Households and firms borrowed and spent less, and saving became more attractive. Lower spending reduced aggregate demand, so prices rose more slowly: inflation fell from 6.1% in 2022 to 4.2% in 2024."},
+      {l:"(f)",q:"Discuss whether Namibia should put tariffs on imports to protect local manufacturers.",m:6,cw:"Discuss",scheme:["For (up to 3): protects infant industries / local jobs; reduces imports and improves current account; raises government revenue","Against (up to 3): higher prices for consumers; less choice; local firms become inefficient; retaliation by trading partners; SACU rules (common external tariff) limit Namibia acting alone","Max 4 if only one side; credit a supported conclusion"],model:"For: a tariff makes imports more expensive, so consumers buy more local products. Local firms sell more and can grow, so they hire more workers, which reduces unemployment. It also raises tax revenue. Against: consumers pay higher prices and have less choice, which lowers living standards, especially for the poor. Protected firms may not try to become efficient. Other countries may retaliate with their own tariffs, hurting Namibian exports such as beef and fish. Also, as a SACU member, Namibia shares a common external tariff, so it cannot easily set tariffs alone. Overall, a temporary tariff for a true infant industry may help, but long-term protection is likely to harm consumers."}]}
+  ]}
+]},
+
+{ id:"p1b", paper:1, title:"Paper 1: Mock B", minutes:150, total:80,
+  intro:"Answer ALL questions. Section A: 40 marks. Section B: two data-response questions, 20 marks each. Show all working in calculations.",
+  sections:[
+  { name:"Section A (40 marks)", questions:[
+    {id:"a1",theme:1,parts:[
+      {l:"(a)",q:"Define a mixed economy.",m:2,cw:"Define",scheme:["An economy where resources are allocated by both the private sector / market (1)","and the public sector / government (1)"],model:"A mixed economy is one where both the private sector (through the market) and the government decide how resources are used."},
+      {l:"(b)",q:"State two disadvantages of a market economy.",m:2,cw:"State",scheme:["Any two (1 each): inequality of income; public goods not provided; merit goods under-provided; demerit goods over-consumed; external costs/pollution; monopoly power"],model:"Public goods are not provided. Income is unequal."},
+      {l:"(c)",q:"Give one example of a state-owned enterprise in Namibia.",m:1,cw:"Identify",scheme:["NamPower / NamWater / TransNamib / Air Namibia (former) / NamPost / Telecom Namibia / Namport (1)"],model:"NamPower."}]},
+    {id:"a2",theme:2,parts:[
+      {l:"(a)",q:"State two functions of a commercial bank.",m:2,cw:"State",scheme:["Any two (1 each): accept deposits; give loans/overdrafts/mortgages; payment services; foreign exchange; safe custody; financial advice"],model:"Accepting deposits and giving loans."},
+      {l:"(b)",q:"Explain one reason why a sole trader may want to become a private limited company.",m:2,cw:"Explain",scheme:["Limited liability (1) so the owner's personal assets are safe if the business fails (1)","OR more capital (1) because shares can be sold to family/friends to fund growth (1)"],model:"To get limited liability, because then the owner can only lose the money invested and not their own house or car."},
+      {l:"(c)",q:"State one action a trade union may take in a wage dispute.",m:1,cw:"State",scheme:["Strike / go-slow / work-to-rule / overtime ban / collective bargaining / picketing (1)"],model:"A strike."}]},
+    {id:"a3",theme:3,parts:[
+      {l:"(a)",q:"State two factors that could cause the supply of fish to decrease.",m:2,cw:"State",scheme:["Any two (1 each): lower fishing quotas; higher fuel/labour costs; bad weather / changes in ocean conditions; new indirect tax; boats breaking down / fewer firms. (Do NOT credit 'a fall in the price of fish'.)"],model:"A cut in fishing quotas and a rise in fuel costs."},
+      {l:"(b)",q:"Explain the difference between a 'decrease in supply' and a 'contraction of supply'.",m:3,cw:"Explain",scheme:["Decrease in supply: the whole supply curve shifts left (1)","caused by a non-price factor, e.g. higher costs (1)","Contraction: a movement down along the same supply curve caused by a fall in the good's own price (1)"],model:"A decrease in supply is a shift of the whole supply curve to the left, caused by a non-price factor such as higher costs. A contraction of supply is a movement down along the same curve, caused by a fall in the good's own price."}]},
+    {id:"a4",theme:4,parts:[
+      {l:"(a)",q:"Sam borrows N$8 000 at 12% simple interest a year for 2 years. Calculate the total amount he must repay. Show your working.",m:3,cw:"Calculate",scheme:["Interest = 8 000 × 0.12 × 2 (1)","= N$1 920 (1)","Total = 8 000 + 1 920 = N$9 920 (1)"],model:"Interest = 8 000 × 0.12 × 2 = N$1 920. Total repaid = 8 000 + 1 920 = N$9 920"},
+      {l:"(b)",q:"State two reasons why people save.",m:2,cw:"State",scheme:["Any two (1 each): for emergencies; for old age/retirement; to buy expensive items (house, car); for education; to earn interest; for children's future"],model:"For retirement and for emergencies."}]},
+    {id:"a5",theme:5,parts:[
+      {l:"(a)",q:"A factory employed 20 workers and produced 4 000 units. After training, 20 workers produce 5 000 units. Calculate the % increase in labour productivity.",m:3,cw:"Calculate",scheme:["Before: 4 000 ÷ 20 = 200; after: 5 000 ÷ 20 = 250 units per worker (1)","(250 − 200) ÷ 200 × 100 (1)","= 25% (1)"],model:"Before: 4 000 ÷ 20 = 200 units per worker. After: 5 000 ÷ 20 = 250. Increase = (250 − 200) ÷ 200 × 100 = 25%"},
+      {l:"(b)",q:"State two diseconomies of scale.",m:2,cw:"State",scheme:["Any two (1 each): poor communication; slow decision making; low worker motivation; coordination/control problems; (external) congestion, higher land prices"],model:"Poor communication and slow decisions."}]},
+    {id:"a6",theme:6,parts:[
+      {l:"(a)",q:"Define monetary policy.",m:2,cw:"Define",scheme:["Changing interest rates / money supply (1)","by the central bank (Bank of Namibia) to influence the economy (1)"],model:"Monetary policy is when the Bank of Namibia changes interest rates or the money supply to influence the economy."},
+      {l:"(b)",q:"The government plans to spend N$95 billion and expects revenue of N$88 billion. Calculate the budget balance and state whether it is a surplus or a deficit.",m:2,cw:"Calculate",scheme:["88 − 95 = −N$7 billion (1)","Deficit (1)"],model:"88 − 95 = −7. A budget deficit of N$7 billion."},
+      {l:"(c)",q:"State one reason why VAT is a regressive tax.",m:1,cw:"State",scheme:["Poor people spend a larger % of their income, so VAT takes a larger % of their income (1)"],model:"Poor households spend most of their income, so VAT takes a bigger share of their income than of a rich person's."}]},
+    {id:"a7",theme:7,parts:[
+      {l:"(a)",q:"Namibia's exports of goods were N$62 billion and imports of goods were N$74 billion. Calculate the balance of trade in goods.",m:2,cw:"Calculate",scheme:["62 − 74 (1)","= −N$12 billion (deficit) (1)"],model:"62 − 74 = −N$12 billion: a trade deficit."},
+      {l:"(b)",q:"State two components of the current account of the balance of payments.",m:2,cw:"State",scheme:["Any two (1 each): trade in goods; trade in services; primary income; secondary income (transfers)"],model:"Trade in goods and trade in services."},
+      {l:"(c)",q:"State one effect of a depreciation of the N$ on Namibia's imports.",m:1,cw:"State",scheme:["Imports become more expensive / fewer imports bought (1)"],model:"Imports become more expensive."}]},
+    {id:"a8",theme:9,parts:[
+      {l:"(a)",q:"Distinguish between renewable and non-renewable resources, using one Namibian example of each.",m:4,cw:"Distinguish",scheme:["Renewable: can be replaced naturally (1); e.g. solar, wind, fish (1)","Non-renewable: finite, cannot be replaced once used (1); e.g. diamonds, uranium, gold (1)"],model:"A renewable resource can be replaced naturally, e.g. solar energy. A non-renewable resource is finite and cannot be replaced once used, e.g. diamonds."},
+      {l:"(b)",q:"State one way the government can protect fish stocks.",m:1,cw:"State",scheme:["Fishing quotas / closed seasons / licences / net-size rules / fines (1)"],model:"Set fishing quotas."}]}
+  ]},
+  { name:"Section B (40 marks)", questions:[
+    {id:"b1",theme:7,stem:`<p><b>Extract: Tourism and the exchange rate</b> <span class="small muted">(practice data)</span></p>
+<p>Tourism is one of Namibia's biggest earners of foreign currency. Visitors come to Etosha, Sossusvlei and the coast. Over one year the exchange rate moved from US$1 = N$16.00 to US$1 = N$18.40. Tour operators reported more bookings from the USA and Europe. However, fuel importers warned that petrol prices would rise. Many tourism jobs are seasonal, and lodges in conservancies share income with local communities.</p>`,parts:[
+      {l:"(a)",q:"Define exchange rate.",m:2,cw:"Define",scheme:["The price of one currency (1)","in terms of another currency (1)"],model:"The price of one currency expressed in another currency."},
+      {l:"(b)",q:"A US tourist has US$1 500. Calculate how many more N$ she gets at the new rate than at the old rate.",m:3,cw:"Calculate",scheme:["Old: 1 500 × 16.00 = N$24 000 (1)","New: 1 500 × 18.40 = N$27 600 (1)","Difference = N$3 600 (1)"],model:"Old: 1 500 × 16.00 = N$24 000. New: 1 500 × 18.40 = N$27 600. Difference: N$3 600 more."},
+      {l:"(c)",q:"Has the N$ appreciated or depreciated? Give a reason from the extract.",m:2,cw:"Identify",scheme:["Depreciated (1)","more N$ are needed to buy one US$ (16.00 → 18.40) (1)"],model:"Depreciated, because one US$ now buys more N$ (N$18.40 instead of N$16.00)."},
+      {l:"(d)",q:"Explain why tourism is recorded in the current account as an export of services.",m:3,cw:"Explain",scheme:["Foreign tourists spend money in Namibia (1)","so foreign currency flows into Namibia (1)","it is a service, not a physical good (invisible) (1)"],model:"Foreign tourists pay for hotels, tours and food in Namibia. Money flows into Namibia from abroad, just like when goods are sold abroad. Because hotels and tours are services, not goods, it is an export of services (invisible export)."},
+      {l:"(e)",q:"Analyse how the change in the exchange rate could cause inflation in Namibia.",m:4,cw:"Analyse",scheme:["N$ depreciates, so imports cost more in N$ (1)","e.g. imported fuel / petrol prices rise (1)","firms' transport and production costs rise (1)","costs passed on in higher prices: cost-push inflation (1)"],model:"The N$ has depreciated, so importers must pay more N$ for goods priced in US$, such as fuel. Petrol prices rise, so transport and production costs rise for many firms. Firms pass these higher costs on to consumers as higher prices, so the general price level rises: cost-push inflation."},
+      {l:"(f)",q:"Discuss whether growth in tourism is good for the Namibian economy.",m:6,cw:"Discuss",scheme:["Benefits (up to 3): foreign currency / current account; jobs incl. rural; income for conservancies and local communities; multiplier to other firms; tax revenue","Costs (up to 3): seasonal and low-paid jobs; damage to environment/wildlife; dependence on foreign demand (e.g. pandemics); profits may leave the country (foreign-owned lodges)","Max 4 if only one side; reward a supported conclusion"],model:"Good: tourists bring foreign currency, which improves the current account. Lodges and tour firms create jobs, including in rural areas where jobs are few, and conservancies share income with communities, which reduces poverty. Tourists also spend in shops and restaurants, so other firms grow. Not so good: many jobs are seasonal, so workers are unemployed in the low season. Too many visitors can damage fragile areas such as Sossusvlei. Tourism also depends on events abroad; during COVID-19 tourism almost stopped. Overall, tourism is good for Namibia if it is managed sustainably and the income stays in local communities."}]},
+    {id:"b2",theme:3,stem:`<p><b>Extract: A single electricity supplier</b> <span class="small muted">(practice data)</span></p>
+<p>In a country, one state-owned firm owns all electricity transmission lines. Other firms cannot easily enter the market because building a grid costs billions. Electricity prices rose by 8% while quantity demanded fell by only 2%. The firm has economies of scale but some customers complain about poor service. The government is considering allowing private solar farms to sell electricity to the grid.</p>`,parts:[
+      {l:"(a)",q:"Identify the type of market structure described in the extract.",m:1,cw:"Identify",scheme:["Monopoly (1)"],model:"Monopoly."},
+      {l:"(b)",q:"Calculate the price elasticity of demand for electricity.",m:2,cw:"Calculate",scheme:["−2 ÷ 8 (1)","= −0.25 (1)"],model:"PED = −2% ÷ 8% = −0.25"},
+      {l:"(c)",q:"Using your answer to (b), explain what happened to the firm's total revenue.",m:3,cw:"Explain",scheme:["Demand is inelastic (0.25 < 1) (1)","% fall in quantity is smaller than % rise in price (1)","so total revenue rises (1)"],model:"Demand is inelastic because 0.25 is less than 1. The quantity fell by a smaller % (2%) than the price rose (8%), so total revenue increased."},
+      {l:"(d)",q:"State two barriers to entry in this market.",m:2,cw:"State",scheme:["Very high start-up costs / grid costs billions (1)","Economies of scale of existing firm / legal rights / government ownership / control of transmission lines (1)"],model:"High start-up cost of building a grid, and the existing firm owns all transmission lines."},
+      {l:"(e)",q:"Explain why this firm can use price discrimination but a firm in perfect competition cannot.",m:4,cw:"Explain",scheme:["Price discrimination = different prices to different groups for the same product (1)","The monopoly has market power / is a price maker (1)","A firm in perfect competition is a price taker (1)","because there are many firms with identical products; if it raised price, buyers would switch (1)"],model:"Price discrimination means charging different prices to different groups for the same product, e.g. higher rates for businesses than households. The monopoly can do this because it is a price maker: customers have no other supplier. A firm in perfect competition is a price taker. If it charged a higher price, buyers would simply buy the identical product from one of the many other firms."},
+      {l:"(f)",q:"Discuss whether allowing private solar farms to sell electricity would benefit consumers.",m:8,cw:"Discuss",scheme:["For (up to 4): more competition → lower prices / better service; more supply → fewer power cuts / less imported electricity; renewable, clean energy; new jobs and investment","Against (up to 4): solar is not available at night / needs storage; the monopoly may lose economies of scale so costs rise; private firms may focus on profit, not poor rural areas; set-up and regulation costs","Judgement (up to 2): weighed conclusion, e.g. depends on regulation and price of storage"],model:"For: private solar farms add competition, so the monopoly must improve service and keep prices down. Supply increases, so there may be fewer shortages and less need to import electricity. Solar is renewable and Namibia has strong sunshine, so this is sustainable. Against: solar only works in the day, so the grid still needs other sources at night. If the state firm sells less, it may lose economies of scale and its average cost may rise, which could push prices up. Private firms want profit and may not invest in poor rural areas. Judgement: it depends on how well the government regulates prices and access to the grid. Overall, consumers are likely to benefit in the long run because more supply and competition usually lower prices, as long as the regulator protects rural customers."}]}
+  ]}
+]},
+
+{ id:"p2a", paper:2, title:"Paper 2: Mock A", minutes:120, total:80,
+  intro:"Section A: Question 1 is compulsory (20 marks). Section B: answer any THREE questions (20 marks each). Total 80 marks.",
+  sections:[
+  { name:"Section A: compulsory case study (20 marks)", questions:[
+    {id:"q1",theme:9,stem:`<p><b>Case study: A new uranium mine in the Erongo Region</b> <span class="small muted">(practice case)</span></p>
+<p>A foreign mining company wants to open a new uranium mine near Arandis. It will employ 900 workers and build a road and a clinic. Uranium exports would earn foreign currency and the government would receive royalties and company tax. Farmers and tourism operators are worried. The mine needs a lot of water from underground aquifers, and dust may spread to farmland. Uranium is a non-renewable resource, and the mine would close after about 20 years.</p>`,parts:[
+      {l:"(a)",q:"Define social cost.",m:2,cw:"Define",scheme:["Private cost + external cost (1)","the total cost to society of an activity (1)"],model:"Social cost is the total cost of an activity to society: private cost plus external cost."},
+      {l:"(b)",q:"Identify two external costs of the mine from the case study.",m:2,cw:"Identify",scheme:["Water taken from aquifers (less for farmers/towns) (1)","Dust spreading to farmland (1)","(also: harm to tourism / landscape)"],model:"Loss of underground water for others, and dust on farmland."},
+      {l:"(c)",q:"Explain two benefits of the mine to the local community.",m:4,cw:"Explain",scheme:["Benefit 1 (1) + explanation (1), e.g. 900 jobs, so households earn income and living standards rise","Benefit 2 (1) + explanation (1), e.g. new road/clinic: external benefits, better access to health care and markets; local shops gain customers"],model:"1. Jobs: the mine will employ 900 people, so more households earn wages and can afford better food, housing and education. 2. Infrastructure: the new road and clinic can be used by everyone, so people get better health care and can reach markets more easily."},
+      {l:"(d)",q:"Analyse how the mine could increase Namibia's GDP.",m:5,cw:"Analyse",scheme:["Mine produces uranium: output rises (1)","exports increase, (X − M) rises (1)","investment (I) in machines and roads rises (1)","workers earn wages and spend in local shops (1)","other firms expand: multiplier effect, so GDP rises further (1)"],model:"The mine produces uranium, so the country's total output rises. Most uranium is exported, so exports (X) rise, which adds to GDP = C + I + G + (X − M). Building the mine is investment (I), which also adds to GDP. The 900 workers earn wages and spend them in local shops, so consumption (C) rises. Shops and suppliers then expand and hire more workers, so GDP rises even more (the multiplier effect)."},
+      {l:"(e)",q:"Evaluate whether the government should allow the mine to open.",m:7,cw:"Evaluate",scheme:RUBRIC7_DISCUSS,model:"Uranium mining is a primary activity that uses a non-renewable resource (K). For: the mine creates 900 jobs in Erongo and the government gains royalties and tax, which it can spend on schools and hospitals; exports bring foreign currency (App/An). Against: the mine uses scarce water from aquifers in a desert region, so farmers and towns may have less water; dust can harm farmland and tourism, which are also important sources of jobs (An). Also, uranium will run out in 20 years, so jobs are not permanent. Judgement: the decision depends on whether the social benefits are greater than the social costs. If the government makes the company pay for water recycling, controls dust and saves part of the royalties for the future, the benefits are likely to be bigger than the costs. So overall the mine should be allowed, but only with strict environmental conditions (E)."}]}
+  ]},
+  { name:"Section B: answer any THREE (60 marks)", choose:3, questions:[
+    {id:"q2",theme:1,parts:[
+      {l:"(a)(i)",q:"Define market failure.",m:2,cw:"Define",scheme:["When the market / price mechanism (1)","does not allocate resources efficiently (1)"],model:"Market failure is when the free market does not allocate resources efficiently."},
+      {l:"(a)(ii)",q:"State two examples of merit goods.",m:2,cw:"State",scheme:["Any two (1 each): education, health care, vaccinations, libraries, museums"],model:"Education and health care."},
+      {l:"(a)(iii)",q:"Explain why a market economy will not provide public goods.",m:2,cw:"Explain",scheme:["Public goods are non-excludable, so people can use them without paying (free-rider problem) (1)","so private firms cannot make a profit and will not supply them (1)"],model:"People cannot be stopped from using a public good like street lights, so they will not pay (free riders). Firms cannot make a profit, so they do not provide it."},
+      {l:"(b)",q:"Analyse how the division of labour can increase output in a factory.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"Division of labour means splitting production into separate tasks done by different workers (K). In a meat-processing plant in Okahandja (App), each worker does one task, e.g. cutting, packing or labelling. Because the worker repeats one task, he becomes skilled and fast (link 1). Less time is wasted moving between tasks and tools (link 2). Simple tasks make it easier to use machines (link 3). So each worker produces more in an hour: labour productivity rises (link 4). With the same number of workers, total output of the factory rises and average cost falls (link 5)."},
+      {l:"(c)",q:"Discuss whether Namibia's government should provide more goods and services instead of the private sector.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"In a mixed economy both government and private firms provide goods (K). For more government provision: the state can provide public goods and merit goods, such as clinics and schools in rural Kunene, which private firms ignore because they are not profitable (App). This raises living standards and reduces inequality, because the poor can use them even if they cannot pay (An). Against: some state-owned enterprises in Namibia have needed large government bailouts, because without a profit motive there is less pressure to be efficient. This uses tax money that could go to other needs, and choice for consumers may fall (An). Judgement: it depends on the type of good. For public and merit goods, government provision is best because the market fails. For ordinary goods, private firms are usually more efficient. So overall the government should focus on goods where the market fails and leave the rest to the private sector (E)."}]},
+    {id:"q3",theme:2,parts:[
+      {l:"(a)(i)",q:"Define a trade union.",m:2,cw:"Define",scheme:["An organisation of workers (1)","that protects/improves members' pay and working conditions (1)"],model:"An organisation of workers that aims to protect and improve its members' pay and working conditions."},
+      {l:"(a)(ii)",q:"State two functions of a trade union.",m:2,cw:"State",scheme:["Any two (1 each): negotiate wages; improve working conditions; protect jobs; legal advice; training; health and safety"],model:"Negotiating higher wages and improving safety at work."},
+      {l:"(a)(iii)",q:"Explain one reason why a trade union may be weak.",m:2,cw:"Explain",scheme:["Reason (1) + explanation (1), e.g. few members, so the employer does not depend on them; workers are unskilled and easy to replace; high unemployment means many people want the jobs"],model:"When unemployment is high, there are many people who want the jobs, so the employer can easily replace workers who strike."},
+      {l:"(b)",q:"Analyse how a successful wage increase for mineworkers could affect a mining company.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"Wages are the reward for labour and a cost of production (K). If the Mineworkers Union of Namibia wins a 10% pay rise (App), the mine's costs of production rise (link 1). Profit falls unless the mine can raise prices (link 2). But mineral prices are set on world markets, so the mine cannot pass the cost on easily (link 3). The mine may replace some workers with machines or cut jobs to reduce costs (link 4). On the other hand, better-paid workers may be more motivated and productive, which could partly cover the higher cost (link 5)."},
+      {l:"(c)",q:"Discuss whether strikes are good for workers.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"A strike is when workers stop working to put pressure on the employer (K). Good for workers: a strike stops production, so the firm loses revenue and may agree to higher wages and better safety; e.g. in mining, every lost day costs the firm a lot (App, An). Bad for workers: workers usually lose pay during a strike. The firm may lose customers or exports, so in the long run it may cut jobs or close. Workers may also lose public support (An). Judgement: whether a strike is good depends on how strong the union is and how profitable the firm is. If the firm is profitable and the workers are skilled, a short strike can win real gains. If the firm is weak or unemployment is high, the strike may cost jobs. So overall strikes are only good for workers as a last step after negotiation fails (E)."}]},
+    {id:"q4",theme:3,parts:[
+      {l:"(a)(i)",q:"Define perfect competition.",m:2,cw:"Define",scheme:["A market with many buyers and sellers (1)","selling identical products with free entry/exit and perfect information; firms are price takers (1)"],model:"A market with many firms selling identical products, with no barriers to entry, so each firm is a price taker."},
+      {l:"(a)(ii)",q:"State two barriers to entry into a market.",m:2,cw:"State",scheme:["Any two (1 each): high start-up costs; economies of scale of existing firms; legal barriers/licences/patents; control of raw materials; brand loyalty"],model:"High start-up costs and licences."},
+      {l:"(a)(iii)",q:"Explain why pricing policies such as price skimming are not used in perfect competition.",m:2,cw:"Explain",scheme:["Firms in perfect competition are price takers / have no market power (1)","if a firm charged more than the market price, buyers would switch to identical products from other firms (1)"],model:"A firm in perfect competition is a price taker. If it charged a higher price, buyers would buy the identical product from other firms, so it cannot choose its own price."},
+      {l:"(b)",q:"Analyse the effect of a monopoly on consumers.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"A monopoly is a single seller with no close substitutes (K), e.g. a single water supplier in a town (App). Because there are no rivals, consumers cannot switch (link 1). The monopoly is a price maker, so it can raise the price above the competitive level (link 2). Consumers pay more and buy less, so consumer welfare falls (link 3). Without competition there is little pressure to improve service or quality (link 4). However, a large monopoly may gain economies of scale, so its average costs are low, which could mean lower prices if it is regulated (link 5)."},
+      {l:"(c)",q:"Discuss whether advertising benefits consumers.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"Advertising is a way to inform or persuade consumers to buy a product (K). Benefits: informative advertising tells consumers about prices and new products, e.g. supermarket specials in Windhoek newspapers, so they can make better choices and save money (App, An). Costs: persuasive advertising can mislead and create brand loyalty, so demand becomes more inelastic and firms can charge higher prices. The cost of advertising is added to the price. It can also encourage demerit goods like alcohol (An). Judgement: it depends on the type of advertising. Informative advertising mostly helps consumers, while persuasive advertising mostly helps firms. Overall, advertising benefits consumers when it is controlled by rules against false claims (E)."}]},
+    {id:"q5",theme:6,parts:[
+      {l:"(a)(i)",q:"Define a budget deficit.",m:2,cw:"Define",scheme:["When government spending (1)","is greater than government revenue (1)"],model:"When government spending is greater than government revenue in a year."},
+      {l:"(a)(ii)",q:"State two sources of government revenue in Namibia.",m:2,cw:"State",scheme:["Any two (1 each): income tax; company tax; VAT; SACU receipts; excise/import duty; mining royalties; dividends from SOEs"],model:"VAT and SACU receipts."},
+      {l:"(a)(iii)",q:"Explain one feature of a good tax.",m:2,cw:"Explain",scheme:["Canon named (1) + explained (1), e.g. equity: tax based on ability to pay; certainty: taxpayer knows how much and when; convenience; economy: cheap to collect"],model:"Equity: the tax should be fair, so people with higher incomes pay more."},
+      {l:"(b)",q:"Analyse how expansionary fiscal policy can reduce unemployment.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"Expansionary fiscal policy means more government spending and/or lower taxes (K). For example, the government builds more roads and houses (App). Construction firms get contracts and hire more workers (link 1). Workers earn wages and spend more in shops (link 2). Lower income tax also raises disposable income, so consumption rises (link 3). Aggregate demand rises, so firms produce more (link 4). To produce more output, firms need more labour, so cyclical unemployment falls (link 5)."},
+      {l:"(c)",q:"Discuss whether Namibia should raise VAT to reduce its budget deficit.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"VAT is an indirect tax on spending, now 15% in Namibia (K). For: a higher VAT rate raises a lot of revenue because almost everyone buys goods, so the budget deficit and the need to borrow fall; less borrowing means less interest paid in future (App, An). Against: VAT is regressive, so poor households lose a bigger share of their income. Prices rise, so spending falls, firms sell less and may cut jobs, which slows growth and can even reduce tax income (An). Judgement: it depends on whether basic foods remain zero-rated and on the state of the economy. If the economy is weak, a VAT rise could cause more unemployment. Overall, a small VAT rise with basic foods zero-rated could help, but cutting wasteful spending is less harmful (E)."}]},
+    {id:"q6",theme:7,parts:[
+      {l:"(a)(i)",q:"Define comparative advantage.",m:2,cw:"Define",scheme:["When a country can produce a good (1)","at a lower opportunity cost than another country (1)"],model:"When a country can produce a good at a lower opportunity cost than another country."},
+      {l:"(a)(ii)",q:"State two methods of protection.",m:2,cw:"State",scheme:["Any two (1 each): tariffs; quotas; subsidies to local firms; embargo; strict standards / red tape"],model:"Tariffs and quotas."},
+      {l:"(a)(iii)",q:"Explain one reason for protecting an infant industry.",m:2,cw:"Explain",scheme:["A new industry has high average costs / no economies of scale yet (1)","so it cannot compete with large foreign firms until it grows (1)"],model:"A new industry is small and has high costs, so it cannot compete with big foreign firms until it grows and gains economies of scale."},
+      {l:"(b)",q:"Analyse how international trade can raise living standards in Namibia.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"International trade is the exchange of goods and services between countries (K). Namibia exports diamonds, uranium and fish, where it has a comparative advantage (App). Specialising in these goods uses resources efficiently (link 1). Exports earn foreign currency, which pays for imports Namibia cannot make, e.g. cars and fuel (link 2). Consumers get a wider choice and often lower prices (link 3). Export firms grow and create jobs, so incomes rise (link 4). Higher real incomes and more choice mean a higher standard of living (link 5)."},
+      {l:"(c)",q:"Discuss whether Namibia benefits from being a member of SACU.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"SACU is a customs union with free trade between members and a common external tariff (K). Benefits: Namibia receives SACU revenue, which is a large share of government income, and its firms can sell freely to South Africa's big market (App, An). Costs: Namibian firms face strong competition from big South African firms, so local manufacturing struggles to grow; Namibia cannot set its own tariffs; and SACU revenue can change a lot from year to year, making the budget uncertain (An). Judgement: it depends on whether Namibia can develop its own industries. The revenue and market access are very important now, while the costs can be reduced with infant-industry protection, which SACU allows. So overall Namibia benefits from SACU membership (E)."}]}
+  ]}
+]},
+
+{ id:"p2b", paper:2, title:"Paper 2: Mock B", minutes:120, total:80,
+  intro:"Section A: Question 1 is compulsory (20 marks). Section B: answer any THREE questions (20 marks each). Total 80 marks.",
+  sections:[
+  { name:"Section A: compulsory case study (20 marks)", questions:[
+    {id:"q1",theme:7,stem:`<p><b>Case study: Namibia's fishing industry</b> <span class="small muted">(practice case)</span></p>
+<p>Fishing is Namibia's second-largest export earner after mining. Most hake and horse mackerel is processed in Walvis Bay and Lüderitz and exported to Spain and other EU countries. The government sets a Total Allowable Catch (quota) each year to protect fish stocks. Last year fuel prices rose, and the N$ weakened against the euro. A large fishing company plans to merge with a canning factory. Unions worry about job losses because the merged firm wants to buy new machines.</p>`,parts:[
+      {l:"(a)",q:"Define a quota (in fishing).",m:2,cw:"Define",scheme:["A legal limit (1)","on the amount of fish that can be caught (in a period) (1)"],model:"A legal limit on the quantity of fish that can be caught in a year."},
+      {l:"(b)",q:"Identify the sector of the economy for (i) fishing and (ii) canning.",m:2,cw:"Identify",scheme:["(i) Primary (1)","(ii) Secondary (1)"],model:"(i) Primary sector. (ii) Secondary sector."},
+      {l:"(c)",q:"Explain how a weaker N$ against the euro affects Namibian fish exporters.",m:4,cw:"Explain",scheme:["Namibian fish becomes cheaper in euros for EU buyers (1)","so demand / export volumes rise (1)","each euro earned converts into more N$ (1)","so exporters' revenue and profit in N$ rise (1)"],model:"When the N$ weakens, EU buyers need fewer euros to buy the same N$ amount of fish, so Namibian fish is cheaper in Spain and demand rises. Also, each euro the exporter earns converts into more N$, so its revenue and profit in N$ increase."},
+      {l:"(d)",q:"Analyse how the merger could lower the firm's average costs.",m:5,cw:"Analyse",scheme:["This is a vertical forward merger (1)","the firm gains economies of scale, e.g. bulk buying of tins/fuel (1)","technical: new machines produce more per worker (1)","no middleman: secure outlet, lower transport/transaction costs (1)","output rises faster than total cost, so average cost (TC ÷ Q) falls (1)"],model:"The fishing company joining the canning factory is a vertical forward merger. The bigger firm can buy tins and fuel in bulk at a discount (purchasing economy). New machines can process more fish per worker (technical economy). It no longer pays a separate firm a profit margin to can its fish, and it is sure of an outlet. Because output rises faster than total cost, average cost (TC ÷ Q) falls."},
+      {l:"(e)",q:"Evaluate whether the government should increase the fishing quota to create more jobs.",m:7,cw:"Evaluate",scheme:RUBRIC7_DISCUSS,model:"A quota limits the catch to protect a renewable resource (K). For a higher quota: firms can catch and process more fish in Walvis Bay and Lüderitz, so they hire more workers and exports and tax revenue rise (App, An). Against: if the catch is greater than the rate at which fish stocks reproduce, stocks fall. In the future catches would drop and many more jobs would be lost; this is not sustainable and harms future generations (An). Judgement: it depends on scientific evidence about the size of fish stocks. If stocks are healthy, a small increase can create jobs safely. If stocks are low, raising the quota gives short-term jobs but long-term losses. Overall, jobs should be created by processing more fish locally (adding value) rather than by catching more (E)."}]}
+  ]},
+  { name:"Section B: answer any THREE (60 marks)", choose:3, questions:[
+    {id:"q2",theme:4,parts:[
+      {l:"(a)(i)",q:"Define a minimum wage.",m:2,cw:"Define",scheme:["The lowest wage (1)","an employer may legally pay a worker (1)"],model:"The lowest wage that an employer is legally allowed to pay a worker."},
+      {l:"(a)(ii)",q:"State two wage factors that affect a person's choice of job.",m:2,cw:"State",scheme:["Any two (1 each): basic pay; overtime; bonuses; commission; fringe benefits (housing, car, medical aid)"],model:"Basic pay and overtime pay."},
+      {l:"(a)(iii)",q:"Explain why the demand for labour is a derived demand.",m:2,cw:"Explain",scheme:["Firms hire labour to produce goods and services (1)","so demand for labour depends on demand for those products (1)"],model:"Firms only hire workers to make goods, so if demand for the goods rises, demand for workers rises."},
+      {l:"(b)",q:"Analyse why workers in the mining industry often earn more than workers in agriculture.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"Wages are set by the demand for and supply of labour (K). Mines in Namibia need skilled workers such as engineers and machine operators (App). These skills need long training, so the supply of such workers is low (link 1). Mining is very profitable and capital-intensive, so each worker produces output of high value (link 2). This makes demand for mine labour high (link 3). Mining unions are strong, so they can bargain for higher pay (link 4). In farming, many unskilled people are available and output per worker is lower, so wages are lower (link 5)."},
+      {l:"(c)",q:"Discuss whether raising the national minimum wage will reduce poverty in Namibia.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"A minimum wage is the lowest legal wage (K). For: low-paid workers such as domestic and farm workers earn more, so they can afford food, transport and school costs, which reduces poverty (App, An). Against: if the minimum wage is above the equilibrium wage, firms demand fewer workers and may replace them with machines, so unemployment rises; unemployed people earn nothing, so poverty may rise. Many poor Namibians work in the informal sector where the law is not applied (An). Judgement: it depends on how big the rise is and how profitable firms are. A small rise helps workers without many job losses, but a big rise could hurt the poorest. Overall, a moderate rise together with job creation and training will reduce poverty more than a large rise alone (E)."}]},
+    {id:"q3",theme:5,parts:[
+      {l:"(a)(i)",q:"Define economies of scale.",m:2,cw:"Define",scheme:["Falling average cost (1)","as a firm increases its scale of output (1)"],model:"The fall in average cost of production as a firm grows larger."},
+      {l:"(a)(ii)",q:"State two types of merger.",m:2,cw:"State",scheme:["Any two (1 each): horizontal; vertical (forward/backward); conglomerate"],model:"Horizontal and conglomerate."},
+      {l:"(a)(iii)",q:"Explain one reason why small firms survive.",m:2,cw:"Explain",scheme:["Reason (1) + explanation (1), e.g. personal service; serve small/niche or local markets; flexible; government support"],model:"Small firms give personal service, so customers who know the owner keep coming back."},
+      {l:"(b)",q:"Analyse how an increase in productivity can increase a firm's profit.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"Productivity is output per worker per period (K). If a bakery in Oshakati trains its workers (App), each worker makes more loaves per hour (link 1). With the same wage bill, output rises, so average cost per loaf falls (link 2). The bakery can keep the price the same and earn more profit per loaf, or lower the price (link 3). A lower price attracts more customers, so sales and total revenue rise (link 4). Since profit = TR − TC, and TR rises faster than TC, profit increases (link 5)."},
+      {l:"(c)",q:"Discuss whether a merger between two large supermarket chains in Namibia is good for consumers.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"This is a horizontal merger: two firms at the same stage join (K). Good: the bigger firm gets purchasing economies of scale, buying in bulk at a discount, so it can lower prices; it may also open stores in more towns (App, An). Bad: with fewer rivals, the merged firm has more market power, so it may raise prices and reduce choice; small local suppliers may be squeezed (An). Judgement: it depends on whether the cost savings are passed on to consumers. This is why the Namibian Competition Commission checks mergers. If other strong rivals remain, consumers probably gain; if the merged firm controls most of the market, they will probably lose. Overall, the merger is good only with conditions set by the Competition Commission (E)."}]},
+    {id:"q4",theme:3,parts:[
+      {l:"(a)(i)",q:"Define price elasticity of demand.",m:2,cw:"Define",scheme:["The responsiveness of quantity demanded (1)","to a change in the good's price (1)"],model:"How much the quantity demanded responds to a change in the price of the good."},
+      {l:"(a)(ii)",q:"State two factors that affect price elasticity of demand.",m:2,cw:"State",scheme:["Any two (1 each): number/closeness of substitutes; necessity vs luxury; % of income; habit; time period; definition of the product"],model:"Number of substitutes and the % of income spent on the good."},
+      {l:"(a)(iii)",q:"The price of a taxi trip rises from N$14 to N$16 and trips fall from 1 000 to 950 a day. Calculate PED.",m:2,cw:"Calculate",scheme:["%ΔQd = −5%; %ΔP = 14.29% (1)","PED = −5 ÷ 14.29 = −0.35 (1)"],model:"%ΔQd = −50 ÷ 1 000 × 100 = −5%. %ΔP = 2 ÷ 14 × 100 = 14.29%. PED = −5 ÷ 14.29 = −0.35 (inelastic)."},
+      {l:"(b)",q:"Analyse how a government subsidy to bread producers would affect the market for bread. You may use a diagram.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE.concat(["Diagram (if drawn): labelled axes, D and S1/S2, S shifts RIGHT, new lower P2 and higher Q2."]),model:"A subsidy is money paid by the government to producers (K). Bakeries in Namibia receive money per loaf (App). This lowers their costs of production (link 1). Firms are willing to supply more at every price, so supply shifts right from S1 to S2 (link 2). At the old price there is now excess supply, so the price falls (link 3). The lower price causes an extension of demand: quantity demanded rises (link 4). The new equilibrium has a lower price P2 and a higher quantity Q2, so poor households can afford more bread (link 5)."},
+      {l:"(c)",q:"Discuss whether a firm should lower its price to increase its revenue.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"Total revenue = price × quantity (K). For lowering price: if demand is price elastic, e.g. a brand of soft drink with many substitutes in a Windhoek supermarket (App), a 10% price cut may raise quantity by 20%, so total revenue rises (An). Against: if demand is inelastic, e.g. for petrol or bread, quantity rises by only a small %, so total revenue falls. Rivals may also cut their prices (a price war), so the firm gains no extra customers. A lower price may also reduce profit if costs rise with output (An). Judgement: it depends on the price elasticity of demand. The firm should only cut its price if PED is greater than 1 and rivals are unlikely to follow. For necessities with few substitutes, raising the price would increase revenue instead (E)."}]},
+    {id:"q5",theme:8,parts:[
+      {l:"(a)(i)",q:"Define standard of living.",m:2,cw:"Define",scheme:["The level of welfare / material well-being (1)","of people, e.g. income, goods and services, health, education (1)"],model:"The level of welfare or material comfort that people enjoy, such as income, health and education."},
+      {l:"(a)(ii)",q:"State two features of a developing economy.",m:2,cw:"State",scheme:["Any two (1 each): low GDP per capita; large primary sector; high birth rate/population growth; young population; lower life expectancy/literacy; poor infrastructure; high inequality"],model:"High population growth and a large primary sector."},
+      {l:"(a)(iii)",q:"Explain one limitation of using GDP per capita to compare living standards.",m:2,cw:"Explain",scheme:["Limitation (1) + explanation (1), e.g. it is an average and ignores inequality: in Namibia many people earn far below the average; ignores informal sector; ignores quality of life/environment"],model:"It is an average, so it ignores inequality. In Namibia, a few people earn very high incomes while many earn very little, so GDP per capita makes most people look richer than they are."},
+      {l:"(b)",q:"Analyse how rapid population growth can affect a developing economy.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"Population growth depends on the birth rate, the death rate and migration (K). In Namibia many people move to Windhoek (App). A fast-growing population needs more schools, clinics and water (link 1). The government must spend more on these, which leaves less for investment in roads and industry (link 2). Many young people enter the labour market each year, but there are not enough jobs, so unemployment rises (link 3). Informal settlements grow because housing is not built fast enough (link 4). If output grows more slowly than population, GDP per capita falls, so living standards fall (link 5)."},
+      {l:"(c)",q:"Discuss whether the HDI is a better measure of development than GDP per capita.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"The HDI combines life expectancy, years of schooling and GNI per capita (K). For HDI: it shows more than income. Namibia has an upper-middle income per head but only a medium HDI, because life expectancy and schooling are lower; this gives a truer picture of how people live (App, An). Against: HDI still uses averages, so it does not show Namibia's very high inequality; it ignores the environment, housing quality and freedom; and data can be hard to collect (An). Judgement: it depends on the purpose. To compare total output or market size, GDP per capita is useful. To compare how well people live, the HDI is better because health and education matter. Overall the HDI is the better measure, but it should be used together with an inequality measure such as the Gini coefficient (E)."}]},
+    {id:"q6",theme:6,parts:[
+      {l:"(a)(i)",q:"Define inflation.",m:2,cw:"Define",scheme:["A sustained / continuous rise (1)","in the general price level (1)"],model:"A sustained rise in the general price level over time."},
+      {l:"(a)(ii)",q:"State two effects of inflation.",m:2,cw:"State",scheme:["Any two (1 each): lower purchasing power; fixed-income groups lose; savers lose; borrowers gain; exports less competitive; uncertainty; menu costs"],model:"People on fixed incomes can buy less, and exports become less competitive."},
+      {l:"(a)(iii)",q:"Explain why the Bank of Namibia usually follows the South African Reserve Bank's interest rate.",m:2,cw:"Explain",scheme:["The N$ is pegged 1:1 to the rand (CMA) (1)","if Namibian rates are much lower, money flows to South Africa, putting pressure on reserves / the peg (1)"],model:"The N$ is pegged one-to-one to the rand. If Namibia's interest rates were much lower, savers and investors would move money to South Africa, reducing Namibia's foreign reserves and putting the peg at risk."},
+      {l:"(b)",q:"Analyse how a rise in the repo rate can reduce inflation.",m:7,cw:"Analyse",scheme:RUBRIC7_ANALYSE,model:"The repo rate is the rate at which the Bank of Namibia lends to commercial banks (K). If it rises from 7% to 7.5% (App), banks such as FNB raise their lending rates (link 1). Loans, mortgages and credit cards cost more, so households borrow and spend less (link 2). Saving earns more, so people save instead of spend (link 3). Firms also invest less because loans are dearer (link 4). Aggregate demand falls, so firms cannot raise prices as easily and the rate of inflation falls (link 5)."},
+      {l:"(c)",q:"Discuss whether higher interest rates are good for the Namibian economy.",m:7,cw:"Discuss",scheme:RUBRIC7_DISCUSS,model:"An interest rate is the cost of borrowing and the reward for saving (K). Good: higher rates reduce demand-pull inflation, so prices are more stable and the poor keep their purchasing power; savers and pensioners earn more; it protects the N$ peg with the rand (App, An). Bad: loans cost more, so firms invest less and households with mortgages have less to spend; growth slows and unemployment, already high in Namibia, may rise (An). Judgement: it depends on the cause of inflation and the state of the economy. If inflation is caused by high demand, higher rates work well. If it is cost-push inflation from fuel prices, higher rates hurt growth without solving the cause. Overall, higher rates are good only for a short time when inflation is high and caused by demand (E)."}]}
+  ]}
+]}
+];
+</script>
+
+<script>
+/* =====================================================================
+   APP CODE: you do not need to change anything below to add questions.
+   ===================================================================== */
+(function(){
+"use strict";
+var KEY = "nssco_econ_v1";
+var EXAM_DATE = new Date(2026, 10, 11, 8, 0, 0); // 11 Nov 2026, 08:00 local time
+
+function blank(){ return {v:1, tab:"dash", flash:{}, quiz:{}, quizWrong:{}, written:{}, exams:[], drafts:{}, active:null}; }
+var S = blank();
+try {
+  var raw = localStorage.getItem(KEY);
+  if (raw) { var o = JSON.parse(raw); if (o && o.v === 1) { S = Object.assign(blank(), o); } }
+} catch (e) { /* storage blocked: app still works, progress not kept */ }
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+function $(s, r){ return (r || document).querySelector(s); }
+function $all(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function nowISO(){ return new Date().toISOString(); }
+function fmtDate(iso){ var d = new Date(iso); return d.toLocaleDateString(undefined, {day:"numeric", month:"short", year:"numeric"}); }
+function shuffle(a){ a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function themeById(id){ for (var i = 0; i < THEMES.length; i++) if (THEMES[i].id === id) return THEMES[i]; return null; }
+function band(p){ return p >= 80 ? "green" : p >= 50 ? "amber" : "red"; }
+function grade(p){ var g = [[90,"A*"],[80,"A"],[70,"B"],[60,"C"],[50,"D"],[40,"E"],[30,"F"],[20,"G"]]; for (var i = 0; i < g.length; i++) if (p >= g[i][0]) return g[i][1]; return "U"; }
+
+/* ---------- Diagrams (SVG) ---------- */
+function svgDia(name){
+  var d = DIAGRAMS[name]; if (!d) return "";
+  function X(x){ return (50 + x * 2.6).toFixed(1); }
+  function Y(y){ return (225 - y * 2.05).toFixed(1); }
+  var s = '<figure class="dia"><svg viewBox="0 0 330 270" role="img" aria-label="' + esc(d.caption) + '" font-family="system-ui,sans-serif" font-size="12">';
+  s += '<defs><marker id="ah-' + name + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#b45309"/></marker></defs>';
+  s += '<line x1="50" y1="225" x2="50" y2="12" stroke="#111" stroke-width="2"/><line x1="50" y1="225" x2="310" y2="225" stroke="#111" stroke-width="2"/>';
+  s += '<text x="14" y="120" transform="rotate(-90 14 120)" text-anchor="middle" font-weight="700">' + esc(d.y) + '</text>';
+  s += '<text x="180" y="262" text-anchor="middle" font-weight="700">' + esc(d.x) + '</text><text x="42" y="238" text-anchor="middle">0</text>';
+  (d.lines || []).forEach(function(l){
+    var c = l.color || "#111827";
+    s += '<line x1="' + X(l.a[0]) + '" y1="' + Y(l.a[1]) + '" x2="' + X(l.b[0]) + '" y2="' + Y(l.b[1]) + '" stroke="' + c + '" stroke-width="2.5"/>';
+    s += '<text x="' + (+X(l.b[0]) + 4) + '" y="' + (+Y(l.b[1]) + (l.b[1] > l.a[1] ? 2 : 12)) + '" fill="' + c + '" font-weight="700">' + esc(l.label) + '</text>';
+  });
+  if (d.quarter){
+    var r = d.quarter, pts = [];
+    for (var t = 0; t <= 90; t += 3){ var rad = t * Math.PI / 180; pts.push(X(r * Math.sin(rad)) + "," + Y(r * Math.cos(rad))); }
+    s += '<polyline points="' + pts.join(" ") + '" fill="none" stroke="#1d4ed8" stroke-width="2.5"/><text x="' + X(r * 0.78) + '" y="' + Y(r * 0.72) + '" fill="#1d4ed8" font-weight="700">PPC</text>';
+  }
+  if (d.wave){
+    var wp = [];
+    for (var x = 0; x <= 95; x += 1){ wp.push(X(x) + "," + Y(30 + 0.4 * x + 15 * Math.sin(2 * Math.PI * (x - 5) / 50))); }
+    s += '<line x1="' + X(0) + '" y1="' + Y(30) + '" x2="' + X(95) + '" y2="' + Y(68) + '" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="6 4"/>';
+    s += '<polyline points="' + wp.join(" ") + '" fill="none" stroke="#1d4ed8" stroke-width="2.5"/>';
+  }
+  (d.hlines || []).forEach(function(h){
+    s += '<line x1="' + X(0) + '" y1="' + Y(h.y) + '" x2="' + X(92) + '" y2="' + Y(h.y) + '" stroke="#b91c1c" stroke-width="2"/>';
+    s += '<text x="' + X(92) + '" y="' + (+Y(h.y) - 5) + '" text-anchor="end" fill="#b91c1c" font-weight="700">' + esc(h.label) + '</text>';
+  });
+  (d.points || []).forEach(function(p){
+    if (p.p){ s += '<line x1="' + X(0) + '" y1="' + Y(p.y) + '" x2="' + X(p.x) + '" y2="' + Y(p.y) + '" stroke="#6b7280" stroke-dasharray="4 3"/><text x="45" y="' + (+Y(p.y) + 4) + '" text-anchor="end" font-weight="700">' + esc(p.p) + '</text>'; }
+    if (p.q){ s += '<line x1="' + X(p.x) + '" y1="' + Y(0) + '" x2="' + X(p.x) + '" y2="' + Y(p.y) + '" stroke="#6b7280" stroke-dasharray="4 3"/><text x="' + X(p.x) + '" y="240" text-anchor="middle" font-weight="700">' + esc(p.q) + '</text>'; }
+    s += '<circle cx="' + X(p.x) + '" cy="' + Y(p.y) + '" r="3.5" fill="#111827"/>';
+    if (p.label){ s += '<text x="' + (+X(p.x) + 6) + '" y="' + (+Y(p.y) - 6) + '" font-weight="700">' + esc(p.label) + '</text>'; }
+  });
+  (d.arrows || []).forEach(function(a){
+    s += '<line x1="' + X(a.a[0]) + '" y1="' + Y(a.a[1]) + '" x2="' + X(a.b[0]) + '" y2="' + Y(a.b[1]) + '" stroke="#b45309" stroke-width="2.5" marker-end="url(#ah-' + name + ')"/>';
+  });
+  (d.texts || []).forEach(function(t){ s += '<text x="' + X(t.x) + '" y="' + Y(t.y) + '" text-anchor="middle" font-weight="700" fill="#374151">' + esc(t.t) + '</text>'; });
+  s += '</svg><figcaption>' + esc(d.caption) + '</figcaption></figure>';
+  return s;
+}
+function withDiagrams(html){ return html.replace(/\[\[dia:(\w+)\]\]/g, function(m, n){ return svgDia(n); }); }
+
+/* ---------- Stats ---------- */
+function themeStats(t){
+  var cards = FLASHCARDS[t] || [], got = 0, rated = 0, again = 0;
+  cards.forEach(function(c, i){ var v = S.flash[t + "-" + i]; if (v){ rated++; if (v === "got") got++; else again++; } });
+  var flashPct = rated ? got / cards.length * 100 : null;
+  var q = S.quiz[t]; var quizPct = q ? q.best : null;
+  var wm = 0, wx = 0;
+  Object.keys(S.written).forEach(function(k){ var w = S.written[k]; if (w.t === t){ wm += w.mark; wx += w.max; } });
+  var writtenPct = wx ? wm / wx * 100 : null;
+  var parts = [[quizPct, .4], [flashPct, .3], [writtenPct, .3]], sum = 0, wsum = 0;
+  parts.forEach(function(p){ if (p[0] !== null){ sum += p[0] * p[1]; wsum += p[1]; } });
+  return {ready: wsum ? Math.round(sum / wsum) : 0, started: wsum > 0, quizPct: quizPct, flashPct: flashPct, writtenPct: writtenPct, again: again, got: got, total: cards.length};
+}
+function overall(){ var s = 0; THEMES.forEach(function(t){ s += themeStats(t.id).ready; }); return Math.round(s / THEMES.length); }
+
+/* ---------- Tabs ---------- */
+var renderers = {};
+function show(view){
+  S.tab = view; save();
+  $all("#tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.view === view ? "true" : "false"); });
+  $all("section.view").forEach(function(v){ v.classList.toggle("active", v.id === "view-" + view); });
+  renderers[view]();
+  window.scrollTo(0, 0);
+}
+$("#tabs").addEventListener("click", function(e){ var b = e.target.closest("button"); if (b) show(b.dataset.view); });
+
+function themeChips(selected, extra){
+  var h = '<div class="chips" role="group" aria-label="Choose a theme">';
+  (extra || []).forEach(function(x){ h += '<button class="chip" data-theme="' + x[0] + '" aria-pressed="' + (String(selected) === String(x[0])) + '">' + esc(x[1]) + '</button>'; });
+  THEMES.forEach(function(t){ h += '<button class="chip" data-theme="' + t.id + '" aria-pressed="' + (String(selected) === String(t.id)) + '">' + t.id + '. ' + esc(t.short) + '</button>'; });
+  return h + '</div>';
+}
+
+/* ---------- Dashboard ---------- */
+function countdownHTML(){
+  var ms = EXAM_DATE - new Date();
+  if (ms <= 0) return '<p class="big">Exam day!</p><p>Good luck. Read each question twice and watch the command word.</p>';
+  var d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4);
+  return '<div class="countdown"><div><b>' + d + '</b>days</div><div><b>' + h + '</b>hours</div><div><b>' + m + '</b>minutes</div></div>';
+}
+function progressChart(){
+  var pts = [];
+  Object.keys(S.quiz).forEach(function(t){ (S.quiz[t].attempts || []).forEach(function(a){ pts.push({d: a.d, p: a.total ? a.score / a.total * 100 : 0, k: "q"}); }); });
+  S.exams.forEach(function(e){ pts.push({d: e.d, p: e.score / e.max * 100, k: "e"}); });
+  pts.sort(function(a, b){ return a.d < b.d ? -1 : 1; });
+  pts = pts.slice(-30);
+  if (pts.length < 2) return '<p class="muted">Do at least two quizzes or mock exams to see your progress line.</p>';
+  var W = 320, H = 170, n = pts.length;
+  function px(i){ return (36 + i * (W - 50) / (n - 1)).toFixed(1); }
+  function py(p){ return (150 - p * 1.35).toFixed(1); }
+  var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Scores over time" font-family="system-ui,sans-serif" font-size="11" style="width:100%;max-width:520px">';
+  [0, 50, 80, 100].forEach(function(g){ s += '<line x1="36" x2="' + (W - 10) + '" y1="' + py(g) + '" y2="' + py(g) + '" stroke="#e5e7eb"/><text x="30" y="' + (+py(g) + 4) + '" text-anchor="end" fill="#4b5563">' + g + '%</text>'; });
+  ["q", "e"].forEach(function(k){
+    var c = k === "q" ? "#1d4ed8" : "#b45309", seg = [];
+    pts.forEach(function(p, i){ if (p.k === k) seg.push(px(i) + "," + py(p.p)); });
+    if (seg.length > 1) s += '<polyline points="' + seg.join(" ") + '" fill="none" stroke="' + c + '" stroke-width="2"/>';
+    pts.forEach(function(p, i){ if (p.k === k) s += '<circle cx="' + px(i) + '" cy="' + py(p.p) + '" r="3.5" fill="' + c + '"/>'; });
+  });
+  s += '<text x="36" y="166" fill="#4b5563">Oldest</text><text x="' + (W - 10) + '" y="166" text-anchor="end" fill="#4b5563">Newest</text></svg>';
+  s += '<p class="small"><span style="color:#1d4ed8;font-weight:700">● Quizzes</span> &nbsp; <span style="color:#b45309;font-weight:700">● Mock exams</span> (last ' + n + ' attempts)</p>';
+  return s;
+}
+renderers.dash = function(){
+  var ov = overall(), b = band(ov);
+  var h = '<div class="card"><h2>Countdown to Paper 1 &amp; 2</h2><div id="cd">' + countdownHTML() + '</div><p class="small muted">Exam date: Wednesday 11 November 2026.</p></div>';
+  h += '<div class="card"><h2>Overall readiness</h2><p class="big t-' + b + '">' + ov + '%</p><div class="bar"><span class="r-' + b + '" style="width:' + ov + '%"></span></div>';
+  h += '<p class="small muted">Readiness per theme = best quiz score (40%) + flashcards marked "got it" (30%) + self-marked written answers (30%). Only the parts you have tried count.</p></div>';
+  h += '<div class="card"><h2>Readiness by theme</h2>';
+  var list = THEMES.map(function(t){ return {t: t, s: themeStats(t.id)}; });
+  list.forEach(function(x){
+    var c = band(x.s.ready);
+    var det = [];
+    det.push("Quiz: " + (x.s.quizPct === null ? "–" : Math.round(x.s.quizPct) + "%"));
+    det.push("Cards: " + x.s.got + "/" + x.s.total);
+    det.push("Written: " + (x.s.writtenPct === null ? "–" : Math.round(x.s.writtenPct) + "%"));
+    h += '<div class="ready-row"><div class="lab"><span><b>' + x.t.id + '. ' + esc(x.t.name) + '</b></span><b class="t-' + c + '">' + (x.s.started ? x.s.ready + "%" : "Not started") + '</b></div><div class="bar"><span class="r-' + c + '" style="width:' + x.s.ready + '%"></span></div><div class="small muted">' + det.join(" · ") + '</div></div>';
+  });
+  h += '<p class="small"><span class="t-red"><b>Red</b></span> under 50% · <span class="t-amber"><b>Amber</b></span> 50–79% · <span class="t-green"><b>Green</b></span> 80%+</p></div>';
+  // weak topics
+  var weak = list.filter(function(x){ return x.s.ready < 80; }).sort(function(a, b){ return a.s.ready - b.s.ready; }).slice(0, 4);
+  h += '<div class="card"><h2>Weak topics: study these next</h2>';
+  if (!weak.length) h += '<p>All themes are green. Keep doing timed mock papers.</p>';
+  else {
+    h += '<ol>';
+    weak.forEach(function(x){
+      var tips = [];
+      if (x.s.quizPct === null) tips.push("take the quiz"); else if (x.s.quizPct < 80) tips.push("redo the quiz (best " + Math.round(x.s.quizPct) + "%)");
+      if (x.s.got < x.s.total) tips.push((x.s.total - x.s.got) + " flashcards not yet 'got it'");
+      if (x.s.writtenPct !== null && x.s.writtenPct < 60) tips.push("practise written answers (" + Math.round(x.s.writtenPct) + "%)");
+      h += '<li><b>' + esc(x.t.name) + '</b> (' + x.s.ready + '%): ' + esc(tips.join("; ") || "read the notes") + '</li>';
+    });
+    h += '</ol>';
+  }
+  var again = [];
+  THEMES.forEach(function(t){ (FLASHCARDS[t.id] || []).forEach(function(c, i){ if (S.flash[t.id + "-" + i] === "again") again.push(c[0]); }); });
+  if (again.length) h += '<h4>Flashcards to review (' + again.length + ')</h4><p>' + again.slice(0, 20).map(esc).join(" · ") + (again.length > 20 ? " …" : "") + '</p><button class="btn ghost" id="goReview">Study review pile</button>';
+  var wrong = [];
+  Object.keys(S.quizWrong).forEach(function(t){ (S.quizWrong[t] || []).forEach(function(i){ var q = QUIZZES[t] && QUIZZES[t][i]; if (q) wrong.push(q.q); }); });
+  if (wrong.length) h += '<h4>Quiz questions you got wrong last time</h4><ul class="small">' + wrong.slice(0, 8).map(function(w){ return "<li>" + esc(w) + "</li>"; }).join("") + '</ul>';
+  h += '</div>';
+  h += '<div class="card"><h2>Progress over time</h2>' + progressChart() + '</div>';
+  // history
+  h += '<div class="card"><h2>Mock exam history</h2>';
+  if (!S.exams.length) h += '<p class="muted">No mock exams saved yet.</p>';
+  else {
+    h += '<div class="tablewrap"><table class="hist"><tr><th>Date</th><th>Paper</th><th>Mark</th><th>%</th><th>Grade*</th></tr>';
+    S.exams.slice().reverse().forEach(function(e){ var p = Math.round(e.score / e.max * 100); h += '<tr><td>' + fmtDate(e.d) + '</td><td>' + esc(e.title) + (e.timed ? "" : " (untimed)") + '</td><td>' + e.score + '/' + e.max + '</td><td>' + p + '%</td><td>' + grade(p) + '</td></tr>'; });
+    h += '</table></div><p class="small muted">*Approximate grade from your self-marking. Real grade boundaries change every year.</p>';
+  }
+  h += '</div>';
+  var qa = [];
+  Object.keys(S.quiz).forEach(function(t){ (S.quiz[t].attempts || []).forEach(function(a){ qa.push({t: t, a: a}); }); });
+  if (qa.length){
+    qa.sort(function(x, y){ return x.a.d < y.a.d ? 1 : -1; });
+    h += '<div class="card"><h2>Recent quiz attempts</h2><div class="tablewrap"><table class="hist"><tr><th>Date</th><th>Theme</th><th>Score</th></tr>';
+    qa.slice(0, 10).forEach(function(x){ var th = themeById(+x.t); h += '<tr><td>' + fmtDate(x.a.d) + '</td><td>' + esc(th ? th.short : x.t) + '</td><td>' + x.a.score + '/' + x.a.total + '</td></tr>'; });
+    h += '</table></div></div>';
+  }
+  h += '<div class="card"><h2>Reset</h2><p class="small muted">This cannot be undone.</p><div class="row">'
+    + '<button class="btn warn" data-reset="flash">Reset flashcards</button><button class="btn warn" data-reset="quiz">Reset quizzes</button>'
+    + '<button class="btn warn" data-reset="exams">Reset mock exams</button><button class="btn bad" data-reset="all">Reset everything</button></div></div>';
+  var v = $("#view-dash"); v.innerHTML = h;
+  var gr = $("#goReview", v); if (gr) gr.onclick = function(){ fl.theme = "review"; fl.order = null; show("flash"); };
+  $all("[data-reset]", v).forEach(function(b){ b.onclick = function(){
+    var k = b.dataset.reset;
+    if (!confirm("Are you sure? This deletes your saved " + (k === "all" ? "progress" : k) + ".")) return;
+    if (k === "flash") S.flash = {};
+    if (k === "quiz"){ S.quiz = {}; S.quizWrong = {}; }
+    if (k === "exams"){ S.exams = []; S.written = {}; S.drafts = {}; S.active = null; }
+    if (k === "all"){ var tab = S.tab; S = blank(); S.tab = tab; }
+    save(); renderers.dash();
+  }; });
+};
+setInterval(function(){ var c = $("#cd"); if (c) c.innerHTML = countdownHTML(); }, 30000);
+
+/* ---------- Notes ---------- */
+var notesTheme = 1;
+renderers.notes = function(){
+  var t = themeById(notesTheme);
+  var v = $("#view-notes");
+  v.innerHTML = '<h2>Notes</h2>' + themeChips(notesTheme) + '<div class="card"><h2>' + t.id + '. ' + esc(t.name) + '</h2>' + withDiagrams(t.notes)
+    + '<div class="row" style="margin-top:16px"><button class="btn" id="nToFlash">Flashcards for this theme</button><button class="btn ghost" id="nToQuiz">Quiz for this theme</button></div></div>';
+  $all(".chip", v).forEach(function(c){ c.onclick = function(){ notesTheme = +c.dataset.theme; renderers.notes(); }; });
+  $("#nToFlash").onclick = function(){ fl.theme = notesTheme; fl.order = null; show("flash"); };
+  $("#nToQuiz").onclick = function(){ qz = null; quizTheme = notesTheme; show("quiz"); };
+};
+
+/* ---------- Flashcards ---------- */
+var fl = {theme: 1, order: null, i: 0, flipped: false};
+function flDeck(){
+  var ids = [];
+  THEMES.forEach(function(t){
+    (FLASHCARDS[t.id] || []).forEach(function(c, i){
+      var id = t.id + "-" + i;
+      if (fl.theme === "all" || (fl.theme === "review" && S.flash[id] === "again") || String(fl.theme) === String(t.id)) ids.push(id);
+    });
+  });
+  return ids;
+}
+function cardById(id){ var p = id.split("-"); return FLASHCARDS[p[0]][+p[1]]; }
+renderers.flash = function(){
+  if (!fl.order){ fl.order = flDeck(); fl.i = 0; fl.flipped = false; }
+  var v = $("#view-flash");
+  var h = '<h2>Flashcards</h2>' + themeChips(fl.theme, [["all", "All themes"], ["review", "Review pile"]]);
+  if (!fl.order.length){
+    h += '<div class="card"><p>' + (fl.theme === "review" ? "Your review pile is empty. Well done!" : "No cards here.") + '</p></div>';
+  } else {
+    if (fl.i >= fl.order.length) fl.i = 0;
+    var id = fl.order[fl.i], c = cardById(id), st = S.flash[id];
+    var tid = +id.split("-")[0];
+    h += '<p class="small muted">Card ' + (fl.i + 1) + ' of ' + fl.order.length + ' · Theme ' + tid + (st ? ' · last time: <b>' + (st === "got" ? "got it" : "review again") + '</b>' : '') + '</p>';
+    h += '<div class="flash' + (fl.flipped ? " back" : "") + '" id="fcard" role="button" tabindex="0" aria-label="Tap to flip">'
+      + (fl.flipped ? '<div><div class="small muted">' + esc(c[0]) + '</div><p>' + esc(c[1]) + '</p></div>' : '<div><div class="term">' + esc(c[0]) + '</div><p class="small muted">Say the definition, then tap to check.</p></div>') + '</div>';
+    h += '<div class="row" style="margin-top:12px;justify-content:center">'
+      + '<button class="btn bad" id="fAgain">Review again</button><button class="btn good" id="fGot">Got it</button></div>';
+    h += '<div class="row" style="margin-top:12px;justify-content:center"><button class="btn ghost" id="fPrev">◀ Prev</button><button class="btn ghost" id="fFlip">Flip</button><button class="btn ghost" id="fNext">Next ▶</button><button class="btn ghost" id="fShuf">Shuffle</button></div>';
+  }
+  var deckAll = fl.theme === "review" || fl.theme === "all" ? null : FLASHCARDS[fl.theme];
+  if (deckAll){ var s = themeStats(+fl.theme); h += '<p class="small muted" style="text-align:center">This theme: ' + s.got + ' of ' + s.total + ' marked "got it".</p>'; }
+  v.innerHTML = h;
+  $all(".chip", v).forEach(function(ch){ ch.onclick = function(){ var t = ch.dataset.theme; fl.theme = (t === "all" || t === "review") ? t : +t; fl.order = null; renderers.flash(); }; });
+  if (!fl.order.length) return;
+  function flip(){ fl.flipped = !fl.flipped; renderers.flash(); }
+  function next(){ fl.i = (fl.i + 1) % fl.order.length; fl.flipped = false; renderers.flash(); }
+  $("#fcard").onclick = flip;
+  $("#fcard").onkeydown = function(e){ if (e.key === "Enter" || e.key === " "){ e.preventDefault(); flip(); } };
+  $("#fFlip").onclick = flip;
+  $("#fNext").onclick = next;
+  $("#fPrev").onclick = function(){ fl.i = (fl.i - 1 + fl.order.length) % fl.order.length; fl.flipped = false; renderers.flash(); };
+  $("#fShuf").onclick = function(){ fl.order = shuffle(fl.order); fl.i = 0; fl.flipped = false; renderers.flash(); };
+  function rate(r){
+    var id = fl.order[fl.i]; S.flash[id] = r; save();
+    if (fl.theme === "review" && r === "got"){ fl.order.splice(fl.i, 1); fl.flipped = false; renderers.flash(); }
+    else next();
+  }
+  $("#fGot").onclick = function(){ rate("got"); };
+  $("#fAgain").onclick = function(){ rate("again"); };
+};
+
+/* ---------- Quizzes ---------- */
+var quizTheme = 1, qz = null;
+function startQuiz(t){
+  var qs = QUIZZES[t] || [];
+  qz = {t: t, order: shuffle(qs.map(function(q, i){ return i; })), i: 0, score: 0, answered: null, wrong: [], opts: null};
+}
+renderers.quiz = function(){
+  var v = $("#view-quiz");
+  var h = '<h2>Quizzes</h2>' + themeChips(quizTheme);
+  if (!qz || qz.t !== quizTheme){
+    var best = S.quiz[quizTheme], n = (QUIZZES[quizTheme] || []).length;
+    h += '<div class="card"><h3>' + esc(themeById(quizTheme).name) + '</h3><p>' + n + ' multiple-choice questions. You get instant feedback.</p>'
+      + '<p>Best score: <b>' + (best ? Math.round(best.best) + '%' : 'not tried yet') + '</b>' + (best ? ' (' + best.attempts.length + ' attempts)' : '') + '</p>'
+      + '<button class="btn" id="qStart">Start quiz</button></div>';
+    v.innerHTML = h;
+    $("#qStart").onclick = function(){ startQuiz(quizTheme); renderers.quiz(); };
+  } else if (qz.i >= qz.order.length){
+    var total = qz.order.length, pct = Math.round(qz.score / total * 100), b = band(pct);
+    h += '<div class="card"><h3>Finished: ' + esc(themeById(qz.t).name) + '</h3><p class="big t-' + b + '">' + qz.score + ' / ' + total + ' (' + pct + '%)</p>';
+    if (qz.wrong.length){
+      h += '<h4>Check these again</h4><ul>';
+      qz.wrong.forEach(function(i){ var q = QUIZZES[qz.t][i]; h += '<li><b>' + esc(q.q) + '</b><br>Answer: ' + esc(q.o[q.a]) + '. ' + esc(q.e) + '</li>'; });
+      h += '</ul>';
+    } else h += '<p>Perfect score!</p>';
+    h += '<div class="row"><button class="btn" id="qAgain">Try again</button><button class="btn ghost" id="qNotes">Read the notes</button></div></div>';
+    v.innerHTML = h;
+    $("#qAgain").onclick = function(){ startQuiz(quizTheme); renderers.quiz(); };
+    $("#qNotes").onclick = function(){ notesTheme = qz.t; show("notes"); };
+  } else {
+    var qi = qz.order[qz.i], q = QUIZZES[qz.t][qi];
+    if (!qz.opts) qz.opts = shuffle([0, 1, 2, 3].slice(0, q.o.length));
+    h += '<div class="card"><p class="small muted">Question ' + (qz.i + 1) + ' of ' + qz.order.length + ' · Score ' + qz.score + '</p><h3>' + esc(q.q) + '</h3>';
+    qz.opts.forEach(function(oi, k){
+      var cls = "";
+      if (qz.answered !== null){ if (oi === q.a) cls = " right"; else if (oi === qz.answered) cls = " wrong"; }
+      h += '<button class="opt' + cls + '" data-oi="' + oi + '"' + (qz.answered !== null ? " disabled" : "") + '><b>' + "ABCD"[k] + '.</b> ' + esc(q.o[oi]) + '</button>';
+    });
+    if (qz.answered !== null){
+      var ok = qz.answered === q.a;
+      h += '<div class="feedback ' + (ok ? "ok" : "no") + '"><b>' + (ok ? "Correct." : "Not quite. Answer: " + esc(q.o[q.a]) + ".") + '</b> ' + esc(q.e) + '</div>';
+      h += '<div class="row" style="margin-top:12px"><button class="btn" id="qNext">' + (qz.i + 1 < qz.order.length ? "Next question" : "See result") + '</button></div>';
+    }
+    h += '</div>';
+    v.innerHTML = h;
+    $all(".opt", v).forEach(function(b){ b.onclick = function(){
+      if (qz.answered !== null) return;
+      qz.answered = +b.dataset.oi;
+      if (qz.answered === q.a) qz.score++; else qz.wrong.push(qi);
+      if (qz.i + 1 >= qz.order.length) finishQuiz();
+      renderers.quiz();
+    }; });
+    var nb = $("#qNext"); if (nb) nb.onclick = function(){ qz.i++; qz.answered = null; qz.opts = null; renderers.quiz(); };
+  }
+  $all(".chip", v).forEach(function(c){ c.onclick = function(){ quizTheme = +c.dataset.theme; qz = null; renderers.quiz(); }; });
+};
+function finishQuiz(){
+  var total = qz.order.length, pct = qz.score / total * 100;
+  var rec = S.quiz[qz.t] || {best: 0, attempts: []};
+  rec.attempts.push({d: nowISO(), score: qz.score, total: total});
+  rec.best = Math.max(rec.best, pct);
+  S.quiz[qz.t] = rec;
+  S.quizWrong[qz.t] = qz.wrong.slice();
+  save();
+}
+
+/* ---------- Practice exams ---------- */
+function examById(id){ for (var i = 0; i < EXAMS.length; i++) if (EXAMS[i].id === id) return EXAMS[i]; return null; }
+function pid(ex, q, k){ return ex.id + "." + q.id + "." + k; }
+function includedQuestions(ex){
+  var out = [];
+  ex.sections.forEach(function(sec){ sec.questions.forEach(function(q){ if (!sec.choose || S.active.chosen.indexOf(q.id) >= 0) out.push(q); }); });
+  return out;
+}
+function examScore(ex){
+  var sc = 0, unmarked = 0;
+  includedQuestions(ex).forEach(function(q){ q.parts.forEach(function(p, k){ var m = S.active.marks[pid(ex, q, k)]; if (m === undefined) unmarked++; else sc += m; }); });
+  return {score: sc, unmarked: unmarked};
+}
+var timesUpShown = false;
+function timerText(){
+  var a = S.active; if (!a) return "";
+  var ex = examById(a.id), el = Math.floor((Date.now() - a.start) / 1000);
+  if (!a.timed){ var mm = Math.floor(el / 60); return "Untimed · " + mm + " min used"; }
+  var rem = ex.minutes * 60 - el;
+  if (rem <= 0) return "Time is up!";
+  var hh = Math.floor(rem / 3600), m2 = Math.floor(rem % 3600 / 60), ss = rem % 60;
+  return hh + ":" + String(m2).padStart(2, "0") + ":" + String(ss).padStart(2, "0") + " left";
+}
+setInterval(function(){
+  var t = $("#examTimer"); if (!t || !S.active) return;
+  t.textContent = timerText();
+  var ex = examById(S.active.id), rem = ex.minutes * 60 - (Date.now() - S.active.start) / 1000;
+  t.parentNode.classList.toggle("low", S.active.timed && rem < 600);
+  if (S.active.timed && rem <= 0 && !timesUpShown){ timesUpShown = true; alert("Time is up! Stop writing. You can still reveal the mark schemes and mark your answers."); }
+}, 1000);
+
+renderers.exam = function(){
+  var v = $("#view-exam");
+  if (S.active && examById(S.active.id)) return renderActiveExam(v);
+  var h = '<h2>Practice exams</h2><div class="card"><p>Mock papers follow the NSSCO format. Write your answer (here or on paper), then reveal the mark scheme and model answer, and give yourself a mark. Your marks feed your grade and the dashboard.</p>'
+    + '<ul class="small"><li><b>Paper 1</b> (2 h 30 min, 80 marks): Section A short questions (40) + Section B two data-response questions (20 each).</li>'
+    + '<li><b>Paper 2</b> (2 h, 80 marks): Q1 compulsory case study (20) + any THREE of Q2–Q6 (20 each: (a) define and state 6, (b) explain/analyse 7, (c) discuss/evaluate 7).</li></ul></div>';
+  EXAMS.forEach(function(ex){
+    var past = S.exams.filter(function(e){ return e.id === ex.id; });
+    var bestP = past.length ? Math.max.apply(null, past.map(function(e){ return Math.round(e.score / e.max * 100); })) : null;
+    h += '<div class="card"><h3>' + esc(ex.title) + '</h3><p class="small">' + ex.minutes + ' minutes · ' + ex.total + ' marks</p>'
+      + '<p class="small muted">' + (bestP === null ? "Not tried yet." : "Best: " + bestP + "% (grade " + grade(bestP) + ") · " + past.length + " attempt(s)") + '</p>'
+      + '<div class="row"><button class="btn" data-start="' + ex.id + '" data-timed="1">Start timed</button><button class="btn ghost" data-start="' + ex.id + '" data-timed="0">Practise untimed</button></div></div>';
+  });
+  h += '<div class="card"><h3>Approximate grades</h3><p class="small">A* 90%+ · A 80% · B 70% · C 60% · D 50% · E 40% · F 30% · G 20%. These are a guide only; real boundaries are set each year.</p></div>';
+  v.innerHTML = h;
+  $all("[data-start]", v).forEach(function(b){ b.onclick = function(){
+    S.active = {id: b.dataset.start, start: Date.now(), timed: b.dataset.timed === "1", chosen: [], marks: {}, revealed: {}, paper: {}};
+    timesUpShown = false; save(); renderers.exam();
+  }; });
+};
+
+function renderActiveExam(v){
+  var a = S.active, ex = examById(a.id);
+  var h = '<div class="timer"><span><b id="examTimer">' + timerText() + '</b></span><span class="small" id="runTotal"></span></div>';
+  h += '<h2>' + esc(ex.title) + '</h2><div class="card"><p>' + esc(ex.intro) + '</p><p class="small muted">Write your answer first. The mark scheme opens only after you write something (or tap "I answered on paper"). Mark honestly using the rubric in Exam technique.</p></div>';
+  var qnum = 0;
+  ex.sections.forEach(function(sec){
+    h += '<h3>' + esc(sec.name) + '</h3>';
+    if (sec.choose) h += '<p class="small"><b>Choose ' + sec.choose + '.</b> Tick the questions you answer. Only ticked questions count. Chosen: <b id="chosenCount">' + a.chosen.length + '</b>/' + sec.choose + '</p>';
+    sec.questions.forEach(function(q){
+      var on = !sec.choose || a.chosen.indexOf(q.id) >= 0, th = themeById(q.theme); qnum++;
+      var qmax = q.parts.reduce(function(s, p){ return s + p.m; }, 0);
+      h += '<div class="q' + (on ? "" : " off") + '" id="q-' + q.id + '"><div class="row" style="justify-content:space-between"><b>Question ' + qnum + ' <span class="pill">Theme ' + q.theme + ': ' + esc(th.short) + '</span></b><span class="small">[' + qmax + ' marks]</span></div>';
+      if (sec.choose) h += '<label class="check"><input type="checkbox" data-choose="' + q.id + '"' + (on ? " checked" : "") + '> I am answering this question</label>';
+      if (q.stem) h += '<div class="stem">' + q.stem + '</div>';
+      q.parts.forEach(function(p, k){
+        var id = pid(ex, q, k), draft = S.drafts[id] || "", rev = !!a.revealed[id], mk = a.marks[id];
+        h += '<div class="part" data-pid="' + id + '"><p class="pq"><span class="marks">[' + p.m + ']</span>' + esc(p.l) + ' ' + esc(p.q) + '</p>';
+        h += '<textarea data-draft="' + id + '" aria-label="Your answer to ' + esc(p.l) + '" placeholder="Write your answer here…">' + esc(draft) + '</textarea>';
+        if (!rev){
+          h += '<div class="row"><button class="btn" data-reveal="' + id + '"' + ((draft.trim().length >= 3 || a.paper[id]) ? "" : " disabled") + '>Reveal mark scheme</button><button class="btn ghost" data-paper="' + id + '">I answered on paper</button></div>';
+        } else {
+          h += '<div class="scheme"><h5>Mark scheme (' + esc(p.cw) + ', ' + p.m + ' marks)</h5><ul>' + p.scheme.map(function(s){ return "<li>" + esc(s) + "</li>"; }).join("") + '</ul></div>';
+          h += '<div class="model"><b>Model answer:</b> ' + esc(p.model) + '</div>';
+          h += '<p class="small"><b>Your mark:</b></p><div class="markpick" role="group" aria-label="Choose your mark">';
+          for (var m = 0; m <= p.m; m++) h += '<button data-mark="' + id + '" data-m="' + m + '" aria-pressed="' + (mk === m) + '">' + m + '</button>';
+          h += '</div>';
+        }
+        h += '</div>';
+      });
+      h += '</div>';
+    });
+  });
+  h += '<div class="card"><p id="finishInfo"></p><div class="row"><button class="btn good" id="exFinish">Finish and save</button><button class="btn warn" id="exQuit">Quit without saving</button></div></div>';
+  v.innerHTML = h;
+  updateTotals();
+  $all("textarea[data-draft]", v).forEach(function(t){ t.oninput = function(){
+    var id = t.dataset.draft; S.drafts[id] = t.value; save();
+    var rb = $('[data-reveal="' + id + '"]', v); if (rb) rb.disabled = !(t.value.trim().length >= 3 || S.active.paper[id]);
+  }; });
+  $all("[data-paper]", v).forEach(function(b){ b.onclick = function(){ S.active.paper[b.dataset.paper] = true; save(); var rb = $('[data-reveal="' + b.dataset.paper + '"]', v); if (rb) rb.disabled = false; }; });
+  $all("[data-reveal]", v).forEach(function(b){ b.onclick = function(){ var id = b.dataset.reveal; S.active.revealed[id] = true; save(); rerenderKeepScroll(id); }; });
+  $all("[data-mark]", v).forEach(function(b){ b.onclick = function(){
+    S.active.marks[b.dataset.mark] = +b.dataset.m; save();
+    $all('[data-mark="' + b.dataset.mark + '"]', v).forEach(function(x){ x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+    updateTotals();
+  }; });
+  $all("[data-choose]", v).forEach(function(c){ c.onchange = function(){
+    var sec = null; ex.sections.forEach(function(s){ if (s.choose) sec = s; });
+    var arr = S.active.chosen, i = arr.indexOf(c.dataset.choose);
+    if (c.checked){ if (arr.length >= sec.choose){ c.checked = false; alert("You can only answer " + sec.choose + " questions in this section. Untick one first."); return; } arr.push(c.dataset.choose); }
+    else if (i >= 0) arr.splice(i, 1);
+    save();
+    $("#q-" + c.dataset.choose).classList.toggle("off", !c.checked);
+    var cc = $("#chosenCount"); if (cc) cc.textContent = arr.length;
+    updateTotals();
+  }; });
+  $("#exQuit").onclick = function(){ if (confirm("Quit this paper? Your marks for this attempt will not be saved.")){ clearDrafts(ex); S.active = null; save(); renderers.exam(); } };
+  $("#exFinish").onclick = function(){
+    var r = examScore(ex), chooseSec = ex.sections.filter(function(s){ return s.choose; })[0];
+    if (chooseSec && S.active.chosen.length < chooseSec.choose && !confirm("You chose only " + S.active.chosen.length + " of " + chooseSec.choose + " Section B questions. Save anyway?")) return;
+    if (r.unmarked && !confirm(r.unmarked + " part(s) have no mark yet and will count as 0. Save anyway?")) return;
+    var d = nowISO();
+    includedQuestions(ex).forEach(function(q){ q.parts.forEach(function(p, k){
+      var id = pid(ex, q, k), m = S.active.marks[id];
+      S.written[id] = {t: q.theme, mark: m === undefined ? 0 : m, max: p.m, d: d};
+    }); });
+    var mins = Math.round((Date.now() - S.active.start) / 60000);
+    S.exams.push({id: ex.id, title: ex.title, paper: ex.paper, d: d, score: r.score, max: ex.total, timed: S.active.timed, mins: mins});
+    clearDrafts(ex); S.active = null; save();
+    var p = Math.round(r.score / ex.total * 100);
+    alert("Saved: " + r.score + "/" + ex.total + " (" + p + "%), approximate grade " + grade(p) + ".");
+    show("dash");
+  };
+}
+function clearDrafts(ex){ Object.keys(S.drafts).forEach(function(k){ if (k.indexOf(ex.id + ".") === 0) delete S.drafts[k]; }); }
+function rerenderKeepScroll(id){
+  var el = document.querySelector('[data-pid="' + id + '"]'), top = el ? el.getBoundingClientRect().top : 0;
+  renderActiveExam($("#view-exam"));
+  var el2 = document.querySelector('[data-pid="' + id + '"]');
+  if (el2) window.scrollBy(0, el2.getBoundingClientRect().top - top);
+}
+function updateTotals(){
+  var ex = examById(S.active.id), r = examScore(ex);
+  var rt = $("#runTotal"); if (rt) rt.textContent = "Marks so far: " + r.score + "/" + ex.total;
+  var fi = $("#finishInfo"); if (fi) fi.innerHTML = "Current total: <b>" + r.score + "/" + ex.total + "</b> (" + Math.round(r.score / ex.total * 100) + "%, approx. grade " + grade(Math.round(r.score / ex.total * 100)) + "). Unmarked parts: " + r.unmarked + ".";
+}
+
+/* ---------- Exam technique ---------- */
+renderers.tech = function(){
+  $("#view-tech").innerHTML = TECHNIQUE_HTML;
+};
+var TECHNIQUE_HTML = '<h2>Exam technique</h2>'
++ '<div class="card"><h3>Command words</h3><div class="tablewrap"><table><tr><th>Word</th><th>What to do</th><th>Example answer shape</th></tr>'
++ '<tr><td><b>State / Identify / Give</b></td><td>A short point. No explanation needed.</td><td>"Bulk buying."</td></tr>'
++ '<tr><td><b>Define</b></td><td>The precise meaning of the term.</td><td>"Opportunity cost is the next best alternative given up when a choice is made."</td></tr>'
++ '<tr><td><b>Calculate</b></td><td>Formula → working → exact answer with unit or % sign.</td><td>"PED = −10 ÷ 25 = −0.4"</td></tr>'
++ '<tr><td><b>Explain</b></td><td>Point + <b>because</b> (a reason).</td><td>"Demand rises <i>because</i> incomes rise, so people can afford more."</td></tr>'
++ '<tr><td><b>Analyse</b></td><td>A <b>chain</b> of cause and effect. Aim for 5 links.</td><td>"A → so B → so C → so D → so E."</td></tr>'
++ '<tr><td><b>Discuss</b></td><td>Both sides (for and against).</td><td>"On one hand… On the other hand…"</td></tr>'
++ '<tr><td><b>Evaluate</b></td><td>Both sides + a <b>justified judgement</b>.</td><td>"…It depends on… so overall…"</td></tr>'
++ '<tr><td><b>Distinguish</b></td><td>Define both terms and show the difference.</td><td>"A direct tax is… whereas an indirect tax is…"</td></tr>'
++ '<tr><td><b>Draw</b></td><td>A fully labelled diagram.</td><td>Axes, curves, equilibrium, shift arrows.</td></tr>'
++ '</table></div></div>'
++ '<div class="card"><h3>Chains of reasoning</h3><p>Each link must <b>cause</b> the next. Use linking words: <b>because, so, therefore, this leads to, as a result</b>.</p>'
++ '<div class="box ex"><b>Question:</b> Analyse how a rise in the repo rate can reduce inflation.<br>'
++ '1. The Bank of Namibia raises the repo rate →<br>2. so commercial banks raise their lending rates →<br>3. so loans cost more and households borrow and spend less →<br>4. so aggregate demand falls →<br>5. so firms cannot raise prices as fast, and <b>inflation falls</b>.</div>'
++ '<div class="box tip"><b>Weak answer:</b> "Higher interest rates reduce inflation because people spend less." (one link only)<br><b>Strong answer:</b> all 5 links above, with a Namibian example.</div></div>'
++ '<div class="card"><h3>Marking rubric for long answers</h3><p>Long answers are marked on four skills:</p>'
++ '<div class="tablewrap"><table><tr><th>Skill</th><th>Meaning</th></tr>'
++ '<tr><td><b>Knowledge (K)</b></td><td>Correct definitions and terms.</td></tr>'
++ '<tr><td><b>Application (A)</b></td><td>Use the case, data or a Namibian example.</td></tr>'
++ '<tr><td><b>Analysis (An)</b></td><td>Chains of cause and effect.</td></tr>'
++ '<tr><td><b>Evaluation (E)</b></td><td>Weigh both sides and make a supported judgement.</td></tr></table></div>'
++ '<h4>7-mark Discuss / Evaluate</h4><div class="tablewrap"><table><tr><th>K</th><th>A</th><th>An</th><th>E</th></tr><tr><td>1</td><td>1</td><td>3</td><td>2</td></tr></table></div>'
++ '<ul><li>You <b>must</b> give both sides.</li><li>The judgement must <b>weigh</b> the sides: "It depends on… If… then… So overall…".</li><li>A third one-sided point is <b>not</b> evaluation and gets no E marks.</li></ul>'
++ '<h4>7-mark Explain / Analyse</h4><div class="tablewrap"><table><tr><th>K</th><th>A</th><th>An</th></tr><tr><td>1</td><td>1</td><td>5 (one per link)</td></tr></table></div>'
++ '<div class="box ex"><b>Evaluation starter:</b> "Overall, X is likely to be more important than Y <b>because</b>… However, this depends on… In the short run… but in the long run…"</div></div>'
++ '<div class="card"><h3>Diagrams: what loses marks</h3><ul><li>Axes not labelled (use <b>Price</b> and <b>Quantity</b>).</li><li>Curves not labelled (D, S, D1, D2, S1, S2).</li><li>No equilibrium points (P1, Q1, P2, Q2).</li><li>Shift in the wrong direction (a decrease in supply moves S to the <b>left</b>).</li><li>Drawing a shift when only the own price changed (that is a <b>movement along</b>).</li></ul><p>Draw with a ruler, make it large, and refer to it in your writing ("as shown in the diagram, price rises from P1 to P2").</p></div>'
++ '<div class="card"><h3>Calculations</h3><ol><li>Write the <b>formula</b>.</li><li>Show the <b>working</b> with the numbers.</li><li>Give the <b>exact final answer</b> with the <b>unit (N$, units) or % sign</b>.</li></ol><p>Round only at the end (2 decimal places unless told otherwise). Even if the final answer is wrong, the formula and working can earn marks.</p></div>'
++ '<div class="card"><h3>Time plan</h3><ul><li><b>Paper 1 (150 min, 80 marks):</b> about 1.8 minutes per mark. Section A ≈ 70 min, each Section B question ≈ 35 min, 10 min to check.</li>'
++ '<li><b>Paper 2 (120 min, 80 marks):</b> 1.5 minutes per mark. Q1 ≈ 28 min, each chosen question ≈ 28 min, 8 min to read and choose.</li>'
++ '<li>Look at the marks: 2 marks = two short points; 7 marks = a full paragraph with a chain or both sides.</li></ul></div>';
+
+/* ---------- Start ---------- */
+show(renderers[S.tab] ? S.tab : "dash");
+})();
+</script>
+</body>
+</html>
