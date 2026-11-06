@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f5fbf">
+<title>CS Paper 1 Study</title>
+<style>
+:root{
+  --bg:#f4f6fa;--card:#fff;--ink:#14202e;--mut:#556273;--line:#d9dee7;
+  --acc:#1f5fbf;--acc2:#e8f0fc;--ok:#1b7f47;--okbg:#e6f6ec;--bad:#c22b2b;--badbg:#fdecec;
+  --warn:#9a5c00;--warnbg:#fff4e0;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0f141b;--card:#18202b;--ink:#e8edf3;--mut:#9aa7b7;--line:#2c3746;
+  --acc:#6ea3ff;--acc2:#1c2a40;--ok:#4cc184;--okbg:#14301f;--bad:#ff7b7b;--badbg:#3a1a1a;
+  --warn:#ffc163;--warnbg:#3a2a10;
+}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header.top{position:sticky;top:0;z-index:5;background:var(--acc);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+header.top h1{font-size:18px;margin:0;font-weight:700}
+header.top small{opacity:.9;font-size:13px}
+main{max-width:900px;margin:0 auto;padding:14px 16px 96px}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+nav.tabs button{border:0;background:none;color:var(--mut);font:600 13px system-ui,sans-serif;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
+nav.tabs button span{font-size:22px;line-height:1}
+nav.tabs button.on{color:var(--acc);background:var(--acc2)}
+@media (min-width:900px){nav.tabs{top:52px;bottom:auto;left:50%;transform:translateX(-50%);max-width:900px;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px}main{padding-top:80px;padding-bottom:40px}}
+section.tab{display:none}section.tab.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+h2{font-size:21px;margin:4px 0 10px}h3{font-size:18px;margin:16px 0 8px}h4{font-size:16px;margin:14px 0 6px}
+p{margin:8px 0}
+.mut{color:var(--mut)}.small{font-size:14px}
+button,.btn{font:600 16px system-ui,sans-serif;min-height:48px;padding:10px 16px;border-radius:12px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer;touch-action:manipulation}
+button.ghost,.btn.ghost{background:transparent;color:var(--acc)}
+button.small{min-height:40px;padding:6px 12px;font-size:14px}
+button:disabled{opacity:.45;cursor:default}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.grid2{display:grid;gap:14px}
+@media (min-width:760px){.grid2{grid-template-columns:1fr 1fr}}
+input[type=text],input[type=search],textarea{font:18px var(--mono);width:100%;min-height:52px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink)}
+textarea{font:17px/1.45 system-ui,sans-serif;min-height:130px}
+input:focus,textarea:focus{outline:none;border-color:var(--acc)}
+/* countdown */
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
+.cd div{background:var(--acc2);border-radius:12px;padding:8px 2px}
+.cd b{display:block;font-size:28px;font-variant-numeric:tabular-nums}
+.cd small{font-size:12px;color:var(--mut)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{background:var(--acc2);border-radius:12px;padding:10px;text-align:center}
+.stat b{font-size:24px;display:block}
+/* bars */
+.bar{display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:2px 8px;align-items:center;margin:8px 0;font-size:14px}
+.bar .lbl{grid-column:1/3;display:flex;justify-content:space-between;gap:6px}
+.bar .track{height:14px;background:var(--line);border-radius:7px;overflow:hidden;grid-column:1/2}
+.bar .fill{height:100%;border-radius:7px}
+.bar .pc{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.thm{font-weight:700;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:14px}
+.weak{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.weak:last-child{border-bottom:0}
+.weak button{white-space:nowrap;flex:0 0 auto}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--warnbg);color:var(--warn)}
+/* notes */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;-webkit-overflow-scrolling:touch}
+.chip{flex:0 0 auto;min-height:44px;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 15px system-ui,sans-serif}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.notes .topic{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 12px}
+.notes .topic>summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:700;font-size:18px;min-height:52px;display:flex;justify-content:space-between;gap:8px}
+.notes .topic>summary::-webkit-details-marker{display:none}
+.notes .topic>summary::after{content:"＋";color:var(--acc)}
+.notes .topic[open]>summary::after{content:"－"}
+.notes .topic .in{padding:0 16px 14px}
+.notes .thead{font-size:13px;font-weight:700;text-transform:uppercase;color:var(--mut);margin:18px 0 8px;letter-spacing:.04em}
+.wrong{border:2px solid var(--bad);background:var(--badbg);border-radius:12px;padding:10px 12px;margin:12px 0}
+.wrong::before{content:"⚠ Booklet is wrong";display:block;font-weight:800;color:var(--bad);margin-bottom:4px}
+.tip{border-left:5px solid var(--warn);background:var(--warnbg);border-radius:8px;padding:8px 12px;margin:12px 0}
+.key{border-left:5px solid var(--acc);background:var(--acc2);border-radius:8px;padding:8px 12px;margin:12px 0}
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0}
+table{border-collapse:collapse;font-size:15px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--acc2)}
+table.c td,table.c th{text-align:center}
+.mono,code{font-family:var(--mono)}
+code{background:var(--acc2);padding:1px 5px;border-radius:5px;font-size:.95em}
+pre{font:15px/1.45 var(--mono);background:var(--acc2);padding:10px 12px;border-radius:10px;overflow-x:auto;margin:8px 0}
+ol.steps li,ul li{margin:4px 0}
+mark{background:#ffe066;color:#000;border-radius:3px}
+.pad{color:var(--bad);font-weight:800;text-decoration:underline}
+/* quiz */
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.qnum{font-size:14px;color:var(--mut)}
+.prompt{font-size:18px}
+.big{font:700 24px/1.3 var(--mono);letter-spacing:.06em;background:var(--acc2);padding:10px 12px;border-radius:10px;display:inline-block;word-break:break-all;margin:6px 0}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.choices button{min-height:58px;font-size:20px}
+.choices.mc{grid-template-columns:1fr}
+.choices.mc button{font-size:16px;text-align:left;background:var(--card);color:var(--ink);border-color:var(--line)}
+.choices button.pick{outline:3px solid var(--acc)}
+.fb{border-radius:12px;padding:10px 12px;margin:12px 0;font-weight:600}
+.fb.ok{background:var(--okbg);color:var(--ok)}.fb.bad{background:var(--badbg);color:var(--bad)}.fb.part{background:var(--warnbg);color:var(--warn)}
+details.work{border:1px solid var(--line);border-radius:12px;padding:6px 12px;margin:10px 0}
+details.work summary{cursor:pointer;font-weight:700;min-height:40px;display:flex;align-items:center}
+.marks{font-weight:800;color:var(--acc)}
+.check{display:flex;gap:12px;align-items:flex-start;padding:10px;border:1px solid var(--line);border-radius:12px;margin:8px 0;cursor:pointer}
+.check input{width:26px;height:26px;flex:0 0 auto;margin-top:2px}
+.rules{background:var(--warnbg);border-radius:12px;padding:10px 12px;font-size:15px}
+.rules h4{margin:0 0 4px;color:var(--warn)}
+.rules ul{margin:4px 0;padding-left:20px}
+.picker .topicbtn{width:100%;text-align:left;background:var(--card);color:var(--ink);border-color:var(--line);margin:4px 0;display:flex;justify-content:space-between;gap:8px}
+.picker .topicbtn em{font-style:normal;color:var(--mut);font-size:14px;white-space:nowrap}
+/* truth tables */
+table.tt td,table.tt th{text-align:center;min-width:44px;font:600 17px var(--mono)}
+table.tt td.in{background:var(--acc2)}
+table.tt button.cell{min-height:44px;min-width:52px;padding:0;font:700 19px var(--mono);background:var(--card);color:var(--ink);border:2px dashed var(--line);border-radius:8px}
+table.tt button.cell.set{border-style:solid;border-color:var(--acc)}
+table.tt td.r{background:var(--okbg)}table.tt td.w{background:var(--badbg)}
+table.tt th.wk{background:transparent;color:var(--mut);font-size:13px}
+.svgwrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;margin:8px 0}
+.svgwrap svg{display:block}
+/* trace */
+table.trace input{font:17px var(--mono);width:74px;min-height:44px;padding:4px 6px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--ink);text-align:center}
+table.trace td.r input{border-color:var(--ok)}table.trace td.w input{border-color:var(--bad);background:var(--badbg)}
+table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--mono)}
+/* mock */
+.timer{position:sticky;top:52px;z-index:4;background:var(--card);border:2px solid var(--acc);border-radius:12px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:700}
+.timer b{font:800 22px var(--mono)}
+.timer.low{border-color:var(--bad);color:var(--bad)}
+.label-model{display:inline-block;font-size:12px;font-weight:800;color:var(--warn);background:var(--warnbg);border-radius:6px;padding:2px 8px;margin:4px 0}
+.mq{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<header class="top"><h1>CS Paper 1 · 6134/1</h1><small id="hdrCount"></small></header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="dash" class="on"><span>🏠</span>Dashboard</button>
+  <button data-tab="notes"><span>📘</span>Notes</button>
+  <button data-tab="quiz"><span>✏️</span>Quiz</button>
+  <button data-tab="papers"><span>📄</span>Past papers</button>
+</nav>
+
+<main>
+<!-- ============ DASHBOARD ============ -->
+<section class="tab on" id="tab-dash">
+  <div class="card">
+    <h2>Exam: Tue 10 Nov 2026, 09:00</h2>
+    <p class="mut small">Paper 1 · 2 h 30 min · 100 marks</p>
+    <div class="cd" id="cd"></div>
+  </div>
+  <div class="card">
+    <div class="stats">
+      <div class="stat"><b id="stDone">0</b><span class="small mut">questions done</span></div>
+      <div class="stat"><b id="stPct">–</b><span class="small mut">score (last 20 per topic)</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Weak topics</h2>
+    <p class="mut small">Below 80%. Fix these first. Tap “Re-test now”.</p>
+    <div id="weakList"></div>
+  </div>
+  <div class="card">
+    <h2>Score per topic</h2>
+    <p class="mut small">Last 20 marks in each topic. Green = 80% or more.</p>
+    <div id="bars"></div>
+  </div>
+  <div class="card" id="mockCard">
+    <h2>Mock papers</h2>
+    <div id="mockScores" class="small"></div>
+  </div>
+  <div class="card">
+    <h2>Save your progress</h2>
+    <p class="small mut">Progress is saved on this phone. Export it to keep a copy or move it to another device.</p>
+    <div class="row">
+      <button id="btnExport">Export progress</button>
+      <button class="ghost" id="btnImport">Import progress</button>
+      <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+    </div>
+    <div id="ioBox" class="hidden" style="margin-top:10px">
+      <p class="small mut" id="ioMsg"></p>
+      <textarea id="ioText" spellcheck="false" style="font:13px var(--mono)"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="small" id="btnIoApply">Load this text</button>
+        <button class="small ghost" id="btnIoClose">Close</button>
+      </div>
+    </div>
+    <p class="small" id="saveWarn"></p>
+  </div>
+</section>
+
+<!-- ============ NOTES ============ -->
+<section class="tab" id="tab-notes">
+  <input type="search" id="noteSearch" placeholder="Search notes… e.g. parity, MAR, VLOOKUP" autocomplete="off">
+  <div class="chips" id="noteChips"></div>
+  <p class="small mut" id="noteCount"></p>
+  <div class="notes" id="notesOut"></div>
+</section>
+
+<!-- ============ QUIZ ============ -->
+<section class="tab" id="tab-quiz">
+  <div id="quizPick" class="picker"></div>
+  <div id="quizRun" class="hidden"></div>
+</section>
+
+<!-- ============ PAST PAPERS ============ -->
+<section class="tab" id="tab-papers">
+  <div id="papersOut"></div>
+</section>
+</main>
+
+<!-- ===================================================================
+     NOTES SOURCE  (each <details class="topic"> is one topic)
+     data-theme: 4A 4B 4C 3 5 12
+==================================================================== -->
+<template id="notesSrc">
+
+<div class="thead" data-theme="4A">Theme 4A · Data representation</div>
+
+<details class="topic" data-theme="4A" data-topic="num"><summary>Binary, denary and hexadecimal</summary><div class="in">
+<p><b>Denary</b> = base 10. Digits 0–9.<br><b>Binary</b> = base 2. Digits 0 and 1.<br><b>Hexadecimal (hex)</b> = base 16. Digits 0–9 and A–F.</p>
+<p>Computers use binary because they are made of switches (transistors). A switch is ON (1) or OFF (0).</p>
+<ul>
+<li>1 <b>bit</b> = one 0 or 1.</li>
+<li>4 bits = 1 <b>nibble</b> = one hex digit.</li>
+<li>8 bits = 1 <b>byte</b>.</li>
+</ul>
+<h4>Place values</h4>
+<div class="tw"><table class="c"><tr><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr><tr><td>2<sup>7</sup></td><td>2<sup>6</sup></td><td>2<sup>5</sup></td><td>2<sup>4</sup></td><td>2<sup>3</sup></td><td>2<sup>2</sup></td><td>2<sup>1</sup></td><td>2<sup>0</sup></td></tr></table></div>
+<p>For 16 bits, carry on to the left: 256, 512, 1024, 2048, 4096, 8192, 16384, 32768.</p>
+<p>8 bits hold 0 to 255. 16 bits hold 0 to 65 535.</p>
+<div class="wrong">255 = <b>11111111</b>. That is <b>8 bits</b>, not 9 bits. (128+64+32+16+8+4+2+1 = 255.)</div>
+
+<h4>Denary → binary (worked example: 75)</h4>
+<ol class="steps">
+<li>Write the place values 128 64 32 16 8 4 2 1.</li>
+<li>128 is bigger than 75 → write 0. 64 fits → write 1. 75 − 64 = 11.</li>
+<li>32 → 0. 16 → 0. 8 fits → 1. 11 − 8 = 3.</li>
+<li>4 → 0. 2 fits → 1. 3 − 2 = 1. 1 fits → 1. 1 − 1 = 0.</li>
+</ol>
+<div class="tw"><table class="c"><tr><th>128</th><th>64</th><th>32</th><th>16</th><th>8</th><th>4</th><th>2</th><th>1</th></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr></table></div>
+<p>Answer: 75 = <b>01001011</b>. Check: 64+8+2+1 = 75 ✓</p>
+<div class="tip">If the question says “8-bit”, write all 8 bits. Put the extra zeros on the <b>left</b>.</div>
+
+<h4>Binary → denary (worked example: 10110010)</h4>
+<p>Add the place values where there is a 1: 128 + 32 + 16 + 2 = <b>178</b>.</p>
+
+<h4>Hex digits</h4>
+<div class="tw"><table class="c"><tr><th>Denary</th><td>0–9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td></tr><tr><th>Hex</th><td>0–9</td><td>A</td><td>B</td><td>C</td><td>D</td><td>E</td><td>F</td></tr><tr><th>Binary</th><td>0000–1001</td><td>1010</td><td>1011</td><td>1100</td><td>1101</td><td>1110</td><td>1111</td></tr></table></div>
+
+<h4>Binary → hex: the grid method</h4>
+<ol class="steps">
+<li>Split the binary into groups of 4, starting from the <b>right</b>.</li>
+<li>If the left group is short, add zeros on the <b>LEFT</b>.</li>
+<li>Write 8 4 2 1 above each group. Add up each group.</li>
+<li>Change each total to one hex digit.</li>
+</ol>
+<p>Example: <span class="mono">1101011</span> (7 bits) → pad to <span class="mono"><span class="pad">0</span>110 1011</span></p>
+<div class="tw"><table class="c"><tr><th>8</th><th>4</th><th>2</th><th>1</th><th>8</th><th>4</th><th>2</th><th>1</th></tr><tr><td class="pad">0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td colspan="4">4+2 = 6 → <b>6</b></td><td colspan="4">8+2+1 = 11 → <b>B</b></td></tr></table></div>
+<p>Answer: <b>6B</b>.</p>
+<div class="tip"><b>Common mistake:</b> adding zeros on the RIGHT (1101 0110 = D6). That is wrong. Zeros on the right change the number. Zeros on the left do not.</div>
+
+<h4>Hex → binary</h4>
+<p>Change each hex digit into 4 bits. Example: <span class="mono">3F</span> → 3 = 0011, F = 1111 → <b>00111111</b>.</p>
+
+<h4>Denary → hex (worked example: 200)</h4>
+<ol class="steps">
+<li>200 ÷ 16 = 12 remainder 8 (12 × 16 = 192, 200 − 192 = 8).</li>
+<li>12 = C. The remainder 8 = 8.</li>
+<li>Answer: <b>C8</b>.</li>
+</ol>
+<p>Or: change to binary first (11001000), then use the grid (1100 = C, 1000 = 8).</p>
+
+<h4>Hex → denary (worked example: 2A7)</h4>
+<p>Place values: 256, 16, 1. → 2×256 + 10×16 + 7×1 = 512 + 160 + 7 = <b>679</b>.</p>
+
+<h4>Why do people use hex?</h4>
+<ul>
+<li>Hex is <b>shorter</b> than binary: 1 hex digit = 4 bits.</li>
+<li>So it is easier for people to read and remember.</li>
+<li>People make fewer mistakes when they copy or type it.</li>
+<li>It is easy to change between hex and binary.</li>
+</ul>
+<div class="key">The computer still uses binary. Hex is only for <b>people</b>.</div>
+</div></details>
+
+<details class="topic" data-theme="4A" data-topic="hexuse"><summary>Uses of hexadecimal</summary><div class="in">
+<div class="tw"><table>
+<tr><th>Use</th><th>What it means</th><th>Example</th></tr>
+<tr><td><b>HTML colour codes</b></td><td>A colour on a web page. 3 pairs of hex: Red, Green, Blue. Each pair is 00 (none) to FF (full).</td><td class="mono">#FF0000 = red<br>#FFFFFF = white<br>#000000 = black</td></tr>
+<tr><td><b>MAC address</b></td><td>A unique number for a device's network card (NIC). 48 bits, written as 6 pairs of hex. First half = maker. Second half = serial number of the card.</td><td class="mono">00-1A-2B-3C-4D-5E</td></tr>
+<tr><td><b>Assembly / machine code</b></td><td>Programmers write machine code instructions and memory addresses in hex. It is shorter than binary.</td><td class="mono">3E 0A</td></tr>
+<tr><td><b>Debugging / error codes</b></td><td>Memory dumps and error codes are shown in hex. Easier to read than long binary.</td><td class="mono">0x0000007B</td></tr>
+<tr><td>IPv6 addresses</td><td>Written in hex groups.</td><td class="mono">2001:0db8::1</td></tr>
+</table></div>
+<div class="wrong">A MAC address identifies a device's <b>network card (NIC)</b> on a network. It is set by the maker and does not change. (An IP address is the address given by the network and can change.)</div>
+<div class="tip">In an exam: name the use AND say what the hex stands for. “MAC address” alone may get only 1 mark. Add: “identifies the NIC of a device, e.g. 00-1A-2B-3C-4D-5E”.</div>
+</div></details>
+
+<details class="topic" data-theme="4A" data-topic="err"><summary>Error checking: parity, checksum, ARQ</summary><div class="in">
+<p>When data is sent, it can change. Causes: <b>interference</b> (electrical noise), damaged cables, data loss.</p>
+
+<h4>Parity check</h4>
+<ul>
+<li>Sender and receiver agree on <b>even</b> or <b>odd</b> parity. This is the <b>parity type</b>.</li>
+<li>One bit in each byte is the <b>parity bit</b> (usually the left-most bit). It is only <b>0 or 1</b>.</li>
+<li><b>Even parity:</b> the total number of 1s (with the parity bit) must be even.</li>
+<li><b>Odd parity:</b> the total number of 1s must be odd.</li>
+<li>The receiver counts the 1s. If the count is wrong for the parity type → error. Ask for the data again.</li>
+</ul>
+<div class="key"><b>Three different things — do not mix them:</b><br>
+1. <b>Count of 1s</b> in the data (e.g. 5).<br>
+2. <b>Parity type</b> (even or odd).<br>
+3. <b>Parity bit</b> (0 or 1) — the answer.</div>
+<h4>Worked example</h4>
+<p>Data (7 bits): <span class="mono">1011001</span>. Even parity.</p>
+<ol class="steps">
+<li>Count the 1s: 1,0,1,1,0,0,1 → <b>4</b> ones.</li>
+<li>4 is already even. Even parity needs an even total.</li>
+<li>So the parity bit = <b>0</b>.</li>
+<li>Byte sent: <span class="mono"><b>0</b>1011001</span>.</li>
+</ol>
+<p>With <b>odd</b> parity, the same data needs parity bit <b>1</b> (4 + 1 = 5, odd). Byte: <span class="mono"><b>1</b>1011001</span>.</p>
+<h4>Limits of parity</h4>
+<ul>
+<li>If <b>two</b> bits change, the count is even/odd again. Parity does <b>not</b> see the error.</li>
+<li>Parity can show there is an error, but not <b>which</b> bit is wrong.</li>
+</ul>
+
+<h4>Checksum</h4>
+<ol class="steps">
+<li>The sender adds up the bytes in a block of data and makes a checksum.</li>
+<li>The checksum is sent with the data.</li>
+<li>The receiver does the same sum again.</li>
+<li>If the two checksums are different → error → the data is sent again.</li>
+</ol>
+<p>Our 1-byte checksum: <b>checksum = (sum of the bytes) MOD 256</b>. (MOD = the remainder after dividing.)</p>
+<p>Example: bytes 200, 150, 99. Sum = 449. 449 MOD 256 = 449 − 256 = <b>193</b>.</p>
+<div class="wrong">Parity <b>misses two-bit errors</b>. Checksums <b>can catch</b> them, because the sum changes. Check digits are a different thing: they find <b>data entry</b> (typing) errors, not transmission errors.</div>
+
+<h4>ARQ (Automatic Repeat reQuest)</h4>
+<ol class="steps">
+<li>The receiver checks the data (e.g. with parity or a checksum).</li>
+<li>If the data is correct, it sends an <b>acknowledgement</b> (ACK) back.</li>
+<li>If the data is wrong, it sends a negative acknowledgement / a request to send again.</li>
+<li>The sender waits for a set time (<b>timeout</b>). No ACK by then → it sends the data again.</li>
+</ol>
+<h4>Echo check</h4>
+<p>The receiver sends the data back to the sender. The sender compares it with the original. Different → error. (Weak: the error might happen on the way back.)</p>
+</div></details>
+
+<details class="topic" data-theme="4A" data-topic="chk"><summary>Check digits (ISBN-13, modulo-11)</summary><div class="in">
+<p>A check digit is an extra digit at the end of a code. It is worked out from the other digits.</p>
+<p>It finds <b>data entry errors</b> when a person types or scans a code:</p>
+<ul><li>a wrong digit (e.g. 5 typed as 6)</li><li>two digits swapped (transposition, e.g. 54 → 45)</li><li>a missing or extra digit</li></ul>
+<p>The computer works out the check digit again. If it does not match → the code was entered wrongly.</p>
+<p>Used in: ISBN (books), barcodes (EAN-13), bank account numbers, ID numbers.</p>
+
+<h4>ISBN-13 method</h4>
+<ol class="steps">
+<li>Take the first 12 digits.</li>
+<li>Multiply them by 1, 3, 1, 3, … (odd places × 1, even places × 3).</li>
+<li>Add the answers → sum.</li>
+<li>Find sum MOD 10.</li>
+<li>Check digit = (10 − sum MOD 10) MOD 10. (If sum MOD 10 is 0, the check digit is 0.)</li>
+</ol>
+<h4>Worked example: 978-1-85974-979-?</h4>
+<div class="tw"><table class="c">
+<tr><th>Digit</th><td>9</td><td>7</td><td>8</td><td>1</td><td>8</td><td>5</td><td>9</td><td>7</td><td>4</td><td>9</td><td>7</td><td>9</td></tr>
+<tr><th>Weight</th><td>1</td><td>3</td><td>1</td><td>3</td><td>1</td><td>3</td><td>1</td><td>3</td><td>1</td><td>3</td><td>1</td><td>3</td></tr>
+<tr><th>Product</th><td>9</td><td>21</td><td>8</td><td>3</td><td>8</td><td>15</td><td>9</td><td>21</td><td>4</td><td>27</td><td>7</td><td>27</td></tr>
+</table></div>
+<p>Sum = 159. 159 MOD 10 = 9. Check digit = 10 − 9 = <b>1</b>. ISBN: 978-1-85974-979-<b>1</b>.</p>
+<div class="wrong">For a sum of 159, the check digit is 10 − (159 MOD 10) = 10 − 9 = <b>1</b>, not 9. The 9 is only the remainder.</div>
+<h4>Check a full ISBN-13</h4>
+<p>Use weights 1,3,1,3,… on all 13 digits (the check digit gets weight 1). If the total MOD 10 = 0 → valid.</p>
+
+<h4>Modulo-11 method</h4>
+<ol class="steps">
+<li>Give each digit a weight. Count down from the right: the right-most digit has weight 2, then 3, 4, …</li>
+<li>Multiply each digit by its weight. Add the answers.</li>
+<li>Find sum MOD 11 (the remainder).</li>
+<li>Check digit = 11 − remainder. If the answer is 11 → use 0. If it is 10 → use X.</li>
+</ol>
+<p>Example: code <span class="mono">4152</span>. Weights 5,4,3,2.</p>
+<p>4×5 + 1×4 + 5×3 + 2×2 = 20 + 4 + 15 + 4 = 43. 43 MOD 11 = 10 (3 × 11 = 33, 43 − 33 = 10). 11 − 10 = <b>1</b>. Code: 4152<b>1</b>.</p>
+<p>To check: weight the check digit 1. Total MOD 11 = 0 → valid. (43 + 1 = 44, 44 MOD 11 = 0 ✓)</p>
+</div></details>
+
+<details class="topic" data-theme="4A" data-topic="comp"><summary>Compression and file formats</summary><div class="in">
+<p><b>Compression</b> makes a file smaller.</p>
+<p>Why: it uses less storage space; it uploads/downloads in less time; it uses less bandwidth when sent.</p>
+<div class="tw"><table>
+<tr><th></th><th>Lossy</th><th>Lossless</th></tr>
+<tr><td>What it does</td><td>Removes some data for ever</td><td>Removes no data; it finds patterns and stores them in a shorter way</td></tr>
+<tr><td>Original file back?</td><td>No</td><td>Yes, exactly</td></tr>
+<tr><td>Quality</td><td>Reduced (often hard to notice)</td><td>Same as the original</td></tr>
+<tr><td>File size</td><td>Much smaller</td><td>Smaller, but not as small</td></tr>
+<tr><td>Good for</td><td>Photos, music, video for the web</td><td>Text, programs, spreadsheets, medical images</td></tr>
+<tr><td>Examples</td><td>JPEG, MP3, MP4, normal WMA</td><td>PNG, GIF, ZIP, FLAC</td></tr>
+</table></div>
+<div class="tip">Never use lossy for text or programs. One lost bit can break the file.</div>
+<h4>Common file formats</h4>
+<div class="tw"><table>
+<tr><th>Format</th><th>Type</th><th>Compression</th></tr>
+<tr><td>JPEG / JPG</td><td>Image (photos)</td><td>Lossy</td></tr>
+<tr><td>PNG</td><td>Image</td><td>Lossless</td></tr>
+<tr><td>GIF</td><td>Image (simple, 256 colours, short animations)</td><td>Lossless</td></tr>
+<tr><td>BMP</td><td>Image</td><td>Usually none (big files)</td></tr>
+<tr><td>MP3</td><td>Audio</td><td>Lossy</td></tr>
+<tr><td>WAV</td><td>Audio</td><td>Usually none (big files)</td></tr>
+<tr><td>WMA</td><td>Audio</td><td>Normally lossy</td></tr>
+<tr><td>MP4</td><td>Video</td><td>Lossy</td></tr>
+<tr><td>AVI</td><td>Video</td><td>Depends on the codec</td></tr>
+<tr><td>MOV</td><td>Video</td><td>Usually lossy</td></tr>
+<tr><td>ZIP</td><td>Any files</td><td>Lossless</td></tr>
+<tr><td>TXT, CSV, RTF, DOCX, PDF, HTML</td><td>Text / documents / web pages</td><td>—</td></tr>
+</table></div>
+<div class="wrong"><b>AVI is a VIDEO format</b>, not audio.</div>
+<div class="wrong"><b>JPEG is lossy</b>, so the quality <b>IS reduced</b>. Normal <b>WMA is lossy</b> too.</div>
+</div></details>
+
+<!--@@NOTES-MORE@@-->
+</template>
+
+<!-- ===================================================================
+     CORE: pure functions (no DOM). Tested by tests/test-core.js
+==================================================================== -->
+<script id="core">
+var Core = (function () {
+  'use strict';
+  function R(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function pad(s, n) { s = String(s); while (s.length < n) s = '0' + s; return s; }
+  function norm(s) { return String(s == null ? '' : s).toUpperCase().replace(/[\s,_\-#]/g, ''); }
+  function stripZ(s) { s = String(s).replace(/^0+/, ''); return s === '' ? '0' : s; }
+  var HEX = '0123456789ABCDEF';
+  function grp(s, n) { var out = []; for (var i = s.length; i > 0; i -= n) out.unshift(s.slice(Math.max(0, i - n), i)); return out.join(' '); }
+  function pow2(k) { var p = 1; for (var i = 0; i < k; i++) p *= 2; return p; }
+
+  // ---- manual conversion algorithms (tests compare against built-ins) ----
+  function denToBin(n, bits) {
+    var out = '', r = n, lines = [];
+    for (var i = bits - 1; i >= 0; i--) {
+      var p = pow2(i);
+      if (r >= p) { out += '1'; lines.push(r + ' − ' + p + ' = ' + (r - p)); r -= p; } else out += '0';
+    }
+    return { bin: out, lines: lines };
+  }
+  function binToDen(b) {
+    var sum = 0, parts = [];
+    for (var i = 0; i < b.length; i++) if (b[b.length - 1 - i] === '1') { sum += pow2(i); parts.unshift(pow2(i)); }
+    return { den: sum, parts: parts };
+  }
+  function denToHex(n) {
+    var lines = [], digits = '', q = n;
+    if (n === 0) return { hex: '0', lines: ['0 = 0'] };
+    while (q > 0) {
+      var d = Math.floor(q / 16), r = q - d * 16;
+      lines.push(q + ' ÷ 16 = ' + d + ' remainder ' + r + (r > 9 ? ' (= ' + HEX[r] + ')' : ''));
+      digits = HEX[r] + digits; q = d;
+    }
+    return { hex: digits, lines: lines };
+  }
+  function hexToDen(h) {
+    var sum = 0, parts = [];
+    for (var i = 0; i < h.length; i++) {
+      var v = HEX.indexOf(h[i]), pv = 1;
+      for (var k = 0; k < h.length - 1 - i; k++) pv *= 16;
+      sum += v * pv; parts.push(h[i] + '(' + v + ') × ' + pv + ' = ' + v * pv);
+    }
+    return { den: sum, parts: parts };
+  }
+  function nibble(b4) { return HEX[(b4[0] === '1' ? 8 : 0) + (b4[1] === '1' ? 4 : 0) + (b4[2] === '1' ? 2 : 0) + (b4[3] === '1' ? 1 : 0)]; }
+  function binToHexGrid(b) {
+    var padN = (4 - b.length % 4) % 4, full = pad(b, b.length + padN), groups = [], hex = '';
+    for (var i = 0; i < full.length; i += 4) { groups.push(full.slice(i, i + 4)); hex += nibble(full.slice(i, i + 4)); }
+    return { hex: hex, padN: padN, full: full, groups: groups };
+  }
+  function hexToBin(h) { var s = ''; for (var i = 0; i < h.length; i++) s += denToBin(HEX.indexOf(h[i]), 4).bin; return s; }
+  function countOnes(s) { var c = 0; for (var i = 0; i < s.length; i++) if (s[i] === '1') c++; return c; }
+  function parityBit(data, type) { var k = countOnes(data); return type === 'EVEN' ? (k % 2) : (1 - k % 2); }
+  function isbnCheck(d12) {
+    var sum = 0, rows = [];
+    for (var i = 0; i < 12; i++) { var w = i % 2 === 0 ? 1 : 3; sum += d12[i] * w; rows.push([d12[i], w, d12[i] * w]); }
+    var m = sum % 10; return { sum: sum, m: m, check: (10 - m) % 10, rows: rows };
+  }
+  function mod11Check(d) {
+    var sum = 0, rows = [], n = d.length;
+    for (var i = 0; i < n; i++) { var w = n + 1 - i; sum += d[i] * w; rows.push([d[i], w, d[i] * w]); }
+    var r = sum % 11, c = 11 - r, ch = c === 11 ? '0' : c === 10 ? 'X' : String(c);
+    return { sum: sum, r: r, c: c, check: ch, rows: rows };
+  }
+
+  // ---- HTML helpers for worked steps ----
+  function tbl(head, rows, cls) {
+    var h = '<div class="tw"><table class="c ' + (cls || '') + '">';
+    if (head) h += '<tr>' + head.map(function (x) { return '<th>' + x + '</th>'; }).join('') + '</tr>';
+    rows.forEach(function (r) { h += '<tr>' + r.map(function (x) { return '<td>' + x + '</td>'; }).join('') + '</tr>'; });
+    return h + '</table></div>';
+  }
+  function pvTable(bin) {
+    var out = '';
+    for (var s = 0; s < bin.length; s += 8) {
+      var chunk = bin.slice(s, s + 8), head = [];
+      for (var i = 0; i < chunk.length; i++) head.push(pow2(bin.length - 1 - s - i));
+      out += tbl(head, [chunk.split('')]);
+    }
+    return out;
+  }
+  function ol(lines) { return '<ol class="steps">' + lines.map(function (l) { return '<li>' + l + '</li>'; }).join('') + '</ol>'; }
+
+  // ---- GENERATORS ----
+  // Each returns {kind, topic, prompt, answer, show, steps, check(u)->{ok,msg}, choices?, input, copy, data}
+  function simpleCheck(ans, opts) {
+    opts = opts || {};
+    return function (u) {
+      var n = norm(u);
+      if (opts.stripZeros) { if (n !== '' && stripZ(n) === stripZ(ans)) return { ok: true }; }
+      else if (n === ans) return { ok: true };
+      var msg = opts.miss ? opts.miss(n) : '';
+      return { ok: false, msg: msg || '' };
+    };
+  }
+  var G = {};
+  G.den2bin = function () {
+    var bits = pick([8, 8, 8, 16]), n = bits === 8 ? R(1, 255) : R(256, 65535);
+    var r = denToBin(n, bits);
+    return {
+      kind: 'den2bin', topic: 'num', input: 'num', copy: String(n), data: { n: n, bits: bits },
+      prompt: 'Convert the denary number <span class="big">' + n + '</span> into a <b>' + bits + '-bit</b> binary number.',
+      answer: r.bin, show: grp(r.bin, 4),
+      check: simpleCheck(r.bin, { miss: function (u) { return (u !== '' && /^[01]+$/.test(u) && stripZ(u) === stripZ(r.bin)) ? 'Your value is right, but write all ' + bits + ' bits. Add zeros on the LEFT.' : ''; } }),
+      steps: '<p>Write the place values. Put 1 where the value fits, then subtract.</p>' + ol(r.lines.concat(['Nothing left, so all other places are 0.'])) + pvTable(r.bin) + '<p>Answer: <b class="mono">' + grp(r.bin, 4) + '</b></p>'
+    };
+  };
+  G.bin2den = function () {
+    var bits = pick([8, 8, 8, 16]), n = bits === 8 ? R(1, 255) : R(256, 65535), b = pad(n.toString(2), bits);
+    var r = binToDen(b);
+    return {
+      kind: 'bin2den', topic: 'num', input: 'num', copy: b, data: { b: b },
+      prompt: 'Convert the binary number <span class="big">' + grp(b, 4) + '</span> into denary.',
+      answer: String(r.den), show: String(r.den), check: simpleCheck(String(r.den), { stripZeros: true }),
+      steps: '<p>Write the place values above the bits. Add the values that have a 1.</p>' + pvTable(b) + '<p>' + r.parts.join(' + ') + ' = <b>' + r.den + '</b></p>'
+    };
+  };
+  G.den2hex = function () {
+    var n = pick([1, 1, 2]) === 1 ? R(17, 255) : R(256, 65535), r = denToHex(n);
+    return {
+      kind: 'den2hex', topic: 'num', input: 'hex', copy: String(n), data: { n: n },
+      prompt: 'Convert the denary number <span class="big">' + n + '</span> into hexadecimal.',
+      answer: r.hex, show: r.hex, check: simpleCheck(r.hex, { stripZeros: true }),
+      steps: '<p>Divide by 16 again and again. The remainders are the hex digits. Read them from the <b>bottom up</b>.</p>' + ol(r.lines) + '<p>Remember: 10=A, 11=B, 12=C, 13=D, 14=E, 15=F.</p><p>Answer: <b class="mono">' + r.hex + '</b></p>'
+    };
+  };
+  G.hex2den = function () {
+    var len = pick([2, 2, 3, 4]), h = HEX[R(1, 15)];
+    while (h.length < len) h += HEX[R(0, 15)];
+    var r = hexToDen(h);
+    return {
+      kind: 'hex2den', topic: 'num', input: 'num', copy: h, data: { h: h },
+      prompt: 'Convert the hexadecimal number <span class="big">' + h + '</span> into denary.',
+      answer: String(r.den), show: String(r.den), check: simpleCheck(String(r.den), { stripZeros: true }),
+      steps: '<p>Hex place values (right to left): 1, 16, 256, 4096. Multiply each digit by its place value, then add.</p>' + ol(r.parts) + '<p>Total = <b>' + r.den + '</b></p>'
+    };
+  };
+  G.bin2hex = function () {
+    var len = pick([5, 6, 7, 9, 10, 11, 13, 14, 15, 8, 12, 16]), b = '1';
+    while (b.length < len) b += R(0, 1);
+    var r = binToHexGrid(b);
+    var wrongRight = (function () { var p = b; while (p.length % 4) p += '0'; var x = ''; for (var i = 0; i < p.length; i += 4) x += nibble(p.slice(i, i + 4)); return x; })();
+    var head = [], bitsRow = [], valRow = [];
+    r.groups.forEach(function (g, gi) {
+      [8, 4, 2, 1].forEach(function (pv, i) { head.push(pv); var isPad = gi * 4 + i < r.padN; bitsRow.push(isPad ? '<span class="pad">0</span>' : g[i]); });
+      var v = HEX.indexOf(nibble(g));
+      valRow.push('<td colspan="4">' + v + ' → <b>' + nibble(g) + '</b></td>');
+    });
+    var grid = '<div class="tw"><table class="c"><tr>' + head.map(function (x) { return '<th>' + x + '</th>'; }).join('') + '</tr><tr>' + bitsRow.map(function (x) { return '<td>' + x + '</td>'; }).join('') + '</tr><tr>' + valRow.join('') + '</tr></table></div>';
+    return {
+      kind: 'bin2hex', topic: 'num', input: 'hex', copy: b, data: { b: b },
+      prompt: 'Convert the binary number <span class="big">' + b + '</span> into hexadecimal. Use the grid method.',
+      answer: r.hex, show: r.hex,
+      check: simpleCheck(r.hex, { stripZeros: true, miss: function (u) { return (r.padN && stripZ(u) === stripZ(wrongRight) && wrongRight !== r.hex) ? 'You put the padding zeros on the RIGHT. Put them on the LEFT.' : ''; } }),
+      steps: '<ol class="steps"><li>The number has ' + b.length + ' bits. Make groups of 4 from the <b>right</b>.</li>' +
+        (r.padN ? '<li>The left group is short. Add <b>' + r.padN + '</b> zero' + (r.padN > 1 ? 's' : '') + ' on the <b>LEFT</b> (red): <span class="mono">' + grp(r.full, 4) + '</span></li>' : '<li>No padding is needed: ' + b.length + ' is a multiple of 4.</li>') +
+        '<li>Put 8 4 2 1 over each group and add.</li></ol>' + grid +
+        '<p>Answer: <b class="mono">' + r.hex + '</b></p>' + (r.padN ? '<p class="small">Wrong way (zeros on the right) would give ' + wrongRight + '. That is a different number!</p>' : '')
+    };
+  };
+  G.hex2bin = function () {
+    var len = pick([2, 2, 3, 4]), h = HEX[R(1, 15)];
+    while (h.length < len) h += HEX[R(0, 15)];
+    var b = hexToBin(h);
+    return {
+      kind: 'hex2bin', topic: 'num', input: 'num', copy: h, data: { h: h },
+      prompt: 'Convert the hexadecimal number <span class="big">' + h + '</span> into binary. Write 4 bits for each hex digit (' + (4 * len) + ' bits).',
+      answer: b, show: grp(b, 4),
+      check: simpleCheck(b, { miss: function (u) { return (u !== '' && /^[01]+$/.test(u) && stripZ(u) === stripZ(b)) ? 'Value is right, but write 4 bits for every hex digit (keep the zeros on the left).' : ''; } }),
+      steps: '<p>Change each hex digit into 4 bits (8 4 2 1).</p>' + tbl(h.split(''), [h.split('').map(function (c) { return hexToBin(c); })]) + '<p>Answer: <b class="mono">' + grp(b, 4) + '</b></p>'
+    };
+  };
+  G.parity = function () {
+    var type = pick(['EVEN', 'ODD']), v = pick(['bit', 'bit', 'byte', 'err', 'err']), data = '';
+    for (var i = 0; i < 7; i++) data += R(0, 1);
+    var k = countOnes(data), pb = parityBit(data, type), byte = pb + data;
+    var why = '<ol class="steps"><li>Count the 1s in the 7 data bits <span class="mono">' + data + '</span>: <b>' + k + '</b> ones.</li><li>' + type.toLowerCase() + ' parity: the total number of 1s must be ' + type.toLowerCase() + '.</li><li>' + k + ' is ' + (k % 2 ? 'odd' : 'even') + '. ' + (pb ? 'We need one more 1 → parity bit = <b>1</b>.' : 'It is already right → parity bit = <b>0</b>.') + '</li><li>Byte with parity bit on the left: <span class="mono"><b>' + pb + '</b>' + data + '</span></li></ol>';
+    var bitMiss = function (u) {
+      if (u === String(k) && k > 1) return 'That is the COUNT of 1s. The parity bit is only 0 or 1.';
+      if (u === 'EVEN' || u === 'ODD') return 'That is the parity TYPE. The parity bit is 0 or 1.';
+      return '';
+    };
+    if (v === 'bit') return {
+      kind: 'parity', topic: 'err', input: 'choice', choices: ['0', '1'], copy: data, data: { v: v, data: data, type: type },
+      prompt: 'A system uses <b>' + type.toLowerCase() + ' parity</b>. The 7 data bits are <span class="big">' + data + '</span><br>What is the <b>parity bit</b>?',
+      answer: String(pb), show: String(pb), check: simpleCheck(String(pb), { miss: bitMiss }), steps: why
+    };
+    if (v === 'byte') return {
+      kind: 'parity', topic: 'err', input: 'num', copy: data, data: { v: v, data: data, type: type },
+      prompt: 'A system uses <b>' + type.toLowerCase() + ' parity</b>. The parity bit goes on the <b>left</b>. The 7 data bits are <span class="big">' + data + '</span><br>Write the full 8-bit byte that is sent.',
+      answer: byte, show: byte, check: simpleCheck(byte, { miss: function (u) { return u === data ? 'You forgot the parity bit on the left.' : (u.length === 8 && u.slice(1) === data ? 'Wrong parity bit. Count the 1s again.' : ''); } }), steps: why
+    };
+    // err
+    var flips = pick([0, 0, 1, 1, 1, 2]), recv = byte.split(''), pos = [];
+    while (pos.length < flips) { var p = R(0, 7); if (pos.indexOf(p) < 0) pos.push(p); }
+    pos.forEach(function (p) { recv[p] = recv[p] === '1' ? '0' : '1'; });
+    recv = recv.join('');
+    var rk = countOnes(recv), ok = type === 'EVEN' ? rk % 2 === 0 : rk % 2 === 1, ans = ok ? 'NO' : 'YES';
+    var st = '<ol class="steps"><li>Count all the 1s in <span class="mono">' + recv + '</span>: <b>' + rk + '</b>.</li><li>' + rk + ' is ' + (rk % 2 ? 'odd' : 'even') + '. The system uses ' + type.toLowerCase() + ' parity.</li><li>' + (ok ? 'This matches → parity finds <b>no error</b>.' : 'This does not match → <b>error found</b>.') + '</li></ol>';
+    st += '<p class="small">What really happened: the sender sent <span class="mono">' + byte + '</span>. ' + (flips === 0 ? 'No bits changed.' : flips === 1 ? 'One bit changed.' : '<b>Two bits changed!</b> The count is ' + type.toLowerCase() + ' again, so parity cannot see this error. Parity misses two-bit errors.') + '</p>';
+    return {
+      kind: 'parity', topic: 'err', input: 'choice', choices: ['YES', 'NO'], copy: recv, data: { v: v, recv: recv, type: type, flips: flips },
+      prompt: 'A system uses <b>' + type.toLowerCase() + ' parity</b>. This byte is received: <span class="big">' + recv + '</span><br>Does the parity check find an error?',
+      answer: ans, show: ans, check: simpleCheck(ans), steps: st
+    };
+  };
+  G.checksum = function () {
+    var k = R(3, 6), bytes = [];
+    for (var i = 0; i < k; i++) bytes.push(R(20, 255));
+    var sum = bytes.reduce(function (a, b) { return a + b; }, 0), q = Math.floor(sum / 256), cs = sum - q * 256;
+    var calc = '<ol class="steps"><li>Add the bytes: ' + bytes.join(' + ') + ' = <b>' + sum + '</b></li><li>' + sum + ' DIV 256 = ' + q + ' (' + q + ' × 256 = ' + q * 256 + ')</li><li>' + sum + ' MOD 256 = ' + sum + ' − ' + q * 256 + ' = <b>' + cs + '</b></li></ol>';
+    if (Math.random() < 0.7) return {
+      kind: 'checksum', topic: 'err', input: 'num', copy: bytes.join(' '), data: { v: 'calc', bytes: bytes },
+      prompt: 'A block of data has these bytes (in denary): <span class="big">' + bytes.join(', ') + '</span><br>The checksum is <b>(sum of the bytes) MOD 256</b>. Work out the checksum.',
+      answer: String(cs), show: String(cs), check: simpleCheck(String(cs), { stripZeros: true, miss: function (u) { return u === String(sum) ? 'That is the sum. Now find sum MOD 256.' : ''; } }), steps: calc
+    };
+    var recv = bytes.slice(), changed = Math.random() < 0.55;
+    if (changed) { var j = R(0, k - 1), old = recv[j]; while (recv[j] === old) recv[j] = R(20, 255); }
+    var rs = recv.reduce(function (a, b) { return a + b; }, 0), rq = Math.floor(rs / 256), rcs = rs - rq * 256, ans = rcs === cs ? 'NO' : 'YES';
+    return {
+      kind: 'checksum', topic: 'err', input: 'choice', choices: ['YES', 'NO'], copy: recv.join(' '), data: { v: 'verify', recv: recv, cs: cs },
+      prompt: 'These bytes are received: <span class="big">' + recv.join(', ') + '</span><br>The checksum sent with them is <b>' + cs + '</b>. Checksum = (sum) MOD 256.<br>Is there an error?',
+      answer: ans, show: ans, check: simpleCheck(ans),
+      steps: '<ol class="steps"><li>Receiver adds the bytes: ' + recv.join(' + ') + ' = ' + rs + '</li><li>' + rs + ' MOD 256 = ' + rs + ' − ' + rq * 256 + ' = <b>' + rcs + '</b></li><li>Sent checksum = ' + cs + '. ' + (rcs === cs ? 'Same → no error.' : 'Different → <b>error</b>. Ask for the data again.') + '</li></ol>'
+    };
+  };
+  G.isbn = function () {
+    var d = [9, 7, pick([8, 8, 9])];
+    while (d.length < 12) d.push(R(0, 9));
+    var r = isbnCheck(d);
+    var rowsT = '<div class="tw"><table class="c"><tr><th>Digit</th>' + r.rows.map(function (x) { return '<td>' + x[0] + '</td>'; }).join('') + '</tr><tr><th>Weight</th>' + r.rows.map(function (x) { return '<td>' + x[1] + '</td>'; }).join('') + '</tr><tr><th>×</th>' + r.rows.map(function (x) { return '<td>' + x[2] + '</td>'; }).join('') + '</tr></table></div>';
+    var steps = '<ol class="steps"><li>Multiply the 12 digits by 1, 3, 1, 3, …</li></ol>' + rowsT + '<ol class="steps" start="2"><li>Sum = ' + r.rows.map(function (x) { return x[2]; }).join(' + ') + ' = <b>' + r.sum + '</b></li><li>' + r.sum + ' MOD 10 = <b>' + r.m + '</b></li><li>Check digit = (10 − ' + r.m + ') MOD 10 = <b>' + r.check + '</b>' + (r.m === 0 ? ' (remainder 0 → check digit 0)' : '') + '</li></ol>';
+    if (Math.random() < 0.7) return {
+      kind: 'isbn', topic: 'chk', input: 'num', copy: d.join(''), data: { v: 'calc', d: d },
+      prompt: 'Find the ISBN-13 check digit for <span class="big">' + d.join('') + '</span><br>Weights 1, 3, 1, 3, … Check digit = (10 − sum MOD 10) MOD 10.',
+      answer: String(r.check), show: String(r.check),
+      check: simpleCheck(String(r.check), { miss: function (u) { return (u === String(r.m) && r.m !== r.check) ? 'That is sum MOD 10 (the remainder). Now do 10 − remainder.' : ''; } }), steps: steps
+    };
+    var full = d.concat([r.check]), bad = Math.random() < 0.55;
+    if (bad) {
+      if (Math.random() < 0.5) { var j = R(3, 12), o = full[j]; while (full[j] === o) full[j] = R(0, 9); }
+      else { var t = R(3, 11); var guard = 0; while (full[t] === full[t + 1] && guard++ < 20) t = R(3, 11); var tmp = full[t]; full[t] = full[t + 1]; full[t + 1] = tmp; }
+    }
+    var tot = 0, prow = [];
+    for (var i = 0; i < 13; i++) { var w = i % 2 === 0 ? 1 : 3; tot += full[i] * w; prow.push(full[i] * w); }
+    var valid = tot % 10 === 0, ans = valid ? 'YES' : 'NO';
+    return {
+      kind: 'isbn', topic: 'chk', input: 'choice', choices: ['YES', 'NO'], copy: full.join(''), data: { v: 'verify', full: full },
+      prompt: 'Is this ISBN-13 valid? <span class="big">' + full.join('') + '</span><br>Weights 1, 3, 1, 3, … on all 13 digits. Valid if the total MOD 10 = 0.',
+      answer: ans, show: ans, check: simpleCheck(ans),
+      steps: tbl(['Digit'].concat(full), [['× weight'].concat(prow)]) + '<ol class="steps"><li>Total = <b>' + tot + '</b></li><li>' + tot + ' MOD 10 = ' + (tot % 10) + '</li><li>' + (valid ? '0 → <b>valid</b>.' : 'Not 0 → <b>not valid</b>. The code was typed wrongly.') + '</li></ol>'
+    };
+  };
+  G.mod11 = function () {
+    var n = R(4, 6), d = [];
+    for (var i = 0; i < n; i++) d.push(R(0, 9));
+    var r = mod11Check(d);
+    var steps = tbl(['Digit'].concat(d), [['Weight'].concat(r.rows.map(function (x) { return x[1]; })), ['×'].concat(r.rows.map(function (x) { return x[2]; }))]) +
+      '<ol class="steps"><li>Sum = ' + r.rows.map(function (x) { return x[2]; }).join(' + ') + ' = <b>' + r.sum + '</b></li><li>' + r.sum + ' MOD 11 = ' + r.sum + ' − ' + (r.sum - r.r) + ' = <b>' + r.r + '</b></li><li>11 − ' + r.r + ' = ' + r.c + (r.c === 11 ? ' → 11 becomes <b>0</b>' : r.c === 10 ? ' → 10 becomes <b>X</b>' : ' → check digit <b>' + r.check + '</b>') + '</li></ol>';
+    if (Math.random() < 0.7) return {
+      kind: 'mod11', topic: 'chk', input: 'hex', copy: d.join(''), data: { v: 'calc', d: d },
+      prompt: 'Find the modulo-11 check digit for the code <span class="big">' + d.join('') + '</span><br>Weights from the right: 2, 3, 4, … Check digit = 11 − (sum MOD 11). 11 → 0, 10 → X.',
+      answer: r.check, show: r.check,
+      check: simpleCheck(r.check, { miss: function (u) { return u === String(r.r) && String(r.r) !== r.check ? 'That is the remainder. Now do 11 − remainder.' : (u === '10' ? 'A check digit is one character. 10 is written as X.' : ''); } }), steps: steps
+    };
+    var full = d.slice(), cd = r.check, bad = Math.random() < 0.5;
+    if (bad) { var j = R(0, n - 1), o = full[j]; while (full[j] === o) full[j] = R(0, 9); }
+    var tot = 0, prow = [];
+    for (var k = 0; k < n; k++) { var w = n + 1 - k; tot += full[k] * w; prow.push(full[k] * w); }
+    var cv = cd === 'X' ? 10 : +cd; tot += cv;
+    var valid = tot % 11 === 0, ans = valid ? 'YES' : 'NO';
+    return {
+      kind: 'mod11', topic: 'chk', input: 'choice', choices: ['YES', 'NO'], copy: full.join('') + cd, data: { v: 'verify', full: full, cd: cd },
+      prompt: 'Is this code valid? <span class="big">' + full.join('') + cd + '</span><br>Modulo-11: the last character is the check digit (weight 1, X = 10). Other weights from the right: 2, 3, 4, … Valid if total MOD 11 = 0.',
+      answer: ans, show: ans, check: simpleCheck(ans),
+      steps: tbl(['Digit'].concat(full).concat([cd]), [['× weight'].concat(prow).concat([cv])]) + '<ol class="steps"><li>Total = <b>' + tot + '</b></li><li>' + tot + ' MOD 11 = ' + (tot % 11) + '</li><li>' + (valid ? '0 → <b>valid</b>.' : 'Not 0 → <b>not valid</b>.') + '</li></ol>'
+    };
+  };
+  var GEN_TOPIC = { den2bin: 'num', bin2den: 'num', den2hex: 'num', hex2den: 'num', bin2hex: 'num', hex2bin: 'num', parity: 'err', checksum: 'err', isbn: 'chk', mod11: 'chk' };
+
+  /*@@CORE-MORE@@*/
+
+  return {
+    R: R, pick: pick, pad: pad, norm: norm, stripZ: stripZ, grp: grp, HEX: HEX,
+    denToBin: denToBin, binToDen: binToDen, denToHex: denToHex, hexToDen: hexToDen, binToHexGrid: binToHexGrid, hexToBin: hexToBin,
+    countOnes: countOnes, parityBit: parityBit, isbnCheck: isbnCheck, mod11Check: mod11Check,
+    G: G, GEN_TOPIC: GEN_TOPIC, tbl: tbl, ol: ol
+    /*@@CORE-EXPORTS@@*/
+  };
+})();
+if (typeof module !== 'undefined') module.exports = Core;
+</script>
+
+<!-- ===================================================================
+     DATA: topics, focus areas, written question bank, papers
+==================================================================== -->
+<script id="data">
+var THEMES = [
+  { id: '4A', name: 'Theme 4A · Data representation' },
+  { id: '4B', name: 'Theme 4B · Logic & the CPU' },
+  { id: '4C', name: 'Theme 4C · Algorithms & programming' },
+  { id: '3', name: 'Theme 3 · Spreadsheets & databases' },
+  { id: '5', name: 'Theme 5 · Hardware, networks & software' },
+  { id: '12', name: 'Themes 1 & 2 · Systems & society' }
+];
+// w = weight in "Mixed" (what past papers test most)
+var TOPICS = [
+  { id: 'num', th: '4A', name: 'Binary, denary & hex', w: 3 },
+  { id: 'hexuse', th: '4A', name: 'Uses of hex', w: 1 },
+  { id: 'err', th: '4A', name: 'Parity, checksum & ARQ', w: 2 },
+  { id: 'chk', th: '4A', name: 'Check digits', w: 1 },
+  { id: 'comp', th: '4A', name: 'Compression & file formats', w: 1 },
+  { id: 'logic', th: '4B', name: 'Logic gates & circuits', w: 4 },
+  { id: 'cpu', th: '4B', name: 'CPU & fetch–decode–execute', w: 3 },
+  { id: 'intr', th: '4B', name: 'Interrupts, buffers, spooling, cache', w: 1 },
+  { id: 'algo', th: '4C', name: 'Pseudocode & flowcharts', w: 3 },
+  { id: 'trace', th: '4C', name: 'Trace tables', w: 3 },
+  { id: 'test', th: '4C', name: 'Test data & errors', w: 2 },
+  { id: 'sheet', th: '3', name: 'Spreadsheets', w: 3 },
+  { id: 'db', th: '3', name: 'Databases', w: 3 },
+  { id: 'valid', th: '3', name: 'Validation & verification', w: 2 },
+  { id: 'io', th: '5', name: 'Input, output & sensors', w: 4 },
+  { id: 'stor', th: '5', name: 'Storage & memory', w: 4 },
+  { id: 'net', th: '5', name: 'Networks', w: 4 },
+  { id: 'os', th: '5', name: 'OS, interfaces & utilities', w: 2 },
+  { id: 'sdlc', th: '12', name: 'System life cycle', w: 2 },
+  { id: 'apps', th: '12', name: 'Computer applications', w: 2 },
+  { id: 'sec', th: '12', name: 'Crime, security, health & safety', w: 4 }
+];
+// Seeded weak areas (shown first in "Re-test now"). Cleared after 8+ marks at 80%+.
+var FOCUS = [
+  { id: 'hexgrid', name: 'Binary → hex grouping (padding zeros go on the LEFT)' },
+  { id: 'parity', name: 'Parity: parity bit vs count of 1s vs parity type' },
+  { id: 'describe', name: 'Describe/explain answers that only name things' },
+  { id: 'valver', name: 'Validation vs verification' },
+  { id: 'sdlcst', name: 'Life cycle: design vs development vs implementation' },
+  { id: 'copy', name: 'Copying numbers from the question correctly' }
+];
+
+// Written / multiple-choice bank.
+// {id, t:topic, m:marks, cmd, q, p:[mark points], f:[focus ids], note?}
+// {id, t, type:'mc', q, o:[options], a:index, why}
+// y: year if from a past paper. Only 2020–2022 may appear in quizzes (enforced in app).
+var BANK = [
+  { id: 'hx1', t: 'hexuse', m: 2, cmd: 'State', q: 'State <b>two</b> uses of hexadecimal.', p: ['HTML colour codes (e.g. #FF0000)', 'MAC addresses', 'Assembly / machine code (memory addresses, instructions)', 'Error codes / memory dumps when debugging', 'IPv6 addresses'] },
+  { id: 'hx2', t: 'hexuse', m: 3, cmd: 'Explain', f: ['describe'], q: 'Explain why programmers use hexadecimal instead of binary.', p: ['Hex is shorter: one hex digit stands for 4 bits', 'So it is easier for people to read / remember', 'Fewer mistakes when copying or typing it', 'Easy to convert between hex and binary'] },
+  { id: 'hx3', t: 'hexuse', m: 3, cmd: 'Describe', f: ['describe'], q: 'Describe what a MAC address is.', p: ['A unique number / address for a device', 'It identifies the network interface card (NIC) of the device on a network', 'Set by the maker / does not change', '48 bits, written as 6 pairs of hex digits', 'First half = maker ID, second half = serial number of the card'] },
+  { id: 'hx4', t: 'hexuse', type: 'mc', q: 'The HTML colour code <b>#00FF00</b> means:', o: ['Red', 'Green', 'Blue', 'White'], a: 1, why: 'Pairs are Red, Green, Blue. 00 red, FF green, 00 blue → pure green.' },
+  { id: 'hx5', t: 'hexuse', type: 'mc', q: 'Which colour is <b>#FFFFFF</b>?', o: ['Black', 'White', 'Red', 'Grey'], a: 1, why: 'All three colours at full (FF) = white. #000000 = black.' },
+  { id: 'er1', t: 'err', m: 3, cmd: 'Describe', f: ['describe'], q: 'Describe how a parity check finds an error in a byte of data.', p: ['Sender and receiver agree even or odd parity', 'A parity bit (0 or 1) is set so the number of 1s is even/odd', 'The receiver counts the 1s in the byte', 'If the count does not match the parity type, an error is found / data is sent again'] },
+  { id: 'er2', t: 'err', m: 2, cmd: 'Explain', f: ['parity'], q: 'Explain why a parity check might not find an error.', p: ['If two bits (an even number of bits) change', 'the number of 1s is still even/odd, so the parity looks correct', 'Parity also cannot show which bit is wrong'] },
+  { id: 'er3', t: 'err', m: 4, cmd: 'Describe', f: ['describe'], q: 'Describe how Automatic Repeat reQuest (ARQ) makes sure data is received correctly.', p: ['Receiver checks the data with an error check (e.g. parity / checksum)', 'If correct, the receiver sends an acknowledgement (ACK) back', 'If wrong, it sends a negative acknowledgement / asks for the data again', 'The sender waits a set time (timeout)', 'If no acknowledgement arrives before the timeout, the data is sent again'] },
+  { id: 'er4', t: 'err', m: 3, cmd: 'Describe', f: ['describe'], q: 'Describe how a checksum is used to check data after it is sent.', p: ['The sender calculates a value (checksum) from the block of data, e.g. sum MOD 256', 'The checksum is sent with the data', 'The receiver calculates the checksum again from the data it received', 'If the two checksums are different, there is an error / data is sent again'] },
+  { id: 'er5', t: 'err', type: 'mc', q: 'With <b>even</b> parity, the data 1101001 has four 1s. What is the parity bit?', o: ['0', '1', '4', 'Even'], a: 0, f: ['parity'], why: 'Four 1s is already even, so the parity bit is 0. "4" is the count, "Even" is the type.' },
+  { id: 'er6', t: 'err', type: 'mc', q: 'Which check can find an error where <b>two bits</b> have changed?', o: ['Parity check', 'Checksum', 'Neither'], a: 1, why: 'Two bit changes keep the parity right, but the sum of the bytes changes, so the checksum finds it.' },
+  { id: 'ck1', t: 'chk', m: 3, cmd: 'Explain', f: ['describe'], q: 'Explain how a check digit is used when a book’s ISBN is typed into a library computer.', p: ['The check digit is the last digit, worked out from the other digits', 'The computer works out the check digit again from the digits typed in', 'It compares it with the check digit that was typed', 'If they are different, the ISBN was typed wrongly / an error message is shown'] },
+  { id: 'ck2', t: 'chk', m: 2, cmd: 'State', q: 'State <b>two</b> types of error a check digit can find.', p: ['A wrong digit typed', 'Two digits swapped (transposition)', 'A digit missed out', 'An extra digit added'] },
+  { id: 'ck3', t: 'chk', type: 'mc', q: 'Check digits are mainly used to find:', o: ['Errors when data is typed or scanned (data entry)', 'Errors when data is sent over a network', 'Viruses', 'Two-bit transmission errors'], a: 0, why: 'Check digits are for DATA ENTRY errors. Parity / checksums are for transmission errors.' },
+  { id: 'cp1', t: 'comp', m: 4, cmd: 'Explain', f: ['describe'], q: 'Explain the difference between lossy and lossless compression.', p: ['Lossy removes some data for ever', 'so the original file cannot be got back / quality is reduced', 'Lossless removes no data (stores patterns in a shorter way)', 'so the original file can be got back exactly', 'Lossy makes the file much smaller than lossless'] },
+  { id: 'cp2', t: 'comp', m: 2, cmd: 'Explain', f: ['describe'], q: 'A student sends a school report (a text document) by e-mail. Explain why lossless compression should be used.', p: ['Text cannot lose any data / every character must stay', 'Lossy would remove data and the document could be changed or corrupted', 'Lossless lets the exact document be restored'] },
+  { id: 'cp3', t: 'comp', type: 'mc', q: 'Which file format is a <b>video</b> format?', o: ['AVI', 'WAV', 'MP3', 'PNG'], a: 0, why: 'AVI is video. WAV and MP3 are audio. PNG is an image.' },
+  { id: 'cp4', t: 'comp', type: 'mc', q: 'What happens to a photo saved as JPEG?', o: ['Its quality is reduced a little (lossy)', 'Nothing is lost (lossless)', 'It becomes a video'], a: 0, why: 'JPEG is lossy. Some data is removed, so the quality IS reduced.' },
+  { id: 'cp5', t: 'comp', m: 3, cmd: 'State', q: 'State <b>three</b> reasons for compressing files.', p: ['Uses less storage space', 'Takes less time to upload / download / send', 'Uses less bandwidth', 'Can attach / send files that would be too big'] },
+  { id: 'nm1', t: 'num', m: 2, cmd: 'Explain', f: ['describe'], q: 'Explain why computers use binary.', p: ['Computers are made of switches / transistors / circuits', 'that have only two states: on (1) and off (0)'] }
+  /*@@BANK-MORE@@*/
+];
+
+/*@@DATA-MORE@@*/
+</script>
+
+<!-- ===================================================================
+     APP
+==================================================================== -->
+<script id="app">
+(function () {
+  'use strict';
+  var $ = function (s, el) { return (el || document).querySelector(s); };
+  var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
+  function h(tag, attrs, html) { var e = document.createElement(tag); if (attrs) for (var k in attrs) { if (attrs[k] == null) continue; if (k === 'cls') e.className = attrs[k]; else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } if (html != null) e.innerHTML = html; return e; }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var EXAM = new Date('2026-11-10T09:00:00+02:00');
+  var KEY = 'cs6134-progress-v1';
+  var TOPIC = {}; TOPICS.forEach(function (t) { TOPIC[t.id] = t; });
+  var FOC = {}; FOCUS.forEach(function (f) { FOC[f.id] = f; });
+
+  // ---------- storage ----------
+  var memoryOnly = false;
+  function blank() { return { v: 1, created: Date.now(), done: 0, t: {}, f: {}, seen: {}, mocks: [] }; }
+  function load() {
+    try { var s = localStorage.getItem(KEY); if (s) { var p = JSON.parse(s); if (p && p.v === 1) return fix(p); } }
+    catch (e) { memoryOnly = true; }
+    return blank();
+  }
+  function fix(p) { var b = blank(); for (var k in b) if (p[k] == null) p[k] = b[k]; return p; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(P)); memoryOnly = false; } catch (e) { memoryOnly = true; } renderSaveWarn(); }
+  var P = load();
+
+  function rec(bucket, id, e, m) {
+    var o = bucket[id] || (bucket[id] = { r: [], e: 0, m: 0, n: 0 });
+    o.r.push([+e.toFixed(2), m]); if (o.r.length > 20) o.r.shift();
+    o.e += e; o.m += m; o.n++;
+  }
+  function record(q, e, m) {
+    P.done++;
+    rec(P.t, q.topic, e, m);
+    (q.focus || []).forEach(function (f) { rec(P.f, f, e, m); });
+    if (q.bankId) P.seen[q.bankId] = (P.seen[q.bankId] || 0) + 1;
+    save();
+  }
+  function pct(o) { if (!o || !o.r.length) return null; var e = 0, m = 0; o.r.forEach(function (x) { e += x[0]; m += x[1]; }); return m ? Math.round(100 * e / m) : null; }
+  function focusCleared(id) { var o = P.f[id]; if (!o) return false; var m = 0; o.r.forEach(function (x) { m += x[1]; }); return m >= 8 && pct(o) >= 80; }
+
+  // ---------- tabs ----------
+  function showTab(id) {
+    $$('#tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === id); });
+    $$('section.tab').forEach(function (s) { s.classList.toggle('on', s.id === 'tab-' + id); });
+    if (id === 'dash') renderDash();
+    if (id === 'papers') renderPapers();
+    window.scrollTo(0, 0);
+    try { history.replaceState(null, '', '#' + id); } catch (e) { }
+  }
+  $('#tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) showTab(b.dataset.tab); });
+
+  // ---------- dashboard ----------
+  function tick() {
+    var ms = EXAM - Date.now(), el = $('#cd');
+    if (ms <= 0) { el.innerHTML = '<div style="grid-column:1/5"><b>Good luck!</b><small>The exam has started</small></div>'; return; }
+    var d = Math.floor(ms / 864e5), hh = Math.floor(ms / 36e5) % 24, mm = Math.floor(ms / 6e4) % 60, ss = Math.floor(ms / 1e3) % 60;
+    el.innerHTML = [[d, 'days'], [hh, 'hours'], [mm, 'min'], [ss, 'sec']].map(function (x) { return '<div><b>' + x[0] + '</b><small>' + x[1] + '</small></div>'; }).join('');
+  }
+  setInterval(tick, 1000); tick();
+
+  function colour(p) { return p == null ? 'var(--line)' : p >= 80 ? 'var(--ok)' : p >= 50 ? 'var(--warn)' : 'var(--bad)'; }
+  function weakItems() {
+    var list = [];
+    FOCUS.forEach(function (f) { if (!focusCleared(f.id)) list.push({ kind: 'f', id: f.id, name: f.name, p: pct(P.f[f.id]), seed: true }); });
+    TOPICS.forEach(function (t) { var p = pct(P.t[t.id]); if (p != null && p < 80) list.push({ kind: 't', id: t.id, name: t.name, p: p }); });
+    return list;
+  }
+  function renderDash() {
+    $('#stDone').textContent = P.done;
+    var e = 0, m = 0; for (var k in P.t) P.t[k].r.forEach(function (x) { e += x[0]; m += x[1]; });
+    $('#stPct').textContent = m ? Math.round(100 * e / m) + '%' : '–';
+    $('#hdrCount').textContent = P.done + ' done';
+    var wl = $('#weakList'); wl.innerHTML = '';
+    var items = weakItems();
+    if (!items.length) wl.innerHTML = '<p>No weak topics now. Well done! Try a mock paper.</p>';
+    items.forEach(function (it) {
+      var row = h('div', { cls: 'weak' });
+      row.appendChild(h('div', null, (it.seed ? '<span class="tag">Known weak spot</span><br>' : '') + esc(it.name) + '<br><span class="small mut">' + (it.p == null ? 'not tested yet' : it.p + '%') + '</span>'));
+      row.appendChild(h('button', { cls: 'small', onclick: function () { startQuiz(it.kind === 'f' ? { focus: it.id } : { topic: it.id }, 8); } }, 'Re-test now'));
+      wl.appendChild(row);
+    });
+    var cleared = FOCUS.filter(function (f) { return focusCleared(f.id); });
+    if (cleared.length) wl.appendChild(h('p', { cls: 'small mut' }, 'Fixed ✓: ' + cleared.map(function (f) { return esc(f.name); }).join('; ')));
+    var bars = $('#bars'); bars.innerHTML = '';
+    THEMES.forEach(function (th) {
+      bars.appendChild(h('div', { cls: 'thm' }, esc(th.name)));
+      TOPICS.filter(function (t) { return t.th === th.id; }).forEach(function (t) {
+        var p = pct(P.t[t.id]), n = P.t[t.id] ? P.t[t.id].n : 0;
+        bars.appendChild(h('div', { cls: 'bar' }, '<div class="lbl"><span>' + esc(t.name) + '</span><span class="mut">' + n + ' q</span></div><div class="track"><div class="fill" style="width:' + (p || 0) + '%;background:' + colour(p) + '"></div></div><div class="pc" style="color:' + colour(p) + '">' + (p == null ? '–' : p + '%') + '</div>'));
+      });
+    });
+    var ms = $('#mockScores');
+    ms.innerHTML = P.mocks.length ? '<div class="tw"><table><tr><th>Paper</th><th>Date</th><th>Score</th></tr>' + P.mocks.slice().reverse().map(function (x) { return '<tr><td>' + esc(x.name) + '</td><td>' + new Date(x.date).toLocaleDateString() + '</td><td><b>' + x.score + '/' + x.max + '</b> (' + Math.round(100 * x.score / x.max) + '%)</td></tr>'; }).join('') + '</table></div>' : '<p class="mut">No mock paper done yet. Go to Past papers → Mock mode.</p>';
+    renderSaveWarn();
+  }
+  function renderSaveWarn() { var w = $('#saveWarn'); if (w) w.innerHTML = memoryOnly ? '<span style="color:var(--bad)">⚠ This browser is not saving. Use “Export progress” before you close it.</span>' : ''; }
+
+  // export / import
+  $('#btnExport').addEventListener('click', function () {
+    var txt = JSON.stringify(P);
+    try {
+      var a = h('a', { href: URL.createObjectURL(new Blob([txt], { type: 'application/json' })), download: 'cs-progress-' + new Date().toISOString().slice(0, 10) + '.json' });
+      document.body.appendChild(a); a.click(); a.remove();
+    } catch (e) { }
+    $('#ioBox').classList.remove('hidden'); $('#ioText').value = txt;
+    $('#ioMsg').textContent = 'A file was downloaded. If not, copy this text and keep it safe (e.g. send it to yourself on WhatsApp).';
+  });
+  $('#btnImport').addEventListener('click', function () {
+    $('#ioBox').classList.remove('hidden'); $('#ioText').value = '';
+    $('#ioMsg').textContent = 'Choose a saved .json file, or paste the saved text below and tap “Load this text”.';
+    $('#importFile').click();
+  });
+  $('#importFile').addEventListener('change', function (e) {
+    var f = e.target.files[0]; if (!f) return;
+    var r = new FileReader(); r.onload = function () { applyImport(r.result); }; r.readAsText(f); e.target.value = '';
+  });
+  $('#btnIoApply').addEventListener('click', function () { applyImport($('#ioText').value); });
+  $('#btnIoClose').addEventListener('click', function () { $('#ioBox').classList.add('hidden'); });
+  function applyImport(txt) {
+    try {
+      var p = JSON.parse(txt);
+      if (!p || p.v !== 1 || typeof p.t !== 'object') throw new Error('bad');
+      if (!confirm('Replace the progress on this device with the imported progress?')) return;
+      P = fix(p); save(); renderDash(); $('#ioMsg').textContent = 'Progress loaded ✓';
+    } catch (e) { $('#ioMsg').textContent = '⚠ That is not a valid progress file.'; }
+  }
+
+  // ---------- notes ----------
+  var noteTheme = 'all';
+  (function () {
+    var c = $('#noteChips');
+    [{ id: 'all', name: 'All' }].concat(THEMES.map(function (t) { return { id: t.id, name: t.id === '12' ? 'Themes 1–2' : 'Theme ' + t.id }; })).forEach(function (t) {
+      c.appendChild(h('button', { cls: 'chip' + (t.id === 'all' ? ' on' : ''), 'data-th': t.id, onclick: function () { noteTheme = t.id; $$('.chip', c).forEach(function (b) { b.classList.toggle('on', b.dataset.th === t.id); }); renderNotes(); } }, esc(t.name)));
+    });
+    var timer; $('#noteSearch').addEventListener('input', function () { clearTimeout(timer); timer = setTimeout(renderNotes, 200); });
+  })();
+  function renderNotes() {
+    var out = $('#notesOut'), q = $('#noteSearch').value.trim().toLowerCase(), words = q ? q.split(/\s+/) : [];
+    out.innerHTML = ''; out.appendChild($('#notesSrc').content.cloneNode(true));
+    var shown = 0;
+    $$('.topic', out).forEach(function (t) {
+      var okTheme = noteTheme === 'all' || t.dataset.theme === noteTheme;
+      var txt = t.textContent.toLowerCase(), okQ = words.every(function (w) { return txt.indexOf(w) >= 0; });
+      if (!okTheme || !okQ) t.remove(); else { shown++; if (words.length) { t.open = true; highlight(t, words); } }
+    });
+    $$('.thead', out).forEach(function (hd) { var n = hd.nextElementSibling; if (!n || !n.classList.contains('topic')) hd.remove(); });
+    $('#noteCount').textContent = words.length ? shown + ' topic(s) match' : '';
+    if (!shown) out.innerHTML = '<p class="mut">Nothing found. Try another word.</p>';
+  }
+  function highlight(root, words) {
+    var re = new RegExp('(' + words.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'gi');
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (n) {
+      if (!re.test(n.nodeValue)) return; re.lastIndex = 0;
+      var span = document.createElement('span'); span.innerHTML = esc(n.nodeValue).replace(re, '<mark>$1</mark>');
+      n.parentNode.replaceChild(span, n);
+    });
+  }
+  renderNotes();
+
+  // ---------- question pools ----------
+  function quizBank() { return BANK.filter(function (b) { return !b.y || b.y <= 2022; }); } // 2023–2025 only in mock mode
+  var GEN_BY_TOPIC = {}; for (var gk in Core.GEN_TOPIC) (GEN_BY_TOPIC[Core.GEN_TOPIC[gk]] = GEN_BY_TOPIC[Core.GEN_TOPIC[gk]] || []).push(gk);
+  var EXTRA_SOURCES = {}; // filled by later modules: topic -> [{w, make()}]
+  window.__addSource = function (topic, w, make) { (EXTRA_SOURCES[topic] = EXTRA_SOURCES[topic] || []).push({ w: w, make: make }); };
+
+  function genQ(kind) { var g = Core.G[kind](); return { type: 'gen', topic: g.topic, focus: focusForGen(g), g: g }; }
+  function focusForGen(g) { var f = []; if (g.kind === 'bin2hex') f.push('hexgrid'); if (g.kind === 'parity') f.push('parity'); return f; }
+  function bankQ(b) { return { type: b.type === 'mc' ? 'mc' : 'w', topic: b.t, focus: (b.f || []).concat(b.type !== 'mc' && /describe|explain/i.test(b.cmd || '') ? ['describe'] : []).filter(uniq), b: b, bankId: b.id }; }
+  function uniq(x, i, a) { return a.indexOf(x) === i; }
+
+  function sourcesForTopic(t, used) {
+    var s = [];
+    (GEN_BY_TOPIC[t] || []).forEach(function (k) { s.push({ w: 2, make: function () { return genQ(k); } }); });
+    (EXTRA_SOURCES[t] || []).forEach(function (x) { s.push(x); });
+    var bank = quizBank().filter(function (b) { return b.t === t; });
+    if (bank.length) s.push({ w: Math.max(2, Math.min(6, bank.length / 2)), make: function () { return bankQ(pickBank(bank, used)); } });
+    return s;
+  }
+  function pickBank(list, used) {
+    var fresh = list.filter(function (b) { return !used[b.id]; }); if (!fresh.length) fresh = list;
+    fresh = fresh.slice().sort(function (a, b) { return ((P.seen[a.id] || 0) - (P.seen[b.id] || 0)) || (Math.random() - 0.5); });
+    var b = fresh[Math.floor(Math.random() * Math.min(3, fresh.length))]; used[b.id] = 1; return b;
+  }
+  function wpick(list) { var tot = 0; list.forEach(function (x) { tot += x.w; }); var r = Math.random() * tot; for (var i = 0; i < list.length; i++) { r -= list[i].w; if (r <= 0) return list[i]; } return list[list.length - 1]; }
+  function makeQuestion(sel, used) {
+    if (sel.focus) {
+      var f = sel.focus;
+      if (f === 'hexgrid') return Math.random() < 0.8 ? genQ('bin2hex') : genQ('hex2bin');
+      if (f === 'parity') { var pb = quizBank().filter(function (b) { return (b.f || []).indexOf('parity') >= 0; }); return Math.random() < 0.8 || !pb.length ? genQ('parity') : bankQ(pickBank(pb, used)); }
+      if (f === 'copy') { var q = genQ(Core.pick(['den2bin', 'bin2den', 'den2hex', 'hex2den', 'bin2hex', 'hex2bin', 'checksum', 'isbn', 'mod11', 'parity'])); q.copyMode = true; q.focus = q.focus.concat(['copy']); return q; }
+      var list = quizBank().filter(function (b) {
+        if (f === 'describe') return b.type !== 'mc' && /describe|explain/i.test(b.cmd || '');
+        return (b.f || []).indexOf(f) >= 0;
+      });
+      if (!list.length) return genQ('parity');
+      var bq = bankQ(pickBank(list, used)); if (bq.focus.indexOf(f) < 0) bq.focus.push(f); return bq;
+    }
+    if (sel.topic) { var s = sourcesForTopic(sel.topic, used); if (!s.length) return null; return wpick(s).make(); }
+    // mixed: pick topic by weight (only topics that have questions)
+    var tl = TOPICS.filter(function (t) { return sourcesForTopic(t.id, {}).length; }).map(function (t) { return { w: t.w, id: t.id }; });
+    return makeQuestion({ topic: wpick(tl).id }, used);
+  }
+
+  // ---------- quiz UI ----------
+  var S = null; // session
+  function renderPicker() {
+    var el = $('#quizPick'); el.innerHTML = '';
+    el.appendChild(h('div', { cls: 'card' }, '<h2>Quiz</h2><p class="small mut">Pick a topic. 10 questions. Your score is saved.</p>'));
+    var c = h('div', { cls: 'card' });
+    c.appendChild(h('button', { cls: 'topicbtn', style: 'background:var(--acc);color:#fff', onclick: function () { startQuiz({ mixed: true }, 10); } }, '🔀 Mixed (all topics, weighted like the exam)'));
+    THEMES.forEach(function (th) {
+      c.appendChild(h('div', { cls: 'thm' }, esc(th.name)));
+      TOPICS.filter(function (t) { return t.th === th.id; }).forEach(function (t) {
+        var has = sourcesForTopic(t.id, {}).length, p = pct(P.t[t.id]);
+        c.appendChild(h('button', { cls: 'topicbtn', disabled: has ? null : 'disabled', onclick: function () { startQuiz({ topic: t.id }, 10); } }, '<span>' + esc(t.name) + '</span><em>' + (has ? (p == null ? 'new' : p + '%') : 'coming soon') + '</em>'));
+        if (!has) c.lastChild.disabled = true;
+      });
+    });
+    c.appendChild(h('div', { cls: 'thm' }, 'Known weak spots'));
+    FOCUS.forEach(function (f) { c.appendChild(h('button', { cls: 'topicbtn', onclick: function () { startQuiz({ focus: f.id }, 8); } }, '<span>' + esc(f.name) + '</span><em>' + (pct(P.f[f.id]) == null ? 'new' : pct(P.f[f.id]) + '%') + '</em>')); });
+    el.appendChild(c);
+  }
+  function selName(sel) { return sel.mixed ? 'Mixed' : sel.topic ? TOPIC[sel.topic].name : FOC[sel.focus].name; }
+  function startQuiz(sel, n) {
+    S = { sel: sel, n: n, i: 0, e: 0, m: 0, used: {} };
+    showTab('quiz'); $('#quizPick').classList.add('hidden'); $('#quizRun').classList.remove('hidden');
+    nextQ();
+  }
+  window.__startQuiz = startQuiz;
+  function endQuiz() {
+    var run = $('#quizRun'), p = S.m ? Math.round(100 * S.e / S.m) : 0;
+    run.innerHTML = '';
+    var c = h('div', { cls: 'card' }, '<h2>Finished!</h2><p>' + esc(selName(S.sel)) + '</p><p style="font-size:28px;font-weight:800;color:' + colour(p) + '">' + (Math.round(S.e * 10) / 10) + ' / ' + S.m + ' marks (' + p + '%)</p><p>' + (p >= 80 ? 'Great work! 🎉' : p >= 50 ? 'Good. Read the notes for this topic, then try again.' : 'Read the notes for this topic, then try again. You can do it.') + '</p>');
+    var row = h('div', { cls: 'row' });
+    var sel = S.sel, n = S.n;
+    row.appendChild(h('button', { onclick: function () { startQuiz(sel, n); } }, 'Again'));
+    row.appendChild(h('button', { cls: 'ghost', onclick: backToPicker }, 'Pick another topic'));
+    row.appendChild(h('button', { cls: 'ghost', onclick: function () { showTab('dash'); } }, 'Dashboard'));
+    c.appendChild(row); run.appendChild(c);
+  }
+  function backToPicker() { S = null; $('#quizRun').classList.add('hidden'); $('#quizPick').classList.remove('hidden'); renderPicker(); window.scrollTo(0, 0); }
+
+  function nextQ() {
+    if (S.i >= S.n) return endQuiz();
+    var q = makeQuestion(S.sel, S.used);
+    var run = $('#quizRun'); run.innerHTML = '';
+    var head = h('div', { cls: 'qhead' }, '<div><b>' + esc(selName(S.sel)) + '</b><div class="qnum">Question ' + (S.i + 1) + ' of ' + S.n + ' · ' + (Math.round(S.e * 10) / 10) + '/' + S.m + ' marks</div></div>');
+    head.appendChild(h('button', { cls: 'small ghost', onclick: backToPicker }, 'Stop'));
+    run.appendChild(head);
+    if (!q) { run.appendChild(h('div', { cls: 'card' }, 'No questions yet for this topic.')); return; }
+    var card = h('div', { cls: 'card' }); run.appendChild(card);
+    if (!S.sel.topic && q.topic) card.appendChild(h('div', { cls: 'small mut' }, esc(TOPIC[q.topic].name)));
+    var body = h('div'); card.appendChild(body);
+    var done = function (e, m) {
+      S.i++; S.e += e; S.m += m; record(q, e, m);
+      var nb = h('button', { style: 'width:100%;margin-top:10px', onclick: nextQ }, S.i >= S.n ? 'See my score →' : 'Next question →');
+      card.appendChild(nb); nb.focus({ preventScroll: true });
+    };
+    RENDER[q.type](q, body, done);
+    window.scrollTo(0, 0);
+  }
+
+  var RENDER = {};
+  window.__RENDER = RENDER;
+  RENDER.gen = function (q, el, done) {
+    var g = q.g;
+    el.appendChild(h('div', { cls: 'prompt' }, g.prompt));
+    var copyOk = !q.copyMode, finished = false;
+    if (q.copyMode) {
+      var cw = h('div', { cls: 'tip' }, '<b>Step 1: copy the number</b> from the question into this box. Check it digit by digit.');
+      var ci = h('input', { type: 'text', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', inputmode: /[A-F]/.test(g.copy) ? 'text' : 'numeric' });
+      var cmsg = h('div', { cls: 'small' });
+      var cb = h('button', { cls: 'small', style: 'margin-top:8px', onclick: function () {
+        if (Core.norm(ci.value) === Core.norm(g.copy)) { copyOk = true; cmsg.innerHTML = '<span style="color:var(--ok)">✓ Copied correctly. Now answer.</span>'; ci.disabled = true; cb.disabled = true; ans.classList.remove('hidden'); }
+        else { cmsg.innerHTML = '<span style="color:var(--bad)">✗ Not the same. Look again, digit by digit.</span>'; q.copyErr = (q.copyErr || 0) + 1; }
+      } }, 'Check my copy');
+      cw.appendChild(ci); cw.appendChild(cb); cw.appendChild(cmsg); el.appendChild(cw);
+    }
+    var ans = h('div', { cls: q.copyMode ? 'hidden' : '' }); el.appendChild(ans);
+    var fb = h('div'); el.appendChild(fb);
+    function finish(u) {
+      if (finished) return;
+      var r = g.check(u);
+      if (!r.ok && r.msg && !q.retried) { q.retried = true; fb.innerHTML = '<div class="fb part">Almost! ' + esc(r.msg) + ' Try once more.</div>'; return; }
+      finished = true;
+      var e = r.ok ? (q.copyErr ? 0.5 : 1) : 0;
+      fb.innerHTML = '<div class="fb ' + (r.ok ? 'ok' : 'bad') + '">' + (r.ok ? '✓ Correct!' : '✗ Not correct. ' + (r.msg ? esc(r.msg) + ' ' : '') + 'The answer is <span class="mono">' + esc(g.show) + '</span>') + (r.ok && q.copyErr ? ' (half mark: the copy was wrong first)' : '') + '</div>';
+      fb.appendChild(h('details', { cls: 'work', open: 'open' }, '<summary>Worked steps</summary>' + g.steps));
+      $$('button, input', ans).forEach(function (x) { x.disabled = true; });
+      done(e, 1);
+    }
+    if (g.input === 'choice') {
+      var ch = h('div', { cls: 'choices' });
+      g.choices.forEach(function (c) { ch.appendChild(h('button', { onclick: function (ev) { $$('button', ch).forEach(function (b) { b.classList.remove('pick'); }); ev.currentTarget.classList.add('pick'); finish(c); } }, c)); });
+      ans.appendChild(ch);
+    } else {
+      var inp = h('input', { type: 'text', autocomplete: 'off', autocorrect: 'off', autocapitalize: 'characters', spellcheck: 'false', inputmode: g.input === 'num' ? 'numeric' : 'text', placeholder: 'Your answer' });
+      var b = h('button', { style: 'width:100%;margin-top:10px', onclick: function () { if (inp.value.trim()) finish(inp.value); } }, 'Check');
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter' && inp.value.trim()) finish(inp.value); });
+      ans.appendChild(inp); ans.appendChild(b);
+    }
+  };
+  RENDER.mc = function (q, el, done) {
+    var b = q.b;
+    el.appendChild(h('div', { cls: 'prompt' }, b.q));
+    var ch = h('div', { cls: 'choices mc' }), fb = h('div');
+    var order = b.o.map(function (_, i) { return i; });
+    order.forEach(function (i) {
+      ch.appendChild(h('button', { onclick: function (ev) {
+        $$('button', ch).forEach(function (x) { x.disabled = true; });
+        ev.currentTarget.classList.add('pick');
+        var ok = i === b.a;
+        fb.innerHTML = '<div class="fb ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✓ Correct!' : '✗ The answer is: ' + b.o[b.a]) + '</div>' + (b.why ? '<p>' + b.why + '</p>' : '');
+        done(ok ? 1 : 0, 1);
+      } }, b.o[i]));
+    });
+    el.appendChild(ch); el.appendChild(fb);
+  };
+  var RULES = '<div class="rules"><h4>Strict marking rules</h4><ul>' +
+    '<li><b>Naming only = 0</b> for Describe / Explain. Say what it does or why.</li>' +
+    '<li><b>Vague words score 0</b> (“faster”, “cheaper”, “easier”) unless you explain why or how.</li>' +
+    '<li><b>The same point twice = one mark.</b></li>' +
+    '<li>Your answer must <b>apply to the scenario</b> in the question.</li>' +
+    '<li>Tick a point only if your answer says the same idea.</li></ul></div>';
+  window.__RULES = RULES;
+  function markScheme(b, ans, onSave, opts) {
+    // returns element: checklist + rules, calls onSave(score)
+    opts = opts || {};
+    var wrap = h('div', { cls: 'grid2' }), left = h('div');
+    left.appendChild(h('div', null, (opts.model ? '<span class="label-model">Model answer, not the official memo</span>' : '') + '<h4 style="margin-top:4px">Mark scheme — tick the points you made (max ' + b.m + ')</h4>'));
+    if (ans != null) left.appendChild(h('div', { cls: 'small', style: 'background:var(--acc2);border-radius:10px;padding:8px 10px;white-space:pre-wrap' }, '<b>Your answer:</b>\n' + (ans.trim() ? esc(ans) : '<i>(blank)</i>')));
+    var boxes = [];
+    b.p.forEach(function (pt) {
+      var lab = h('label', { cls: 'check' }); var cbx = h('input', { type: 'checkbox' }); boxes.push(cbx);
+      lab.appendChild(cbx); lab.appendChild(h('span', null, pt)); left.appendChild(lab);
+    });
+    if (b.note) left.appendChild(h('p', { cls: 'small mut' }, b.note));
+    var out = h('div', { cls: 'marks' }); left.appendChild(out);
+    function score() { var n = boxes.filter(function (x) { return x.checked; }).length; return Math.min(n, b.m); }
+    boxes.forEach(function (x) { x.addEventListener('change', function () { out.textContent = 'Your mark: ' + score() + ' / ' + b.m; if (opts.live) opts.live(score()); }); });
+    out.textContent = 'Your mark: 0 / ' + b.m;
+    wrap.appendChild(left); wrap.appendChild(h('div', null, RULES));
+    if (onSave) {
+      var sb = h('button', { style: 'width:100%;margin-top:10px', onclick: function () { sb.disabled = true; boxes.forEach(function (x) { x.disabled = true; }); onSave(score()); } }, 'Save my mark');
+      left.appendChild(sb);
+    }
+    wrap.getScore = score;
+    return wrap;
+  }
+  window.__markScheme = markScheme;
+  RENDER.w = function (q, el, done) {
+    var b = q.b;
+    el.appendChild(h('div', { cls: 'prompt' }, (b.cmd ? '<b>' + esc(b.cmd) + '.</b> ' : '') + b.q + ' <span class="marks">[' + b.m + ']</span>'));
+    if (/describe|explain/i.test(b.cmd || '')) el.appendChild(h('p', { cls: 'small mut' }, 'Tip: “' + esc(b.cmd) + '” means do not just name things. Say what happens and why. About one point per mark.'));
+    var ta = h('textarea', { placeholder: 'Type your answer. Write one point per line.' });
+    el.appendChild(ta);
+    var go = h('button', { style: 'width:100%;margin-top:10px', onclick: function () {
+      go.remove(); ta.disabled = true;
+      el.appendChild(markScheme(b, ta.value, function (s) { done(s, b.m); }));
+    } }, 'Mark my answer');
+    el.appendChild(go);
+  };
+
+  /*@@APP-MORE@@*/
+
+  // ---------- past papers ----------
+  function renderPapers() {
+    var el = $('#papersOut');
+    if (window.__renderPapers) return window.__renderPapers(el);
+    el.innerHTML = '<div class="card"><h2>Past papers</h2><p>Mock mode is coming in the next update.</p></div>';
+  }
+  window.__P = function () { return P; };
+  window.__save = save;
+  window.__showTab = showTab;
+
+  renderPicker();
+  var start = (location.hash || '').slice(1);
+  showTab(['dash', 'notes', 'quiz', 'papers'].indexOf(start) >= 0 ? start : 'dash');
+})();
+</script>
+</body>
+</html>
