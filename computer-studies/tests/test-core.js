@@ -134,6 +134,15 @@ for (let i = 0; i < 200; i++) Core.TRACE.forEach(p => {
   ctx.TOPICS.forEach(tp => { const n = ctx.BANK.filter(b => b.t === tp.id).length + (['num', 'err', 'chk', 'logic', 'trace'].includes(tp.id) ? 5 : 0); eq(n >= 3, true, 'topic has questions ' + tp.id); });
   console.log('Bank:', ctx.BANK.length, 'questions');
 }
+
+// ---- rule: 2023–2025 past-paper questions never reach topic quizzes ----
+{
+  const fake = [2020, 2021, 2022, 2023, 2024, 2025].map(y => ({ id: 'p' + y, year: y, name: String(y), q: [{ n: '1', m: 2, t: 'net', q: 'Q' + y, p: ['a', 'b'] }] }));
+  const pool = Core.quizPool(ctx.BANK, fake);
+  [2023, 2024, 2025].forEach(y => eq(pool.some(b => b.y === y || b.q === 'Q' + y), false, 'year ' + y + ' excluded from quizzes'));
+  [2020, 2021, 2022].forEach(y => eq(pool.some(b => b.q === 'Q' + y), true, 'year ' + y + ' allowed in quizzes'));
+  eq(Core.quizPool(ctx.BANK, ctx.PAPERS).filter(b => b.y >= 2023).length, 0, 'real PAPERS: no 2023+ in pool');
+}
 /*@@TEST-MORE@@*/
 
 console.log(fails ? `\n${fails} FAILED of ${checks} checks` : `All ${checks} checks passed.`);

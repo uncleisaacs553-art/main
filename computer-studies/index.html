@@ -27,7 +27,7 @@ nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:6;display:grid;grid-temp
 nav.tabs button{border:0;background:none;color:var(--mut);font:600 13px system-ui,sans-serif;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
 nav.tabs button span{font-size:22px;line-height:1}
 nav.tabs button.on{color:var(--acc);background:var(--acc2)}
-@media (min-width:900px){nav.tabs{top:52px;bottom:auto;left:50%;transform:translateX(-50%);max-width:900px;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px}main{padding-top:80px;padding-bottom:40px}}
+@media (min-width:900px){nav.tabs{top:52px;bottom:auto;left:50%;transform:translateX(-50%);max-width:900px;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px}main{padding-top:80px;padding-bottom:40px}.timer{top:118px}}
 section.tab{display:none}section.tab.on{display:block}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 14px}
 h2{font-size:21px;margin:4px 0 10px}h3{font-size:18px;margin:16px 0 8px}h4{font-size:16px;margin:14px 0 6px}
@@ -1489,6 +1489,24 @@ var Core = (function () {
     return { id: p.id, title: p.title, code: p.code(d), inputs: p.inputs(d), cols: r.cols, rows: r.rows, note: r.note, data: d };
   }
 
+  // ================= QUIZ POOL RULE =================
+  // Past-paper questions from 2023, 2024, 2025 are for Mock mode ONLY.
+  // Questions from 2020–2022 papers may also be used in topic quizzes.
+  function quizPool(bank, papers) {
+    var out = bank.filter(function (b) { return !b.y || b.y <= 2022; });
+    (papers || []).forEach(function (pp) {
+      if (!pp.year || pp.year >= 2023 || pp.practice) return;
+      (pp.q || []).forEach(function (q, i) { if (q.t && q.p) out.push({ id: pp.id + '-' + i, t: q.t, m: q.m, cmd: q.cmd || '', q: q.q, p: q.p, note: q.note, y: pp.year, src: pp.name + ' Q' + q.n }); });
+    });
+    return out;
+  }
+  // Run fn with a repeatable Math.random (used to build practice papers)
+  function seeded(seed, fn) {
+    var orig = Math.random, a = seed >>> 0;
+    Math.random = function () { a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    try { return fn(); } finally { Math.random = orig; }
+  }
+
   return {
     R: R, pick: pick, pad: pad, norm: norm, stripZ: stripZ, grp: grp, HEX: HEX,
     denToBin: denToBin, binToDen: binToDen, denToHex: denToHex, hexToDen: hexToDen, binToHexGrid: binToHexGrid, hexToBin: hexToBin,
@@ -1496,6 +1514,7 @@ var Core = (function () {
     G: G, GEN_TOPIC: GEN_TOPIC, tbl: tbl, ol: ol
     , parseLogic: parseLogic, evalLogic: evalLogic, logicStr: logicStr, varsOf: varsOf, rowsFor: rowsFor, truthTable: truthTable,
     subExprs: subExprs, sameTable: sameTable, randExpr: randExpr, circuitSVG: circuitSVG, OPS2: OPS2, TRACE: TRACE, traceQ: traceQ
+    , quizPool: quizPool, seeded: seeded
     /*@@CORE-EXPORTS@@*/
   };
 })();
@@ -1747,6 +1766,12 @@ var LOGIC_STATEMENTS = [
   'NOT (A XOR B)',
   '(A OR B) AND (NOT A OR C)'
 ];
+// Past papers 2020–2025 (6134/1). Each question: {n:'1(a)', m, t:topic, cmd, q, p:[model mark points]}
+// The questions are NOT loaded yet: the past-papers PDF was not in the folder.
+// Rule: questions in 2023, 2024, 2025 papers are used ONLY in Mock mode (Core.quizPool).
+var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
+  return { id: 'p' + y, year: y, name: y + ' Paper 1 (6134/1)', q: [] };
+});
 /*@@DATA-MORE@@*/
 </script>
 
@@ -1919,7 +1944,7 @@ var LOGIC_STATEMENTS = [
   renderNotes();
 
   // ---------- question pools ----------
-  function quizBank() { return BANK.filter(function (b) { return !b.y || b.y <= 2022; }); } // 2023–2025 only in mock mode
+  function quizBank() { return Core.quizPool(BANK, PAPERS); } // 2023–2025 past-paper questions: mock mode only (see Core.quizPool)
   var GEN_BY_TOPIC = {}; for (var gk in Core.GEN_TOPIC) (GEN_BY_TOPIC[Core.GEN_TOPIC[gk]] = GEN_BY_TOPIC[Core.GEN_TOPIC[gk]] || []).push(gk);
   var EXTRA_SOURCES = {}; // filled by later modules: topic -> [{w, make()}]
   window.__addSource = function (topic, w, make) { (EXTRA_SOURCES[topic] = EXTRA_SOURCES[topic] || []).push({ w: w, make: make }); };
@@ -2022,6 +2047,7 @@ var LOGIC_STATEMENTS = [
   }
 
   var RENDER = {};
+  function cmdPre(b) { if (!b.cmd) return ''; var first = String(b.q).replace(/<[^>]+>/g, '').split(/\s+/)[0].toLowerCase(); return first === b.cmd.toLowerCase() ? '' : '<b>' + esc(b.cmd) + '.</b> '; }
   window.__RENDER = RENDER;
   RENDER.gen = function (q, el, done) {
     var g = q.g;
@@ -2091,15 +2117,16 @@ var LOGIC_STATEMENTS = [
     left.appendChild(h('div', null, (opts.model ? '<span class="label-model">Model answer, not the official memo</span>' : '') + '<h4 style="margin-top:4px">Mark scheme — tick the points you made (max ' + b.m + ')</h4>'));
     if (ans != null) left.appendChild(h('div', { cls: 'small', style: 'background:var(--acc2);border-radius:10px;padding:8px 10px;white-space:pre-wrap' }, '<b>Your answer:</b>\n' + (ans.trim() ? esc(ans) : '<i>(blank)</i>')));
     var boxes = [];
-    b.p.forEach(function (pt) {
+    b.p.forEach(function (pt, k) {
       var lab = h('label', { cls: 'check' }); var cbx = h('input', { type: 'checkbox' }); boxes.push(cbx);
+      if (opts.init && opts.init[k]) cbx.checked = true;
       lab.appendChild(cbx); lab.appendChild(h('span', null, pt)); left.appendChild(lab);
     });
     if (b.note) left.appendChild(h('p', { cls: 'small mut' }, b.note));
     var out = h('div', { cls: 'marks' }); left.appendChild(out);
     function score() { var n = boxes.filter(function (x) { return x.checked; }).length; return Math.min(n, b.m); }
-    boxes.forEach(function (x) { x.addEventListener('change', function () { out.textContent = 'Your mark: ' + score() + ' / ' + b.m; if (opts.live) opts.live(score()); }); });
-    out.textContent = 'Your mark: 0 / ' + b.m;
+    boxes.forEach(function (x) { x.addEventListener('change', function () { out.textContent = 'Your mark: ' + score() + ' / ' + b.m; if (opts.live) opts.live(score(), boxes.map(function (y) { return y.checked; })); }); });
+    out.textContent = 'Your mark: ' + score() + ' / ' + b.m;
     wrap.appendChild(left); wrap.appendChild(h('div', null, RULES));
     if (onSave) {
       var sb = h('button', { style: 'width:100%;margin-top:10px', onclick: function () { sb.disabled = true; boxes.forEach(function (x) { x.disabled = true; }); onSave(score()); } }, 'Save my mark');
@@ -2111,7 +2138,7 @@ var LOGIC_STATEMENTS = [
   window.__markScheme = markScheme;
   RENDER.w = function (q, el, done) {
     var b = q.b;
-    el.appendChild(h('div', { cls: 'prompt' }, (b.cmd ? '<b>' + esc(b.cmd) + '.</b> ' : '') + b.q + ' <span class="marks">[' + b.m + ']</span>'));
+    el.appendChild(h('div', { cls: 'prompt' }, cmdPre(b) + b.q + ' <span class="marks">[' + b.m + ']</span>'));
     if (/describe|explain/i.test(b.cmd || '')) el.appendChild(h('p', { cls: 'small mut' }, 'Tip: “' + esc(b.cmd) + '” means do not just name things. Say what happens and why. About one point per mark.'));
     var ta = h('textarea', { placeholder: 'Type your answer. Write one point per line.' });
     el.appendChild(ta);
@@ -2238,6 +2265,193 @@ var LOGIC_STATEMENTS = [
   window.__addSource('trace', 8, trQuestion);
 
   /*@@APP-MORE@@*/
+
+  // ---------- MOCK MODE ----------
+  var MOCK_MS = 150 * 60 * 1000, PRACTICE_N = 6;
+  function buildPractice(k) {
+    return Core.seeded(7919 * k + 13, function () {
+      var qs = [], used = {}, total = 0;
+      function add(q) { qs.push(q); total += q.m; }
+      var gens = ['den2bin', 'bin2den', 'bin2hex', 'hex2den', 'den2hex', 'hex2bin'].sort(function () { return Math.random() - 0.5; }).slice(0, 4).concat(['parity', Core.pick(['checksum', 'isbn', 'mod11'])]);
+      gens.forEach(function (kd) { var g = Core.G[kd](); add({ kind: 'gen', m: 1, topic: g.topic, g: g }); });
+      add({ kind: 'tt', m: 4, topic: 'logic', ast: Core.parseLogic(Core.pick(LOGIC_STATEMENTS.filter(function (s) { return /C/.test(s); }))), show: 'stmt' });
+      add({ kind: 'tt', m: 4, topic: 'logic', ast: Core.randExpr(3), show: 'circ' });
+      var tr = Core.traceQ(); add({ kind: 'trace', m: 5, topic: 'trace', tr: tr });
+      var bank = Core.quizPool(BANK, []); // practice papers use only the app's own questions
+      var written = bank.filter(function (b) { return b.type !== 'mc'; }), mcs = bank.filter(function (b) { return b.type === 'mc'; });
+      var order = []; TOPICS.forEach(function (t) { for (var i = 0; i < t.w; i++) order.push(t.id); });
+      var guard = 0;
+      while (total < 92 && guard++ < 500) {
+        var tp = Core.pick(order), cand = written.filter(function (b) { return b.t === tp && !used[b.id] && b.m <= 100 - total; });
+        if (!cand.length) continue;
+        var b = Core.pick(cand); used[b.id] = 1; add({ kind: 'w', m: b.m, topic: b.t, b: b });
+      }
+      while (total < 100) { var mc = Core.pick(mcs.filter(function (x) { return !used[x.id]; })); used[mc.id] = 1; add({ kind: 'mc', m: 1, topic: mc.t, b: mc }); }
+      var thOrder = { '4A': 1, '4B': 2, '4C': 3, '3': 4, '5': 5, '12': 6 };
+      qs.forEach(function (q, i) { q._i = i; });
+      qs.sort(function (a, b) { return (thOrder[TOPIC[a.topic].th] - thOrder[TOPIC[b.topic].th]) || (a._i - b._i); });
+      qs.forEach(function (q, i) { q.n = String(i + 1); });
+      return { id: 'x' + k, name: 'Practice paper ' + k, practice: true, qs: qs, max: total };
+    });
+  }
+  function getPaper(pid) {
+    if (pid[0] === 'x') return buildPractice(+pid.slice(1));
+    var pp = PAPERS.filter(function (x) { return x.id === pid; })[0]; if (!pp) return null;
+    var qs = pp.q.map(function (q) { return { kind: 'w', m: q.m, topic: q.t || 'sec', n: q.n, b: { m: q.m, cmd: q.cmd, q: q.q, p: q.p, note: q.note } }; });
+    return { id: pp.id, name: pp.name, qs: qs, max: qs.reduce(function (s, q) { return s + q.m; }, 0) };
+  }
+  function fmt(ms) { ms = Math.max(0, ms); var s = Math.floor(ms / 1000); return Math.floor(s / 3600) + ':' + ('0' + Math.floor(s / 60) % 60).slice(-2) + ':' + ('0' + s % 60).slice(-2); }
+  var mockTimer = null, saveT = null;
+  function lazySave() { clearTimeout(saveT); saveT = setTimeout(save, 400); }
+
+  window.__renderPapers = function (el) {
+    clearInterval(mockTimer);
+    var M = P.mockRun;
+    if (M) return renderMock(el);
+    el.innerHTML = '';
+    el.appendChild(h('div', { cls: 'card' }, '<h2>Past papers</h2><p class="small">Mock mode: one full paper, 2 h 30 min timer, answer boxes. Then you mark it with the mark scheme checklists.</p><p class="small mut">Questions from the 2023, 2024 and 2025 papers are only used here, never in the topic quizzes.</p>'));
+    var c = h('div', { cls: 'card' }, '<h3 style="margin-top:0">NSSCO 6134/1 papers 2020–2025</h3>');
+    PAPERS.forEach(function (pp) {
+      var best = bestScore(pp.id), row = h('div', { cls: 'weak' });
+      row.appendChild(h('div', null, '<b>' + esc(pp.name) + '</b><br><span class="small mut">' + (pp.q.length ? pp.q.length + ' questions' + (best ? ' · best ' + best : '') : 'Questions not added yet') + (pp.year >= 2023 ? ' · mock only' : '') + '</span>'));
+      var b = h('button', { cls: 'small', onclick: function () { startMock(pp.id); } }, 'Mock mode'); if (!pp.q.length) b.disabled = true;
+      row.appendChild(b); c.appendChild(row);
+    });
+    if (!PAPERS.some(function (pp) { return pp.q.length; })) c.appendChild(h('p', { cls: 'tip small' }, 'The past-paper PDF was not given to this app yet, so these papers are empty. Use the practice papers below until they are added.'));
+    el.appendChild(c);
+    var c2 = h('div', { cls: 'card' }, '<h3 style="margin-top:0">Practice papers (exam style)</h3><p class="small mut">Made by this app in the style of Paper 1, 100 marks each. Not real past papers.</p>');
+    for (var k = 1; k <= PRACTICE_N; k++) (function (k) {
+      var best = bestScore('x' + k), row = h('div', { cls: 'weak' });
+      row.appendChild(h('div', null, '<b>Practice paper ' + k + '</b><br><span class="small mut">100 marks · 2 h 30 min' + (best ? ' · best ' + best : '') + '</span>'));
+      row.appendChild(h('button', { cls: 'small', onclick: function () { startMock('x' + k); } }, 'Mock mode'));
+      c2.appendChild(row);
+    })(k);
+    el.appendChild(c2);
+  };
+  function bestScore(pid) { var b = null; P.mocks.forEach(function (m) { if (m.pid === pid && (!b || m.score / m.max > b.score / b.max)) b = m; }); return b ? b.score + '/' + b.max + ' (' + Math.round(100 * b.score / b.max) + '%)' : ''; }
+  function startMock(pid) {
+    var paper = getPaper(pid);
+    if (!confirm('Start ' + paper.name + '?\n\nThe 2 h 30 min timer starts now. Your answers are saved as you type.')) return;
+    P.mockRun = { pid: pid, start: Date.now(), ans: {}, done: false, self: {} }; save();
+    window.__renderPapers($('#papersOut')); window.scrollTo(0, 0);
+  }
+  function renderMock(el) {
+    var M = P.mockRun, paper = getPaper(M.pid);
+    if (!paper) { P.mockRun = null; save(); return window.__renderPapers(el); }
+    el.innerHTML = '';
+    if (M.done) return renderMockResults(el, paper);
+    var tb = h('div', { cls: 'timer' }, '<span>' + esc(paper.name) + '</span><b id="mockClock"></b>');
+    el.appendChild(tb);
+    function upd() {
+      var left = M.start + MOCK_MS - Date.now(), ck = $('#mockClock'); if (!ck) { clearInterval(mockTimer); return; }
+      ck.textContent = fmt(left); tb.classList.toggle('low', left < 10 * 60000);
+      if (left <= 0) { clearInterval(mockTimer); alert('Time is up! Your paper is submitted.'); submit(); }
+    }
+    upd(); mockTimer = setInterval(upd, 1000);
+    el.appendChild(h('div', { cls: 'card small' }, '<b>Instructions.</b> Answer all questions. The marks are shown in brackets [ ]. Total: ' + paper.max + ' marks. Answers save automatically.'));
+    paper.qs.forEach(function (q, i) {
+      var c = h('div', { cls: 'card' }), a = M.ans[i];
+      c.appendChild(h('div', { cls: 'prompt' }, '<b>' + esc(q.n) + '.</b> ' + mockPrompt(q) + ' <span class="marks">[' + q.m + ']</span>'));
+      if (q.kind === 'w') { var ta = h('textarea', { placeholder: 'Your answer' }); ta.value = a || ''; ta.addEventListener('input', function () { M.ans[i] = ta.value; lazySave(); }); c.appendChild(ta); }
+      else if (q.kind === 'gen' && q.g.input !== 'choice') { var inp = h('input', { type: 'text', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false', inputmode: q.g.input === 'num' ? 'numeric' : 'text' }); inp.value = a || ''; inp.addEventListener('input', function () { M.ans[i] = inp.value; lazySave(); }); c.appendChild(inp); }
+      else if (q.kind === 'mc' || q.kind === 'gen') {
+        var opts = q.kind === 'mc' ? q.b.o : q.g.choices, ch = h('div', { cls: 'choices' + (q.kind === 'mc' ? ' mc' : '') });
+        opts.forEach(function (o, k) { var v = q.kind === 'mc' ? k : o; var bt = h('button', { type: 'button', cls: a === v ? 'pick' : '', onclick: function () { M.ans[i] = v; $$('button', ch).forEach(function (x) { x.classList.remove('pick'); }); bt.classList.add('pick'); lazySave(); } }, esc(o)); ch.appendChild(bt); });
+        c.appendChild(ch);
+      }
+      else if (q.kind === 'tt') c.appendChild(mockTT(q, i, false));
+      else if (q.kind === 'trace') c.appendChild(mockTrace(q, i, false));
+      el.appendChild(c);
+    });
+    var sb = h('button', { style: 'width:100%', onclick: function () { if (confirm('Submit your paper now? You cannot change answers after this.')) submit(); } }, 'Submit paper');
+    el.appendChild(sb);
+    el.appendChild(h('button', { cls: 'ghost', style: 'width:100%;margin-top:10px', onclick: function () { if (confirm('Give up this mock? Your answers will be deleted.')) { P.mockRun = null; save(); clearInterval(mockTimer); window.__renderPapers(el); } } }, 'Give up this mock'));
+    function submit() { clearInterval(mockTimer); M.done = true; M.end = Date.now(); save(); renderMock(el); window.scrollTo(0, 0); }
+  }
+  function mockPrompt(q) {
+    if (q.kind === 'gen') return q.g.prompt;
+    if (q.kind === 'mc') return q.b.q + ' <span class="small mut">(choose one)</span>';
+    if (q.kind === 'w') return cmdPre(q.b) + q.b.q;
+    if (q.kind === 'tt') return q.show === 'stmt' ? 'Complete the truth table for: <b class="mono">X = ' + esc(Core.logicStr(q.ast, true)) + '</b>' : 'Complete the truth table for this logic circuit.<div class="svgwrap">' + Core.circuitSVG(q.ast, { names: false }) + '</div>';
+    if (q.kind === 'trace') return 'Complete the trace table. Input data: <b class="mono">' + esc(q.tr.inputs) + '</b><pre>' + esc(q.tr.code) + '</pre><span class="small mut">Row 1 = after the start lines, then one row per pass of the loop. Write every variable in every row.</span>';
+    return '';
+  }
+  function mockTT(q, i, marked) {
+    var M = P.mockRun, vars = Core.varsOf(q.ast), rows = Core.rowsFor(vars), a = M.ans[i] || [], tbl = h('table', { cls: 'tt' });
+    tbl.innerHTML = '<tr>' + vars.map(function (v) { return '<th>' + v + '</th>'; }).join('') + '<th>X</th></tr>';
+    rows.forEach(function (env, r) {
+      var tr = h('tr'); vars.forEach(function (v) { tr.appendChild(h('td', { cls: 'in' }, String(env[v]))); });
+      var td = h('td'), exp = Core.evalLogic(q.ast, env);
+      if (marked) { td.className = a[r] === exp ? 'r' : 'w'; td.textContent = (a[r] == null ? '–' : a[r]) + (a[r] === exp ? '' : ' → ' + exp); }
+      else { var b = h('button', { cls: 'cell' + (a[r] != null ? ' set' : ''), type: 'button' }, a[r] == null ? '' : String(a[r])); b.addEventListener('click', function () { var arr = M.ans[i] || (M.ans[i] = []); arr[r] = arr[r] === 0 ? 1 : 0; b.textContent = arr[r]; b.classList.add('set'); lazySave(); }); td.appendChild(b); }
+      tr.appendChild(td); tbl.appendChild(tr);
+    });
+    var w = h('div', { cls: 'tw' }); w.appendChild(tbl); return w;
+  }
+  function mockTrace(q, i, marked) {
+    var M = P.mockRun, t = q.tr, a = M.ans[i] || [], tbl = h('table', { cls: 'trace' }), nc = t.cols.length;
+    tbl.innerHTML = '<tr>' + t.cols.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr>';
+    t.rows.forEach(function (row, r) {
+      var tr = h('tr');
+      row.forEach(function (exp, c) {
+        var k = r * nc + c, td = h('td'), inp = h('input', { type: 'text', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false' });
+        inp.value = a[k] || '';
+        if (marked) { inp.disabled = true; var ok = traceSame(a[k] || '', exp); td.className = ok ? 'r' : 'w'; td.appendChild(inp); if (!ok) td.appendChild(h('span', { cls: 'exp' }, exp === '' ? '(empty)' : esc(exp))); }
+        else { inp.addEventListener('input', function () { var arr = M.ans[i] || (M.ans[i] = []); arr[k] = inp.value; lazySave(); }); td.appendChild(inp); }
+        tr.appendChild(td);
+      });
+      tbl.appendChild(tr);
+    });
+    var w = h('div', { cls: 'tw' }); w.appendChild(tbl); return w;
+  }
+  function traceSame(u, exp) { var n = function (s) { return String(s).toUpperCase().replace(/["'\s]/g, ''); }; return n(u) === n(exp) || (exp !== '' && !isNaN(exp) && String(u).trim() !== '' && +u === +exp); }
+  function autoMark(q, a) {
+    if (q.kind === 'gen') return a != null && a !== '' && q.g.check(String(a)).ok ? 1 : 0;
+    if (q.kind === 'mc') return a === q.b.a ? 1 : 0;
+    if (q.kind === 'tt') { var rows = Core.rowsFor(Core.varsOf(q.ast)), r = 0; rows.forEach(function (env, k) { if ((a || [])[k] === Core.evalLogic(q.ast, env)) r++; }); return Math.round(q.m * r / rows.length * 2) / 2; }
+    if (q.kind === 'trace') { var t = q.tr, nc = t.cols.length, ok = 0; t.rows.forEach(function (row, r) { if (row.every(function (exp, c) { return traceSame((a || [])[r * nc + c] || '', exp); })) ok++; }); return Math.round(q.m * ok / t.rows.length * 2) / 2; }
+    return null;
+  }
+  function renderMockResults(el, paper) {
+    var M = P.mockRun; M.self = M.self || {};
+    var used = M.end ? fmt(M.end - M.start) : '';
+    var top = h('div', { cls: 'card' }, '<h2>' + esc(paper.name) + ' — mark your paper</h2><p class="small">Time used: ' + used + '. Questions with exact answers are marked for you. For written answers, tick the points you made. Be strict!</p><span class="label-model">Model answers, not the official memo</span>');
+    var totEl = h('p', { style: 'font-size:24px;font-weight:800;margin:8px 0' }); top.appendChild(totEl); el.appendChild(top);
+    var scores = {};
+    function upd() { var s = 0; paper.qs.forEach(function (q, i) { s += scores[i] || 0; }); s = Math.round(s * 10) / 10; totEl.textContent = 'Total: ' + s + ' / ' + paper.max + ' (' + Math.round(100 * s / paper.max) + '%)'; botEl.textContent = totEl.textContent; return s; }
+    var botEl = h('p', { style: 'font-size:22px;font-weight:800' });
+    paper.qs.forEach(function (q, i) {
+      var c = h('div', { cls: 'card' }), a = M.ans[i];
+      c.appendChild(h('div', { cls: 'prompt' }, '<b>' + esc(q.n) + '.</b> ' + mockPrompt(q) + ' <span class="marks">[' + q.m + ']</span>'));
+      var am = autoMark(q, a);
+      if (q.kind === 'w') {
+        M.ticks = M.ticks || {};
+        var ms = markScheme(q.b, a || '', null, { model: true, init: M.ticks[i], live: function (s, tk) { scores[i] = s; M.self[i] = s; M.ticks[i] = tk; lazySave(); upd(); } });
+        scores[i] = ms.getScore(); c.appendChild(ms);
+      } else {
+        scores[i] = am;
+        var yours = q.kind === 'mc' ? (a == null ? '(blank)' : q.b.o[a]) : (q.kind === 'gen' ? (a == null || a === '' ? '(blank)' : a) : null);
+        if (yours != null) c.appendChild(h('p', null, 'Your answer: <b class="mono">' + esc(yours) + '</b>'));
+        if (q.kind === 'tt') c.appendChild(mockTT(q, i, true));
+        if (q.kind === 'trace') c.appendChild(mockTrace(q, i, true));
+        var model = q.kind === 'mc' ? q.b.o[q.b.a] : q.kind === 'gen' ? q.g.show : 'the values shown in green';
+        c.appendChild(h('div', { cls: 'fb ' + (am === q.m ? 'ok' : am ? 'part' : 'bad') }, 'Mark: ' + am + ' / ' + q.m + ' · <span class="label-model">Model answer, not the official memo</span> ' + esc(model)));
+        if (q.kind === 'gen') c.appendChild(h('details', { cls: 'work' }, '<summary>Worked steps</summary>' + q.g.steps));
+        if (q.kind === 'mc' && q.b.why) c.appendChild(h('p', { cls: 'small' }, q.b.why));
+      }
+      el.appendChild(c);
+    });
+    el.appendChild(botEl); upd();
+    el.appendChild(h('button', { style: 'width:100%', onclick: function () {
+      var s = upd();
+      if (!confirm('Save your total: ' + s + ' / ' + paper.max + '?')) return;
+      P.mocks.push({ pid: paper.id, name: paper.name, score: s, max: paper.max, date: Date.now() });
+      paper.qs.forEach(function (q, i) { rec(P.t, q.topic, scores[i] || 0, q.m); });
+      P.mockRun = null; save(); alert('Saved: ' + s + ' / ' + paper.max + ' (' + Math.round(100 * s / paper.max) + '%). See the Dashboard.');
+      window.__renderPapers(el); window.scrollTo(0, 0);
+    } }, 'Save my total'));
+  }
+  window.__buildPractice = buildPractice;
 
   // ---------- past papers ----------
   function renderPapers() {
