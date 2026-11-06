@@ -6,7 +6,7 @@ Tabs: Dashboard · Notes · Quiz · Past papers (Mock mode).
 
 ## Checks
 - `node tests/test-core.js`: generators (1000 random cases each), truth tables, trace tables, question bank, past-paper rule.
-- `node tests/browser-smoke3.js` and `node tests/browser-smoke4.js`: Playwright, 375 px and 1280 px (every topic, notes, full mock).
+- `node tests/browser-smoke3.js`, `browser-smoke4.js`, `browser-smoke5.js`: Playwright at 375 px and 1280 px (every topic, notes, full mock, mistakes review, Mark this answer, study plan, old saves).
 
 ## Adding the real past papers
 Fill `PAPERS[i].q` in the `<script id="data">` block with `{n:'1(a)', m:2, t:'net', cmd:'Describe', q:'…', p:['mark point', …]}`.

@@ -12,7 +12,7 @@ function block(id) {
 const ctx = { module: { exports: {} }, console };
 vm.createContext(ctx);
 vm.runInContext(block('core'), ctx);
-vm.runInContext(block('data') + ';this.LOGIC_STATEMENTS=LOGIC_STATEMENTS;this.BANK=BANK;this.TOPICS=TOPICS;this.FOCUS=FOCUS;this.PAPERS=typeof PAPERS!=="undefined"?PAPERS:[];', ctx);
+vm.runInContext(block('data') + ';this.LOGIC_STATEMENTS=LOGIC_STATEMENTS;this.BANK=BANK;this.TOPICS=TOPICS;this.FOCUS=FOCUS;this.PAPERS=typeof PAPERS!=="undefined"?PAPERS:[];this.JUDGE=JUDGE;this.PLAN=PLAN;', ctx);
 const Core = ctx.module.exports;
 let fails = 0, checks = 0;
 function eq(a, b, msg) { checks++; if (a !== b) { fails++; if (fails < 30) console.log('FAIL', msg, 'got', a, 'expected', b); } }
@@ -142,6 +142,30 @@ for (let i = 0; i < 200; i++) Core.TRACE.forEach(p => {
   [2023, 2024, 2025].forEach(y => eq(pool.some(b => b.y === y || b.q === 'Q' + y), false, 'year ' + y + ' excluded from quizzes'));
   [2020, 2021, 2022].forEach(y => eq(pool.some(b => b.q === 'Q' + y), true, 'year ' + y + ' allowed in quizzes'));
   eq(Core.quizPool(ctx.BANK, ctx.PAPERS).filter(b => b.y >= 2023).length, 0, 'real PAPERS: no 2023+ in pool');
+}
+
+// ---- "Mark this answer" items and study plan ----
+{
+  const topics = new Set(ctx.TOPICS.map(x => x.id)), focus = new Set(ctx.FOCUS.map(x => x.id)), ids = new Set();
+  ctx.JUDGE.forEach(j => {
+    eq(ids.has(j.id), false, 'judge unique ' + j.id); ids.add(j.id);
+    eq(topics.has(j.t), true, 'judge topic ' + j.id);
+    eq(Number.isInteger(j.right) && j.right >= 0 && j.right <= j.m, true, 'judge mark range ' + j.id);
+    (j.f || []).forEach(f => eq(focus.has(f), true, 'judge focus ' + j.id));
+    eq(typeof j.ans === 'string' && typeof j.why === 'string', true, 'judge text ' + j.id);
+  });
+  const tids = new Set();
+  ctx.PLAN.forEach(d => {
+    eq(/^2026-11-(0[6-9]|10)$/.test(d.d), true, 'plan date ' + d.d);
+    d.tasks.forEach(tk => {
+      eq(tids.has(tk.id), false, 'plan task unique ' + tk.id); tids.add(tk.id);
+      const g = tk.go; if (!g) return;
+      if (g.topic) eq(topics.has(g.topic), true, 'plan topic ' + g.topic);
+      if (g.focus) eq(focus.has(g.focus), true, 'plan focus ' + g.focus);
+      if (g.mock) eq(/^x[1-6]$/.test(g.mock), true, 'plan mock ' + g.mock);
+    });
+  });
+  console.log('Mark-this-answer items:', ctx.JUDGE.length);
 }
 /*@@TEST-MORE@@*/
 

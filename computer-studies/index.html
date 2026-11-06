@@ -157,6 +157,10 @@ table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--
       <div class="stat"><b id="stPct">–</b><span class="small mut">score (last 20 per topic)</span></div>
     </div>
   </div>
+  <div class="card" id="planCard">
+    <h2>Today's plan</h2>
+    <div id="planOut"></div>
+  </div>
   <div class="card">
     <h2>Weak topics</h2>
     <p class="mut small">Below 80%. Fix these first. Tap “Re-test now”.</p>
@@ -1746,6 +1750,20 @@ var BANK = [
   { id: 'sc13', t: 'sec', type: 'mc', q: 'Software that secretly records your key presses is called…', o: ['Spyware / key logger', 'Firewall', 'Anti-virus', 'Encryption'], a: 0, why: 'Spyware / key loggers steal passwords.' },
   { id: 'sc14', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain what <b>software piracy</b> is.', p: ['Copying / distributing / selling software without permission (licence)', 'It breaks copyright law; the makers lose money'] }
 
+  ,
+  // ---------- extra: weak spots ----------
+  { id: 'vv11', t: 'valid', type: 'mc', f: ['valver'], q: 'Which of these is <b>verification</b>?', o: ['Typing a new password twice', 'Checking an age is between 13 and 19', 'Checking a field is not empty', 'Checking a date is DD/MM/YYYY'], a: 0, why: 'Typing twice and comparing = double entry = verification. The others are validation.' },
+  { id: 'vv12', t: 'valid', type: 'mc', f: ['valver'], q: 'Which of these is <b>validation</b>?', o: ['A range check on a mark', 'A visual check against the paper form', 'Double entry of an ID number'], a: 0, why: 'Range check = validation (is it sensible?). The others check it was copied correctly = verification.' },
+  { id: 'vv13', t: 'valid', type: 'mc', f: ['valver'], q: 'Who or what does a <b>visual check</b>?', o: ['A person', 'The computer, automatically'], a: 0, why: 'A person looks at the screen and compares with the original document.' },
+  { id: 'vv14', t: 'valid', m: 2, cmd: 'Explain', f: ['valver'], q: 'Explain why a school uses <b>both</b> validation and verification when learners’ marks are typed in.', p: ['Validation stops impossible / unreasonable marks, e.g. a range check rejects 120', 'Verification finds marks that are sensible but typed wrongly, e.g. 65 typed as 56'] },
+  { id: 'vv15', t: 'valid', type: 'mc', f: ['valver'], q: 'A mark of 65 is typed as 56. Which check can find this error?', o: ['Verification (double entry or visual check)', 'Range check', 'Presence check', 'Type check'], a: 0, why: '56 is still a sensible mark, so validation accepts it. Only verification can catch a copying error.' },
+  { id: 'sd13', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'A programmer writes the code and creates the database tables. Which stage?', o: ['Development and testing', 'Design', 'Implementation', 'Analysis'], a: 0, why: 'Building the system = development.' },
+  { id: 'sd14', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'The analyst draws the layout of the data entry screen on paper. Which stage?', o: ['Design', 'Development', 'Implementation', 'Evaluation'], a: 0, why: 'Planning a screen = design.' },
+  { id: 'sd15', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'The new system is installed in the shop and the old files are copied into it. Which stage?', o: ['Implementation', 'Development', 'Design', 'Analysis'], a: 0, why: 'Installing it at the organisation and transferring data = implementation.' },
+  { id: 'sd16', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'The test plan (what data to test with and the expected results) is written. Which stage?', o: ['Design', 'Implementation', 'Evaluation'], a: 0, why: 'The test PLAN is made in design. The testing itself is done in development and testing.' },
+  { id: 'sd17', t: 'sdlc', type: 'mc', f: ['sdlcst'], q: 'The system is tested with normal, extreme and abnormal data. Which stage?', o: ['Development and testing', 'Design', 'Analysis'], a: 0, why: 'Doing the tests = development and testing.' },
+  { id: 'sd18', t: 'sdlc', m: 3, cmd: 'Describe', f: ['sdlcst'], q: 'Describe what happens during <b>implementation</b>.', p: ['The new system is installed / put into use at the organisation', 'Data from the old system is transferred / entered into the new system', 'Staff are trained to use it', 'A changeover method is used (direct, parallel, phased or pilot)'] },
+  { id: 'sd19', t: 'sdlc', m: 3, cmd: 'Describe', f: ['sdlcst'], q: 'Describe what happens during <b>development and testing</b>.', p: ['The system is built / created from the design', 'e.g. the program is coded / the database tables and forms are created', 'It is tested using the test plan', 'with normal, extreme and abnormal data; errors are corrected'] }
   /*@@BANK-MORE@@*/
 ];
 
@@ -1772,6 +1790,61 @@ var LOGIC_STATEMENTS = [
 var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
   return { id: 'p' + y, year: y, name: y + ' Paper 1 (6134/1)', q: [] };
 });
+
+// "Mark this answer": the learner chooses the mark a strict examiner gives.
+var JUDGE = [
+  { id: 'j1', t: 'intr', m: 2, cmd: 'Describe', q: 'Describe what a buffer is.', ans: 'A buffer is a type of memory.', right: 0, why: 'This only names it as memory. It does not say what it does. Naming only = 0.', better: 'An area of memory that holds data for a short time (1) while it is sent between devices that work at different speeds, e.g. CPU and printer (1).' },
+  { id: 'j2', t: 'stor', m: 2, cmd: 'Explain', q: 'Explain why an SSD is used in a laptop instead of a hard disk.', ans: 'It is faster and better.', right: 0, why: '“Faster” and “better” are vague. Faster at what? Why does it matter? 0 marks.', better: 'It has no moving parts (1), so it is not damaged if the laptop is dropped (1). / It accesses data faster, so the laptop starts up quickly.' },
+  { id: 'j3', t: 'stor', m: 2, cmd: 'Explain', q: 'Explain why an SSD is used in a laptop instead of a hard disk.', ans: 'An SSD has no moving parts, so it will not break easily when the laptop is carried around and dropped.', right: 2, why: 'A point (no moving parts) plus why it matters for a laptop (not damaged when dropped). Full marks.' },
+  { id: 'j4', t: 'net', m: 2, cmd: 'Describe', q: 'Describe the purpose of a router.', ans: 'A router is a network device.', right: 0, why: 'Naming only. It says what it is, not what it does.', better: 'It connects a LAN to the internet / other networks (1) and sends data packets to the correct network using IP addresses (1).' },
+  { id: 'j5', t: 'net', m: 2, cmd: 'Describe', q: 'Describe the purpose of a router.', ans: 'It connects the school network to the internet. It connects the school network to other networks.', right: 1, why: 'Both sentences make the SAME point (connects networks). The same point twice = one mark.', better: 'Add a second, different point: it sends data packets to the correct destination using IP addresses.' },
+  { id: 'j6', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain how a firewall protects a computer.', ans: 'A firewall protects the computer from hackers.', right: 0, why: 'It repeats the question (it “protects”). It does not say HOW. 0 marks.', better: 'It checks data coming in and going out (1) and blocks data or connections that are not allowed (1).' },
+  { id: 'j7', t: 'sec', m: 2, cmd: 'Explain', q: 'Explain how encryption protects data sent over the internet.', ans: 'The data is scrambled using a key, so if a hacker intercepts it, they cannot understand it.', right: 2, why: 'Two points: scrambled with a key (1); cannot be understood if intercepted (1).' },
+  { id: 'j8', t: 'sdlc', m: 2, cmd: 'Explain', f: ['sdlcst'], q: 'A bank changes to a new system. Explain why parallel changeover is used.', ans: 'Parallel changeover is cheaper and easier.', right: 0, why: 'Wrong and vague. Parallel is actually costly (double work). “Cheaper/easier” alone = 0.', better: 'Both systems run together (1), so if the new system fails the customers’ data is still in the old system (1).' },
+  { id: 'j9', t: 'valid', m: 2, cmd: 'Describe', f: ['valver'], q: 'Describe a range check.', ans: 'A range check is a validation check.', right: 0, why: 'Naming only: it says what kind of check, not what it does.', better: 'It checks that data is between a lowest and a highest value (1), e.g. a mark from 0 to 100 (1).' },
+  { id: 'j10', t: 'valid', m: 2, cmd: 'Describe', f: ['valver'], q: 'Describe double entry verification.', ans: 'The data is checked to see if it is sensible.', right: 0, why: 'That describes VALIDATION, not verification. 0 marks.', better: 'The data is typed in twice (1); the computer compares the two and shows an error if they are different (1).' },
+  { id: 'j11', t: 'io', m: 3, cmd: 'Describe', q: 'Describe how a sensor and microprocessor keep a greenhouse warm.', ans: 'The temperature sensor checks if it is cold and then turns on the heater.', right: 1, why: 'Only “a temperature sensor measures the temperature” gets credit. A sensor does NOT decide or switch on anything: the microprocessor compares the reading with a set value and sends the signal.', better: 'A temperature sensor measures the temperature (1). The microprocessor compares it with the pre-set value (1). If it is lower, the microprocessor sends a signal to switch the heater on (1).' },
+  { id: 'j12', t: 'cpu', m: 2, cmd: 'Describe', q: 'Describe the decode stage of the fetch–decode–execute cycle.', ans: 'The instruction is changed into binary so the computer can understand it.', right: 0, why: 'Wrong. The instruction is already binary. Decode = the control unit interprets the instruction in the CIR.', better: 'The control unit decodes / interprets the instruction in the CIR (1), finding the opcode and the operand (1).' },
+  { id: 'j13', t: 'cpu', m: 2, cmd: 'State', q: 'State what is held in the MAR and in the MDR.', ans: 'MAR holds the data. MDR holds the address.', right: 0, why: 'They are the wrong way round. MAR = address, MDR = data or instruction.' },
+  { id: 'j14', t: 'apps', m: 3, cmd: 'Explain', q: 'A clothing shop in Rundu wants a computerised stock system. Explain two benefits for the shop.', ans: 'Computers are faster. Computers make fewer mistakes. Computers are faster than people.', right: 0, why: 'Vague (“faster”, “fewer mistakes” with no reason), the first point is repeated, and nothing is about the shop.', better: 'The stock level is updated automatically when an item is sold (1), so the manager always knows how many shirts are left (1). Items are re-ordered automatically when stock is low, so the shop does not run out (1).' },
+  { id: 'j15', t: 'comp', m: 2, cmd: 'Explain', q: 'Explain why lossless compression is used for a spreadsheet file.', ans: 'Lossless compression removes no data, so the spreadsheet comes back exactly the same and no numbers are lost or changed.', right: 2, why: 'Two points: removes no data (1); file restored exactly / numbers not changed (1).' },
+  { id: 'j16', t: 'net', m: 2, cmd: 'Explain', q: 'Explain one advantage of a wired network over a wireless network for a school computer lab.', ans: 'It is more secure.', right: 1, why: 'A valid point, but no explanation. For [2] say WHY: a person must plug in a cable, so outsiders cannot pick up the signals.' }
+];
+
+// Study plan for the last days (date in Namibia time, YYYY-MM-DD)
+var PLAN = [
+  { d: '2026-11-06', title: 'Fri 6 Nov · Theme 4A', tasks: [
+    { id: 'a1', text: 'Read notes: Theme 4A', go: { notes: '4A' } },
+    { id: 'a2', text: 'Weak spot: binary → hex grouping', go: { focus: 'hexgrid' } },
+    { id: 'a3', text: 'Weak spot: parity bit', go: { focus: 'parity' } },
+    { id: 'a4', text: 'Weak spot: copying numbers', go: { focus: 'copy' } },
+    { id: 'a5', text: 'Quiz: check digits', go: { topic: 'chk' } } ] },
+  { d: '2026-11-07', title: 'Sat 7 Nov · Theme 4B and 4C', tasks: [
+    { id: 'b1', text: 'Read notes: Theme 4B and 4C', go: { notes: '4B' } },
+    { id: 'b2', text: 'Quiz: logic gates & circuits', go: { topic: 'logic' } },
+    { id: 'b3', text: 'Quiz: CPU', go: { topic: 'cpu' } },
+    { id: 'b4', text: 'Quiz: trace tables', go: { topic: 'trace' } },
+    { id: 'b5', text: 'Mock: Practice paper 1 (2 h 30 min)', go: { mock: 'x1' } } ] },
+  { d: '2026-11-08', title: 'Sun 8 Nov · Themes 3 and 5', tasks: [
+    { id: 'c1', text: 'Read notes: Themes 3 and 5', go: { notes: '5' } },
+    { id: 'c2', text: 'Weak spot: validation vs verification', go: { focus: 'valver' } },
+    { id: 'c3', text: 'Quiz: storage & memory', go: { topic: 'stor' } },
+    { id: 'c4', text: 'Quiz: networks', go: { topic: 'net' } },
+    { id: 'c5', text: 'Quiz: spreadsheets', go: { topic: 'sheet' } },
+    { id: 'c6', text: 'Weak spot: describe/explain answers', go: { focus: 'describe' } } ] },
+  { d: '2026-11-09', title: 'Mon 9 Nov · Themes 1–2 and a full mock', tasks: [
+    { id: 'd1', text: 'Mock: Practice paper 2 (morning)', go: { mock: 'x2' } },
+    { id: 'd2', text: 'Weak spot: life cycle stages', go: { focus: 'sdlcst' } },
+    { id: 'd3', text: 'Quiz: crime, security, health & safety', go: { topic: 'sec' } },
+    { id: 'd4', text: 'Review my mistakes', go: { mistakes: true } },
+    { id: 'd5', text: 'Read all the red “Booklet is wrong” boxes', go: { notes: 'Booklet is wrong' } },
+    { id: 'd6', text: 'Sleep early. Pack 2 pens, pencil, ruler, eraser, ID.', go: null } ] },
+  { d: '2026-11-10', title: 'Tue 10 Nov · Exam day', tasks: [
+    { id: 'e1', text: 'Eat breakfast. Arrive early.', go: null },
+    { id: 'e2', text: 'In the exam: look at the marks [ ] — one point per mark.', go: null },
+    { id: 'e3', text: 'Copy numbers carefully. Check every conversion twice.', go: null },
+    { id: 'e4', text: 'Describe/explain: say what it does and WHY. Use the scenario.', go: null } ] }
+];
 /*@@DATA-MORE@@*/
 </script>
 
@@ -1792,7 +1865,7 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
 
   // ---------- storage ----------
   var memoryOnly = false;
-  function blank() { return { v: 1, created: Date.now(), done: 0, t: {}, f: {}, seen: {}, mocks: [] }; }
+  function blank() { return { v: 1, created: Date.now(), done: 0, t: {}, f: {}, seen: {}, mocks: [], miss: {}, missGen: {}, plan: {} }; }
   function load() {
     try { var s = localStorage.getItem(KEY); if (s) { var p = JSON.parse(s); if (p && p.v === 1) return fix(p); } }
     catch (e) { memoryOnly = true; }
@@ -1812,6 +1885,10 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
     rec(P.t, q.topic, e, m);
     (q.focus || []).forEach(function (f) { rec(P.f, f, e, m); });
     if (q.bankId) P.seen[q.bankId] = (P.seen[q.bankId] || 0) + 1;
+    var full = e >= m - 1e-9, key = q.bankId || (q.judge && 'j:' + q.judge.id);
+    if (key) { if (full) delete P.miss[key]; else P.miss[key] = Date.now(); }
+    var gk = q.g ? q.g.kind : q.type === 'tt' ? 'tt' : q.type === 'trace' ? 'trace' : null;
+    if (gk) { if (full) { if (P.missGen[gk] && !--P.missGen[gk]) delete P.missGen[gk]; } else P.missGen[gk] = Math.min(3, (P.missGen[gk] || 0) + 1); }
     save();
   }
   function pct(o) { if (!o || !o.r.length) return null; var e = 0, m = 0; o.r.forEach(function (x) { e += x[0]; m += x[1]; }); return m ? Math.round(100 * e / m) : null; }
@@ -1849,6 +1926,7 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
     var e = 0, m = 0; for (var k in P.t) P.t[k].r.forEach(function (x) { e += x[0]; m += x[1]; });
     $('#stPct').textContent = m ? Math.round(100 * e / m) + '%' : '–';
     $('#hdrCount').textContent = P.done + ' done';
+    renderPlan();
     var wl = $('#weakList'); wl.innerHTML = '';
     var items = weakItems();
     if (!items.length) wl.innerHTML = '<p>No weak topics now. Well done! Try a mock paper.</p>';
@@ -1871,6 +1949,34 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
     var ms = $('#mockScores');
     ms.innerHTML = P.mocks.length ? '<div class="tw"><table><tr><th>Paper</th><th>Date</th><th>Score</th></tr>' + P.mocks.slice().reverse().map(function (x) { return '<tr><td>' + esc(x.name) + '</td><td>' + new Date(x.date).toLocaleDateString() + '</td><td><b>' + x.score + '/' + x.max + '</b> (' + Math.round(100 * x.score / x.max) + '%)</td></tr>'; }).join('') + '</table></div>' : '<p class="mut">No mock paper done yet. Go to Past papers → Mock mode.</p>';
     renderSaveWarn();
+  }
+  function todayNam() { return new Date(Date.now() + 2 * 3600e3).toISOString().slice(0, 10); }
+  var planShowAll = false;
+  function renderPlan() {
+    var out = $('#planOut'); if (!out) return; out.innerHTML = '';
+    var today = todayNam(), idx = PLAN.findIndex(function (d) { return d.d === today; });
+    if (idx < 0) idx = today < PLAN[0].d ? 0 : PLAN.length - 1;
+    PLAN.forEach(function (day, di) {
+      if (!planShowAll && di !== idx) return;
+      out.appendChild(h('div', { cls: 'thm' }, esc(day.title) + (di === idx ? ' · today' : '')));
+      day.tasks.forEach(function (t) {
+        var done = !!P.plan[t.id], row = h('div', { cls: 'weak' });
+        var lab = h('label', { style: 'display:flex;gap:10px;align-items:center;cursor:pointer;flex:1' });
+        var cb = h('input', { type: 'checkbox', style: 'width:26px;height:26px;flex:0 0 auto' }); cb.checked = done;
+        cb.addEventListener('change', function () { if (cb.checked) P.plan[t.id] = Date.now(); else delete P.plan[t.id]; save(); renderPlan(); });
+        lab.appendChild(cb); lab.appendChild(h('span', { style: done ? 'text-decoration:line-through;color:var(--mut)' : '' }, esc(t.text)));
+        row.appendChild(lab);
+        if (t.go) row.appendChild(h('button', { cls: 'small', onclick: function () { planGo(t); } }, 'Go'));
+        out.appendChild(row);
+      });
+    });
+    out.appendChild(h('button', { cls: 'small ghost', style: 'margin-top:8px', onclick: function () { planShowAll = !planShowAll; renderPlan(); } }, planShowAll ? 'Show today only' : 'Show all days'));
+  }
+  function planGo(t) {
+    var g = t.go;
+    if (g.notes) { showTab('notes'); var th = THEMES.filter(function (x) { return x.id === g.notes; })[0]; if (th) { $('#noteSearch').value = ''; var chip = $('#noteChips [data-th="' + g.notes + '"]'); if (chip) chip.click(); } else { $('#noteSearch').value = g.notes; renderNotes(); } return; }
+    if (g.mock) { showTab('papers'); if (!P.mockRun) startMock(g.mock); return; }
+    startQuiz(g, g.focus ? 8 : 10);
   }
   function renderSaveWarn() { var w = $('#saveWarn'); if (w) w.innerHTML = memoryOnly ? '<span style="color:var(--bad)">⚠ This browser is not saving. Use “Export progress” before you close it.</span>' : ''; }
 
@@ -1958,6 +2064,8 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
     var s = [];
     (GEN_BY_TOPIC[t] || []).forEach(function (k) { s.push({ w: 2, make: function () { return genQ(k); } }); });
     (EXTRA_SOURCES[t] || []).forEach(function (x) { s.push(x); });
+    var jt = JUDGE.filter(function (j) { return j.t === t; });
+    if (jt.length) s.push({ w: 1, make: function () { var l = jt.filter(function (j) { return !used['j:' + j.id]; }); if (!l.length) l = jt; var j = Core.pick(l); used['j:' + j.id] = 1; return judgeQ(j); } });
     var bank = quizBank().filter(function (b) { return b.t === t; });
     if (bank.length) s.push({ w: Math.max(2, Math.min(6, bank.length / 2)), make: function () { return bankQ(pickBank(bank, used)); } });
     return s;
@@ -1968,7 +2076,20 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
     var b = fresh[Math.floor(Math.random() * Math.min(3, fresh.length))]; used[b.id] = 1; return b;
   }
   function wpick(list) { var tot = 0; list.forEach(function (x) { tot += x.w; }); var r = Math.random() * tot; for (var i = 0; i < list.length; i++) { r -= list[i].w; if (r <= 0) return list[i]; } return list[list.length - 1]; }
+  function mistakeCount() { return Object.keys(P.miss).length + Object.keys(P.missGen).reduce(function (s, k) { return s + P.missGen[k]; }, 0); }
   function makeQuestion(sel, used) {
+    if (sel.mistakes) {
+      var ids = Object.keys(P.miss).filter(function (k) { return !used[k]; }), gens = Object.keys(P.missGen);
+      if (ids.length && (!gens.length || Math.random() < 0.6)) {
+        var k = Core.pick(ids); used[k] = 1;
+        if (k.slice(0, 2) === 'j:') { var jj = JUDGE.filter(function (x) { return x.id === k.slice(2); })[0]; if (jj) return judgeQ(jj); }
+        var bb = quizBank().filter(function (x) { return x.id === k; })[0]; if (bb) return bankQ(bb);
+        delete P.miss[k];
+      }
+      if (gens.length) { var gk = Core.pick(gens); return gk === 'tt' ? ttQuestion() : gk === 'trace' ? trQuestion() : genQ(gk); }
+      return makeQuestion({ mixed: true }, used);
+    }
+    if (sel.judge) { var jl = JUDGE.filter(function (j) { return !used['j:' + j.id]; }); if (!jl.length) jl = JUDGE; var j2 = Core.pick(jl); used['j:' + j2.id] = 1; return judgeQ(j2); }
     if (sel.focus) {
       var f = sel.focus;
       if (f === 'hexgrid') return Math.random() < 0.8 ? genQ('bin2hex') : genQ('hex2bin');
@@ -1976,8 +2097,11 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
       if (f === 'copy') { var q = genQ(Core.pick(['den2bin', 'bin2den', 'den2hex', 'hex2den', 'bin2hex', 'hex2bin', 'checksum', 'isbn', 'mod11', 'parity'])); q.copyMode = true; q.focus = q.focus.concat(['copy']); return q; }
       var list = quizBank().filter(function (b) {
         if (f === 'describe') return b.type !== 'mc' && /describe|explain/i.test(b.cmd || '');
+        if (f === 'sdlcst') return (b.f || []).indexOf(f) >= 0 || b.t === 'sdlc';
         return (b.f || []).indexOf(f) >= 0;
       });
+      var js = JUDGE.filter(function (j) { return (j.f || []).indexOf(f) >= 0 && !used['j:' + j.id]; });
+      if (js.length && Math.random() < (f === 'describe' ? 0.5 : 0.25)) { var j = Core.pick(js); used['j:' + j.id] = 1; var jq = judgeQ(j); if (jq.focus.indexOf(f) < 0) jq.focus.push(f); return jq; }
       if (!list.length) return genQ('parity');
       var bq = bankQ(pickBank(list, used)); if (bq.focus.indexOf(f) < 0) bq.focus.push(f); return bq;
     }
@@ -1994,6 +2118,9 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
     el.appendChild(h('div', { cls: 'card' }, '<h2>Quiz</h2><p class="small mut">Pick a topic. 10 questions. Your score is saved.</p>'));
     var c = h('div', { cls: 'card' });
     c.appendChild(h('button', { cls: 'topicbtn', style: 'background:var(--acc);color:#fff', onclick: function () { startQuiz({ mixed: true }, 10); } }, '🔀 Mixed (all topics, weighted like the exam)'));
+    var mc0 = mistakeCount();
+    var mb = h('button', { cls: 'topicbtn', onclick: function () { startQuiz({ mistakes: true }, Math.min(10, Math.max(5, mistakeCount()))); } }, '<span>🔁 My mistakes</span><em>' + (mc0 ? mc0 + ' to fix' : 'none yet') + '</em>'); if (!mc0) mb.disabled = true; c.appendChild(mb);
+    c.appendChild(h('button', { cls: 'topicbtn', onclick: function () { startQuiz({ judge: true }, 8); } }, '<span>⚖️ Mark this answer (be the examiner)</span><em>' + JUDGE.length + ' answers</em>'));
     THEMES.forEach(function (th) {
       c.appendChild(h('div', { cls: 'thm' }, esc(th.name)));
       TOPICS.filter(function (t) { return t.th === th.id; }).forEach(function (t) {
@@ -2006,7 +2133,7 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
     FOCUS.forEach(function (f) { c.appendChild(h('button', { cls: 'topicbtn', onclick: function () { startQuiz({ focus: f.id }, 8); } }, '<span>' + esc(f.name) + '</span><em>' + (pct(P.f[f.id]) == null ? 'new' : pct(P.f[f.id]) + '%') + '</em>')); });
     el.appendChild(c);
   }
-  function selName(sel) { return sel.mixed ? 'Mixed' : sel.topic ? TOPIC[sel.topic].name : FOC[sel.focus].name; }
+  function selName(sel) { return sel.mistakes ? 'My mistakes' : sel.judge ? 'Mark this answer' : sel.mixed ? 'Mixed' : sel.topic ? TOPIC[sel.topic].name : FOC[sel.focus].name; }
   function startQuiz(sel, n) {
     S = { sel: sel, n: n, i: 0, e: 0, m: 0, used: {} };
     showTab('quiz'); $('#quizPick').classList.add('hidden'); $('#quizRun').classList.remove('hidden');
@@ -2086,6 +2213,25 @@ var PAPERS = [2020, 2021, 2022, 2023, 2024, 2025].map(function (y) {
       inp.addEventListener('keydown', function (e) { if (e.key === 'Enter' && inp.value.trim()) finish(inp.value); });
       ans.appendChild(inp); ans.appendChild(b);
     }
+  };
+  function judgeQ(j) { return { type: 'judge', topic: j.t, focus: ['describe'].concat(j.f || []).filter(uniq), judge: j }; }
+  RENDER.judge = function (q, el, done) {
+    var j = q.judge;
+    el.appendChild(h('div', { cls: 'small mut' }, '⚖️ You are the examiner'));
+    el.appendChild(h('div', { cls: 'prompt' }, cmdPre(j) + j.q + ' <span class="marks">[' + j.m + ']</span>'));
+    el.appendChild(h('div', { style: 'background:var(--acc2);border-radius:10px;padding:10px 12px;margin:10px 0' }, '<b>A learner wrote:</b><br>“' + esc(j.ans) + '”'));
+    el.appendChild(h('p', null, 'How many marks does this answer get? Use the strict rules.'));
+    var ch = h('div', { cls: 'choices' }), fb = h('div');
+    for (var k = 0; k <= j.m; k++) (function (k) {
+      ch.appendChild(h('button', { onclick: function (ev) {
+        $$('button', ch).forEach(function (x) { x.disabled = true; }); ev.currentTarget.classList.add('pick');
+        var ok = k === j.right;
+        fb.innerHTML = '<div class="fb ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✓ Correct!' : '✗ It gets ' + j.right + ' / ' + j.m + '.') + '</div><p>' + j.why + '</p>' + (j.better ? '<div class="key"><b>A full-mark answer:</b><br>' + j.better + '</div>' : '');
+        done(ok ? 1 : 0, 1);
+      } }, k + ' mark' + (k === 1 ? '' : 's')));
+    })(k);
+    el.appendChild(ch); el.appendChild(fb);
+    el.appendChild(h('details', { cls: 'work' }, '<summary>Strict marking rules</summary>' + RULES));
   };
   RENDER.mc = function (q, el, done) {
     var b = q.b;
