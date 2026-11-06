@@ -11,15 +11,20 @@
   --acc:#1f5fbf;--acc2:#e8f0fc;--ok:#1b7f47;--okbg:#e6f6ec;--bad:#c22b2b;--badbg:#fdecec;
   --warn:#9a5c00;--warnbg:#fff4e0;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
-@media (prefers-color-scheme:dark){:root{
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
   --bg:#0f141b;--card:#18202b;--ink:#e8edf3;--mut:#9aa7b7;--line:#2c3746;
   --acc:#6ea3ff;--acc2:#1c2a40;--ok:#4cc184;--okbg:#14301f;--bad:#ff7b7b;--badbg:#3a1a1a;
   --warn:#ffc163;--warnbg:#3a2a10;
 }}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0f141b;--card:#18202b;--ink:#e8edf3;--mut:#9aa7b7;--line:#2c3746;
+  --acc:#6ea3ff;--acc2:#1c2a40;--ok:#4cc184;--okbg:#14301f;--bad:#ff7b7b;--badbg:#3a1a1a;
+  --warn:#ffc163;--warnbg:#3a2a10;
+}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header.top{position:sticky;top:0;z-index:5;background:var(--acc);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--acc);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 header.top h1{font-size:18px;margin:0;font-weight:700}
 header.top small{opacity:.9;font-size:13px}
 main{max-width:900px;margin:0 auto;padding:14px 16px 96px}
@@ -131,6 +136,8 @@ table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--
 .label-model{display:inline-block;font-size:12px;font-weight:800;color:var(--warn);background:var(--warnbg);border-radius:6px;padding:2px 8px;margin:4px 0}
 .mq{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
 .hidden{display:none!important}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-box{background:var(--card);color:var(--ink);border-radius:16px;padding:18px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)}
 </style>
 </head>
 <body>
@@ -1858,6 +1865,17 @@ var PLAN = [
   var $$ = function (s, el) { return Array.prototype.slice.call((el || document).querySelectorAll(s)); };
   function h(tag, attrs, html) { var e = document.createElement(tag); if (attrs) for (var k in attrs) { if (attrs[k] == null) continue; if (k === 'cls') e.className = attrs[k]; else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); } if (html != null) e.innerHTML = html; return e; }
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function ask(msg, yes, onYes, no) {
+    var bg = h('div', { cls: 'modal' }), box = h('div', { cls: 'modal-box', role: 'dialog', 'aria-modal': 'true' });
+    box.appendChild(h('p', { style: 'white-space:pre-line;font-size:17px;margin-top:0' }, esc(msg)));
+    var row = h('div', { cls: 'row' });
+    var close = function () { bg.remove(); };
+    row.appendChild(h('button', { onclick: function () { close(); if (onYes) onYes(); } }, esc(yes || 'OK')));
+    if (no !== false) row.appendChild(h('button', { cls: 'ghost', onclick: close }, esc(no || 'Cancel')));
+    box.appendChild(row); bg.appendChild(box); document.body.appendChild(bg);
+    row.firstChild.focus();
+  }
+  function tell(msg) { ask(msg, 'OK', null, false); }
   var EXAM = new Date('2026-11-10T09:00:00+02:00');
   var KEY = 'cs6134-progress-v1';
   var TOPIC = {}; TOPICS.forEach(function (t) { TOPIC[t.id] = t; });
@@ -2005,8 +2023,7 @@ var PLAN = [
     try {
       var p = JSON.parse(txt);
       if (!p || p.v !== 1 || typeof p.t !== 'object') throw new Error('bad');
-      if (!confirm('Replace the progress on this device with the imported progress?')) return;
-      P = fix(p); save(); renderDash(); $('#ioMsg').textContent = 'Progress loaded ✓';
+      ask('Replace the progress on this device with the imported progress?', 'Yes, replace', function () { P = fix(p); save(); renderDash(); $('#ioMsg').textContent = 'Progress loaded ✓'; });
     } catch (e) { $('#ioMsg').textContent = '⚠ That is not a valid progress file.'; }
   }
 
@@ -2477,9 +2494,10 @@ var PLAN = [
   function bestScore(pid) { var b = null; P.mocks.forEach(function (m) { if (m.pid === pid && (!b || m.score / m.max > b.score / b.max)) b = m; }); return b ? b.score + '/' + b.max + ' (' + Math.round(100 * b.score / b.max) + '%)' : ''; }
   function startMock(pid) {
     var paper = getPaper(pid);
-    if (!confirm('Start ' + paper.name + '?\n\nThe 2 h 30 min timer starts now. Your answers are saved as you type.')) return;
-    P.mockRun = { pid: pid, start: Date.now(), ans: {}, done: false, self: {} }; save();
-    window.__renderPapers($('#papersOut')); window.scrollTo(0, 0);
+    ask('Start ' + paper.name + '?\n\nThe 2 h 30 min timer starts now. Your answers are saved as you type.', 'Start', function () {
+      P.mockRun = { pid: pid, start: Date.now(), ans: {}, done: false, self: {} }; save();
+      window.__renderPapers($('#papersOut')); window.scrollTo(0, 0);
+    });
   }
   function renderMock(el) {
     var M = P.mockRun, paper = getPaper(M.pid);
@@ -2491,7 +2509,7 @@ var PLAN = [
     function upd() {
       var left = M.start + MOCK_MS - Date.now(), ck = $('#mockClock'); if (!ck) { clearInterval(mockTimer); return; }
       ck.textContent = fmt(left); tb.classList.toggle('low', left < 10 * 60000);
-      if (left <= 0) { clearInterval(mockTimer); alert('Time is up! Your paper is submitted.'); submit(); }
+      if (left <= 0) { clearInterval(mockTimer); submit(); tell('Time is up! Your paper is submitted.'); }
     }
     upd(); mockTimer = setInterval(upd, 1000);
     el.appendChild(h('div', { cls: 'card small' }, '<b>Instructions.</b> Answer all questions. The marks are shown in brackets [ ]. Total: ' + paper.max + ' marks. Answers save automatically.'));
@@ -2509,9 +2527,9 @@ var PLAN = [
       else if (q.kind === 'trace') c.appendChild(mockTrace(q, i, false));
       el.appendChild(c);
     });
-    var sb = h('button', { style: 'width:100%', onclick: function () { if (confirm('Submit your paper now? You cannot change answers after this.')) submit(); } }, 'Submit paper');
+    var sb = h('button', { style: 'width:100%', onclick: function () { ask('Submit your paper now? You cannot change answers after this.', 'Submit', submit); } }, 'Submit paper');
     el.appendChild(sb);
-    el.appendChild(h('button', { cls: 'ghost', style: 'width:100%;margin-top:10px', onclick: function () { if (confirm('Give up this mock? Your answers will be deleted.')) { P.mockRun = null; save(); clearInterval(mockTimer); window.__renderPapers(el); } } }, 'Give up this mock'));
+    el.appendChild(h('button', { cls: 'ghost', style: 'width:100%;margin-top:10px', onclick: function () { ask('Give up this mock? Your answers will be deleted.', 'Give up', function () { P.mockRun = null; save(); clearInterval(mockTimer); window.__renderPapers(el); }); } }, 'Give up this mock'));
     function submit() { clearInterval(mockTimer); M.done = true; M.end = Date.now(); save(); renderMock(el); window.scrollTo(0, 0); }
   }
   function mockPrompt(q) {
@@ -2590,11 +2608,13 @@ var PLAN = [
     el.appendChild(botEl); upd();
     el.appendChild(h('button', { style: 'width:100%', onclick: function () {
       var s = upd();
-      if (!confirm('Save your total: ' + s + ' / ' + paper.max + '?')) return;
+      ask('Save your total: ' + s + ' / ' + paper.max + '?', 'Save', function () {
       P.mocks.push({ pid: paper.id, name: paper.name, score: s, max: paper.max, date: Date.now() });
       paper.qs.forEach(function (q, i) { rec(P.t, q.topic, scores[i] || 0, q.m); });
-      P.mockRun = null; save(); alert('Saved: ' + s + ' / ' + paper.max + ' (' + Math.round(100 * s / paper.max) + '%). See the Dashboard.');
+      P.mockRun = null; save();
       window.__renderPapers(el); window.scrollTo(0, 0);
+      tell('Saved: ' + s + ' / ' + paper.max + ' (' + Math.round(100 * s / paper.max) + '%). See the Dashboard.');
+      });
     } }, 'Save my total'));
   }
   window.__buildPractice = buildPractice;

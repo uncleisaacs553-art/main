@@ -26,6 +26,7 @@ const path = require('path'), os = require('os');
       if (await p.evaluate(() => window.__P().mockRun)) await p.evaluate(() => { window.__P().mockRun = null; window.__save(); });
       await p.click('[data-tab=dash]');
       const btns = await p.$$('#planOut button.small:not(.ghost)'); await btns[i].click(); await ov('plan go ' + i);
+      const m = await p.$('.modal-box button'); if (m) await m.click();
     }
     await p.evaluate(() => { window.__P().mockRun = null; window.__save(); });
     // Mark-this-answer: answer all with 0 marks

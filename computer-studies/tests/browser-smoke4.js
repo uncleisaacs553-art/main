@@ -5,6 +5,7 @@ const { chromium } = require('playwright');
     const p = await b.newPage({ viewport: { width: w, height: hgt } });
     p.on('pageerror', e => errs.push(w + ' ' + e.message));
     p.on('dialog', d => d.accept());
+    const yes = async () => { await p.waitForSelector('.modal-box button'); await p.click('.modal-box button >> nth=0'); };
     await p.goto('file://' + require('path').resolve(__dirname, '..', 'index.html') + '#papers');
     const ov = async (tag) => { const o = await p.evaluate(() => document.documentElement.scrollWidth - window.innerWidth); if (o > 0) errs.push(w + ' overflow ' + o + 'px on ' + tag); };
     // all practice papers total exactly 100 and are deterministic
@@ -12,7 +13,7 @@ const { chromium } = require('playwright');
     tot.forEach((t, i) => { if (t[0] !== 100) errs.push('practice ' + (i + 1) + ' total ' + t[0]); if (!t[2]) errs.push('practice ' + (i + 1) + ' not deterministic'); if (t[3]) errs.push('2023+ in practice'); });
     console.log(w, 'practice papers', JSON.stringify(tot.map(t => t.slice(0, 2))));
     await ov('papers'); await p.screenshot({ path: require('os').tmpdir() + '/papers-' + w + '.png', fullPage: true });
-    await p.click('text=Practice paper 1 >> xpath=../.. >> button');
+    await p.click('text=Practice paper 1 >> xpath=../.. >> button'); await yes();
     await ov('mock'); await p.screenshot({ path: require('os').tmpdir() + '/mock-' + w + '.png' });
     for (const t of await p.$$('#papersOut textarea')) await t.fill('An area of memory');
     for (const t of await p.$$('#papersOut input[type=text]')) await t.fill('1');
@@ -22,12 +23,12 @@ const { chromium } = require('playwright');
     // reload keeps answers + timer
     await p.reload(); await p.click('[data-tab=papers]');
     const kept = await p.$eval('#papersOut textarea', e => e.value); if (kept !== 'An area of memory') errs.push(w + ' answers not kept after reload');
-    await p.click('text=Submit paper');
+    await p.click('text=Submit paper'); await yes();
     await ov('results');
     const boxes = await p.$$('#papersOut .check input'); for (let i = 0; i < boxes.length; i += 3) await boxes[i].click();
     await p.screenshot({ path: require('os').tmpdir() + '/results-' + w + '.png' });
     const total = await p.$eval('#papersOut .card p', e => e.textContent); console.log(w, total);
-    await p.click('text=Save my total');
+    await p.click('text=Save my total'); await yes(); await yes();
     await p.click('[data-tab=dash]'); const ms = await p.$eval('#mockScores', e => e.innerText); console.log(w, ms.replace(/\s+/g, ' '));
   }
   console.log(errs.length ? errs.join('\n') : 'no errors'); await b.close();
