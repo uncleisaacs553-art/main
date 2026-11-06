@@ -12,6 +12,7 @@ function block(id) {
 const ctx = { module: { exports: {} }, console };
 vm.createContext(ctx);
 vm.runInContext(block('core'), ctx);
+vm.runInContext(block('data') + ';this.LOGIC_STATEMENTS=LOGIC_STATEMENTS;this.BANK=BANK;this.TOPICS=TOPICS;this.FOCUS=FOCUS;this.PAPERS=typeof PAPERS!=="undefined"?PAPERS:[];', ctx);
 const Core = ctx.module.exports;
 let fails = 0, checks = 0;
 function eq(a, b, msg) { checks++; if (a !== b) { fails++; if (fails < 30) console.log('FAIL', msg, 'got', a, 'expected', b); } }
@@ -63,6 +64,60 @@ eq(Core.denToBin(255, 8).bin, '11111111', '255 is 8 ones'); eq(Core.denToBin(75,
 eq(Core.binToHexGrid('1101011').hex, '6B', 'grid 6B'); eq(Core.denToHex(200).hex, 'C8', '200=C8'); eq(Core.hexToDen('2A7').den, 679, '2A7');
 eq((200 + 150 + 99) % 256, 193, 'notes checksum');
 
+
+// ---- truth tables: every fixed statement vs a hand-written JS formula ----
+const NOT = x => x ? 0 : 1, AND = (x, y) => x & y, OR = (x, y) => x | y, XOR = (x, y) => x ^ y, NAND = (x, y) => NOT(x & y), NOR = (x, y) => NOT(x | y);
+const HAND = {
+  'NOT A OR (A AND NOT B)': (A, B) => OR(NOT(A), AND(A, NOT(B))),
+  '(A AND B) OR C': (A, B, C) => OR(AND(A, B), C),
+  '(A OR B) AND NOT C': (A, B, C) => AND(OR(A, B), NOT(C)),
+  'NOT (A AND B) OR C': (A, B, C) => OR(NAND(A, B), C),
+  '(A XOR B) AND C': (A, B, C) => AND(XOR(A, B), C),
+  '(A AND NOT B) OR (NOT A AND B)': (A, B) => XOR(A, B),
+  'NOT (A OR B) AND C': (A, B, C) => AND(NOR(A, B), C),
+  '(A NAND B) OR (B AND C)': (A, B, C) => OR(NAND(A, B), AND(B, C)),
+  '(A OR NOT B) AND (B OR C)': (A, B, C) => AND(OR(A, NOT(B)), OR(B, C)),
+  'NOT A AND NOT B': (A, B) => NOR(A, B),
+  '(A NOR B) OR (A AND C)': (A, B, C) => OR(NOR(A, B), AND(A, C)),
+  '(A AND B) XOR C': (A, B, C) => XOR(AND(A, B), C),
+  'NOT (A XOR B)': (A, B) => NOT(XOR(A, B)),
+  '(A OR B) AND (NOT A OR C)': (A, B, C) => AND(OR(A, B), OR(NOT(A), C))
+};
+ctx.LOGIC_STATEMENTS.forEach(s => {
+  const f = HAND[s]; eq(typeof f, 'function', 'hand formula for ' + s); if (!f) return;
+  const ast = Core.parseLogic('X = ' + s), vars = Core.varsOf(ast);
+  Core.truthTable(ast, vars).forEach(r => eq(r.out, f(r.env.A, r.env.B, r.env.C), s + ' ' + JSON.stringify(r.env)));
+  eq(Core.sameTable(Core.parseLogic(Core.logicStr(ast, true)), ast), true, 'round-trip ' + s);
+});
+// basic gates
+[['AND', AND], ['OR', OR], ['NAND', NAND], ['NOR', NOR], ['XOR', XOR]].forEach(([op, f]) => {
+  for (let A = 0; A < 2; A++) for (let B = 0; B < 2; B++) eq(Core.evalLogic(Core.parseLogic('A ' + op + ' B'), { A, B }), f(A, B), op);
+});
+for (let A = 0; A < 2; A++) eq(Core.evalLogic(Core.parseLogic('NOT A'), { A }), NOT(A), 'NOT');
+// random expressions: independent evaluator over the AST + string round trip + SVG draws
+function indEval(n, e) { if (n.v) return e[n.v]; const a = indEval(n.a[0], e), b = n.a[1] && indEval(n.a[1], e); return { NOT: () => NOT(a), AND: () => AND(a, b), OR: () => OR(a, b), NAND: () => NAND(a, b), NOR: () => NOR(a, b), XOR: () => XOR(a, b) }[n.op](); }
+for (let i = 0; i < N; i++) {
+  const ast = Core.randExpr(i % 2 ? 2 : 3), str = Core.logicStr(ast, true), re = Core.parseLogic(str);
+  Core.rowsFor(['A', 'B', 'C']).forEach(env => { eq(Core.evalLogic(ast, env), indEval(ast, env), 'rand eval ' + str); eq(Core.evalLogic(re, env), indEval(ast, env), 'rand reparse ' + str); });
+  const svg = Core.circuitSVG(ast); eq(/NaN|undefined/.test(svg), false, 'svg ok ' + str);
+}
+// ---- trace tables: each program re-run by a separate simulation of the pseudocode ----
+for (let i = 0; i < 200; i++) Core.TRACE.forEach(p => {
+  const t = Core.traceQ(p.id), d = t.data, last = t.rows[t.rows.length - 1], outCol = t.cols.indexOf('OUTPUT');
+  const lastOut = [...t.rows].reverse().find(r => r[outCol] !== '')[outCol];
+  let want;
+  if (p.id === 'tot') want = d.nums.reduce((a, b) => a + b) + ', ' + d.nums.filter(x => x > d.lim).length;
+  if (p.id === 'pass') want = (d.m[3] >= 50 ? 'PASS' : 'FAIL') + ', ' + d.m.filter(x => x >= 50).length;
+  if (p.id === 'digits') want = String([...String(d.n)].reduce((a, b) => a + +b, 0));
+  if (p.id === 'double') { let c = 0, x = d.x; while (x <= d.lim) { x *= 2; c++; } want = String(c); }
+  if (p.id === 'high') want = Math.max(...d.a) + ', ' + Math.min(...d.a);
+  if (p.id === 'rogue') { const v = d.a.slice(0, -1); want = String(Math.round(v.reduce((a, b) => a + b) / v.length * 100) / 100); }
+  if (p.id === 'evenodd') want = d.a.filter(x => x % 2 === 0).length + ', ' + d.a.filter(x => x % 2).reduce((a, b) => a + b, 0);
+  if (p.id === 'case') { const m = d.a[3]; want = m >= 80 ? 'A' : m >= 60 ? 'B' : m >= 40 ? 'C' : 'U'; eq(last[3], String(d.a.filter(x => x >= 80).length), 'case ACount'); }
+  if (p.id === 'bin') want = d.n.toString(2);
+  eq(lastOut, want, 'trace ' + p.id + ' ' + JSON.stringify(d));
+  t.rows.forEach(r => eq(r.length, t.cols.length, 'trace row width ' + p.id));
+});
 /*@@TEST-MORE@@*/
 
 console.log(fails ? `\n${fails} FAILED of ${checks} checks` : `All ${checks} checks passed.`);

@@ -120,8 +120,9 @@ table.tt th.wk{background:transparent;color:var(--mut);font-size:13px}
 .svgwrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px;margin:8px 0}
 .svgwrap svg{display:block}
 /* trace */
-table.trace input{font:17px var(--mono);width:74px;min-height:44px;padding:4px 6px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--ink);text-align:center}
+table.trace input{font:17px var(--mono);width:62px;min-height:44px;padding:4px 6px;border-radius:8px;border:2px solid var(--line);background:var(--card);color:var(--ink);text-align:center}
 table.trace td.r input{border-color:var(--ok)}table.trace td.w input{border-color:var(--bad);background:var(--badbg)}
+table.trace td{padding:4px}
 table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--mono)}
 /* mock */
 .timer{position:sticky;top:52px;z-index:4;background:var(--card);border:2px solid var(--acc);border-radius:12px;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-weight:700}
@@ -708,13 +709,212 @@ var Core = (function () {
   };
   var GEN_TOPIC = { den2bin: 'num', bin2den: 'num', den2hex: 'num', hex2den: 'num', bin2hex: 'num', hex2bin: 'num', parity: 'err', checksum: 'err', isbn: 'chk', mod11: 'chk' };
 
-  /*@@CORE-MORE@@*/
+  // ================= LOGIC =================
+  var OPS2 = ['AND', 'OR', 'NAND', 'NOR', 'XOR'];
+  function parseLogic(str) {
+    var s = String(str).toUpperCase().replace(/^\s*[A-Z]\s*=(?!=)/, '');
+    s = s.replace(/¬/g, ' NOT ').replace(/[.∧·]/g, ' AND ').replace(/[+∨]/g, ' OR ').replace(/⊕/g, ' XOR ');
+    var toks = s.match(/\(|\)|[A-Z]+|\S/g) || [], i = 0;
+    function peek() { return toks[i]; }
+    function eat(t) { if (toks[i] !== t) throw new Error('Expected ' + t); i++; }
+    function pOr() { var l = pXor(); while (peek() === 'OR' || peek() === 'NOR') { var op = toks[i++]; l = { op: op, a: [l, pXor()] }; } return l; }
+    function pXor() { var l = pAnd(); while (peek() === 'XOR') { i++; l = { op: 'XOR', a: [l, pAnd()] }; } return l; }
+    function pAnd() { var l = pNot(); while (peek() === 'AND' || peek() === 'NAND') { var op = toks[i++]; l = { op: op, a: [l, pNot()] }; } return l; }
+    function pNot() { if (peek() === 'NOT') { i++; return { op: 'NOT', a: [pNot()] }; } return pAtom(); }
+    function pAtom() {
+      var t = peek();
+      if (t === '(') { i++; var e = pOr(); eat(')'); return e; }
+      if (t && /^[A-Z]$/.test(t)) { i++; return { v: t }; }
+      throw new Error(t ? 'Did not understand "' + t + '"' : 'Statement ends too early');
+    }
+    var ast = pOr();
+    if (i < toks.length) throw new Error('Did not understand "' + toks[i] + '"');
+    return ast;
+  }
+  function evalLogic(n, env) {
+    if (n.v) return env[n.v] ? 1 : 0;
+    var x = evalLogic(n.a[0], env), y = n.a[1] ? evalLogic(n.a[1], env) : 0;
+    switch (n.op) {
+      case 'NOT': return x ? 0 : 1; case 'AND': return x & y; case 'OR': return x | y;
+      case 'NAND': return (x & y) ? 0 : 1; case 'NOR': return (x | y) ? 0 : 1; case 'XOR': return x ^ y;
+    }
+    throw new Error('bad op');
+  }
+  function logicStr(n, top) {
+    if (n.v) return n.v;
+    if (n.op === 'NOT') return 'NOT ' + (n.a[0].v || n.a[0].op === 'NOT' ? logicStr(n.a[0]) : '(' + logicStr(n.a[0], true) + ')');
+    var s = logicStr(n.a[0]) + ' ' + n.op + ' ' + logicStr(n.a[1]);
+    return top ? s : '(' + s + ')';
+  }
+  function varsOf(n, acc) { acc = acc || []; if (n.v) { if (acc.indexOf(n.v) < 0) acc.push(n.v); } else n.a.forEach(function (c) { varsOf(c, acc); }); return acc.sort(); }
+  function rowsFor(vars) { var rows = []; for (var r = 0; r < (1 << vars.length); r++) { var env = {}; vars.forEach(function (v, k) { env[v] = (r >> (vars.length - 1 - k)) & 1; }); rows.push(env); } return rows; }
+  function truthTable(ast, vars) { vars = vars || varsOf(ast); return rowsFor(vars).map(function (env) { return { env: env, out: evalLogic(ast, env) }; }); }
+  function subExprs(n, acc) { acc = acc || []; if (!n.v) { n.a.forEach(function (c) { subExprs(c, acc); }); acc.push(n); } return acc; }
+  function sameTable(a, b) {
+    var vars = varsOf(a).concat(varsOf(b)).filter(function (x, i, arr) { return arr.indexOf(x) === i; }).sort();
+    return rowsFor(vars).every(function (env) { return evalLogic(a, env) === evalLogic(b, env); });
+  }
+  var V = function (x) { return { v: x }; }, NOT = function (x) { return { op: 'NOT', a: [x] }; }, B = function (op, l, r) { return { op: op, a: [l, r] }; };
+  function maybeNot(x, p) { return Math.random() < p ? NOT(x) : x; }
+  function randExpr(nIn) {
+    var g = function () { return pick(OPS2); }, A = V('A'), Bv = V('B'), C = V('C');
+    var t = R(0, 4), e;
+    if (nIn === 2) {
+      if (t === 0) e = B(g(), maybeNot(A, .5), maybeNot(Bv, .4));
+      else if (t === 1) e = B(g(), B(g(), A, Bv), maybeNot(pick([A, Bv]), .6));
+      else if (t === 2) e = B(g(), maybeNot(A, .5), B(g(), A, Bv));
+      else if (t === 3) e = NOT(B(pick(['AND', 'OR', 'XOR']), A, maybeNot(Bv, .5)));
+      else e = B(g(), B(g(), A, NOT(Bv)), B(g(), NOT(A), Bv));
+    } else {
+      if (t === 0) e = B(g(), B(g(), A, Bv), maybeNot(C, .4));
+      else if (t === 1) e = B(g(), maybeNot(A, .4), B(g(), Bv, C));
+      else if (t === 2) e = B(g(), B(g(), A, Bv), B(g(), Bv, C));
+      else if (t === 3) e = B(g(), B(g(), A, maybeNot(Bv, .6)), NOT(C));
+      else e = B(g(), NOT(B(g(), A, Bv)), B(g(), A, C));
+    }
+    return e;
+  }
+  // ---- circuit drawing (SVG) ----
+  function circuitSVG(ast, opt) {
+    opt = opt || {}; var names = opt.names !== false, out = opt.out || 'X';
+    var slot = 0, maxCol = 0, gates = [], leaves = [];
+    function lay(n) {
+      if (n.v) { n._y = 30 + slot * 52; slot++; n._c = 0; leaves.push(n); return; }
+      n.a.forEach(lay);
+      n._c = 1 + Math.max.apply(null, n.a.map(function (c) { return c._c; }));
+      n._y = n.a.reduce(function (s, c) { return s + c._y; }, 0) / n.a.length;
+      if (n.op === 'NOT') n._y = n.a[0]._y;
+      maxCol = Math.max(maxCol, n._c); gates.push(n);
+    }
+    lay(ast);
+    var GX = function (c) { return 46 + (c - 1) * 104; };
+    function outPt(n) { if (n.v) return [26, n._y]; var x = GX(n._c); return [x + (n.op === 'NOT' || /^N/.test(n.op) ? (n.op === 'NOT' ? 44 : 53) : 45), n._y]; }
+    var W = GX(maxCol) + 53 + 46, H = 10 + slot * 52 + (slot < 2 ? 20 : 0), svg = [];
+    var stroke = 'currentColor';
+    leaves.forEach(function (l) { svg.push('<text x="6" y="' + (l._y + 6) + '" font-size="17" font-weight="700" fill="' + stroke + '">' + l.v + '</text>'); });
+    gates.forEach(function (n) {
+      var x = GX(n._c), y = n._y, d;
+      var pins = n.op === 'NOT' ? [y] : [y - 11, y + 11];
+      n.a.forEach(function (c, k) {
+        var o = outPt(c), px = x + (/OR/.test(n.op) ? 5 : 0), py = pins[k], mid = x - 14 - k * 8;
+        svg.push('<path d="M' + o[0] + ' ' + o[1] + ' H' + mid + ' V' + py + ' H' + px + '" fill="none" stroke="' + stroke + '" stroke-width="2"/>');
+      });
+      if (n.op === 'NOT') d = 'M' + x + ' ' + (y - 15) + ' L' + (x + 34) + ' ' + y + ' L' + x + ' ' + (y + 15) + ' Z';
+      else if (n.op === 'AND' || n.op === 'NAND') d = 'M' + x + ' ' + (y - 20) + ' H' + (x + 25) + ' A20 20 0 0 1 ' + (x + 25) + ' ' + (y + 20) + ' H' + x + ' Z';
+      else d = 'M' + x + ' ' + (y - 20) + ' Q' + (x + 30) + ' ' + (y - 20) + ' ' + (x + 45) + ' ' + y + ' Q' + (x + 30) + ' ' + (y + 20) + ' ' + x + ' ' + (y + 20) + ' Q' + (x + 12) + ' ' + y + ' ' + x + ' ' + (y - 20) + ' Z';
+      svg.push('<path d="' + d + '" fill="var(--card)" stroke="' + stroke + '" stroke-width="2"/>');
+      if (n.op === 'XOR') svg.push('<path d="M' + (x - 7) + ' ' + (y - 20) + ' Q' + (x + 5) + ' ' + y + ' ' + (x - 7) + ' ' + (y + 20) + '" fill="none" stroke="' + stroke + '" stroke-width="2"/>');
+      if (n.op === 'NOT') svg.push('<circle cx="' + (x + 39) + '" cy="' + y + '" r="5" fill="var(--card)" stroke="' + stroke + '" stroke-width="2"/>');
+      if (n.op === 'NAND' || n.op === 'NOR') svg.push('<circle cx="' + (x + 49) + '" cy="' + y + '" r="4" fill="var(--card)" stroke="' + stroke + '" stroke-width="2"/>');
+      if (names) svg.push('<text x="' + (x + (n.op === 'NOT' ? 4 : 9)) + '" y="' + (y + 4) + '" font-size="' + (n.op === 'NOT' ? 8 : 10) + '" font-weight="700" fill="var(--mut)">' + n.op + '</text>');
+    });
+    var o = outPt(ast);
+    svg.push('<path d="M' + o[0] + ' ' + o[1] + ' H' + (W - 22) + '" stroke="' + stroke + '" stroke-width="2"/><text x="' + (W - 18) + '" y="' + (o[1] + 6) + '" font-size="17" font-weight="700" fill="' + stroke + '">' + out + '</text>');
+    gates.concat(leaves).forEach(function (n) { delete n._y; delete n._c; });
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" style="color:var(--ink)" role="img" aria-label="Logic circuit">' + svg.join('') + '</svg>';
+  }
+
+  // ================= TRACE TABLES =================
+  // Each program: code(inputs) -> pseudocode text; gen() -> inputs; run(inputs) -> {cols, rows}
+  // Rows: first row = values after the start lines; then one row per pass of the loop.
+  // Every variable is written in every row. OUTPUT only in the row where it happens.
+  var TRACE = [
+    { id: 'tot', title: 'Totalling and counting (FOR loop)',
+      gen: function () { var a = []; for (var i = 0; i < 5; i++) a.push(R(1, 25)); return { nums: a, lim: pick([10, 12, 15]) }; },
+      code: function (d) { return 'Total ← 0\nCount ← 0\nFOR i ← 1 TO 5\n    INPUT Num\n    IF Num > ' + d.lim + ' THEN\n        Count ← Count + 1\n    ENDIF\n    Total ← Total + Num\nNEXT i\nOUTPUT Total, Count'; },
+      inputs: function (d) { return d.nums.join(', '); },
+      run: function (d) {
+        var rows = [], Total = 0, Count = 0; rows.push(['', '', Count, Total, '']);
+        for (var i = 1; i <= 5; i++) { var Num = d.nums[i - 1]; if (Num > d.lim) Count++; Total += Num; rows.push([i, Num, Count, Total, i === 5 ? Total + ', ' + Count : '']); }
+        return { cols: ['i', 'Num', 'Count', 'Total', 'OUTPUT'], rows: rows };
+      } },
+    { id: 'pass', title: 'Pass or fail (IF … ELSE)',
+      gen: function () { var a = []; for (var i = 0; i < 4; i++) a.push(pick([R(20, 49), R(51, 95), 50])); return { m: a }; },
+      code: function () { return 'Passes ← 0\nFOR k ← 1 TO 4\n    INPUT Mark\n    IF Mark >= 50 THEN\n        Result ← "PASS"\n        Passes ← Passes + 1\n    ELSE\n        Result ← "FAIL"\n    ENDIF\n    OUTPUT Result\nNEXT k\nOUTPUT Passes'; },
+      inputs: function (d) { return d.m.join(', '); },
+      run: function (d) {
+        var rows = [['', '', '', 0, '']], Passes = 0;
+        for (var k = 1; k <= 4; k++) { var M = d.m[k - 1], Res; if (M >= 50) { Res = 'PASS'; Passes++; } else Res = 'FAIL'; rows.push([k, M, Res, Passes, k === 4 ? Res + ', ' + Passes : Res]); }
+        return { cols: ['k', 'Mark', 'Result', 'Passes', 'OUTPUT'], rows: rows };
+      } },
+    { id: 'digits', title: 'Digit sum (WHILE, MOD, DIV)',
+      gen: function () { return { n: R(100, 9999) }; },
+      code: function () { return 'INPUT N\nSum ← 0\nWHILE N > 0 DO\n    Digit ← N MOD 10\n    Sum ← Sum + Digit\n    N ← N DIV 10\nENDWHILE\nOUTPUT Sum'; },
+      inputs: function (d) { return String(d.n); },
+      run: function (d) {
+        var N = d.n, Sum = 0, rows = [[N, '', Sum, '']];
+        while (N > 0) { var Dg = N % 10; Sum += Dg; N = Math.floor(N / 10); rows.push([N, Dg, Sum, N > 0 ? '' : Sum]); }
+        return { cols: ['N', 'Digit', 'Sum', 'OUTPUT'], rows: rows };
+      } },
+    { id: 'double', title: 'Doubling (REPEAT … UNTIL)',
+      gen: function () { return { x: R(2, 7), lim: pick([50, 60, 80, 100, 150]) }; },
+      code: function (d) { return 'X ← ' + d.x + '\nCount ← 0\nREPEAT\n    X ← X * 2\n    Count ← Count + 1\nUNTIL X > ' + d.lim + '\nOUTPUT Count'; },
+      inputs: function () { return 'none'; },
+      run: function (d) {
+        var X = d.x, C = 0, rows = [[X, C, '']];
+        do { X *= 2; C++; rows.push([X, C, X > d.lim ? C : '']); } while (!(X > d.lim));
+        return { cols: ['X', 'Count', 'OUTPUT'], rows: rows };
+      } },
+    { id: 'high', title: 'Highest and lowest',
+      gen: function () { var a = []; for (var i = 0; i < 5; i++) a.push(R(10, 99)); return { a: a }; },
+      code: function () { return 'INPUT Num\nHighest ← Num\nLowest ← Num\nFOR c ← 2 TO 5\n    INPUT Num\n    IF Num > Highest THEN\n        Highest ← Num\n    ENDIF\n    IF Num < Lowest THEN\n        Lowest ← Num\n    ENDIF\nNEXT c\nOUTPUT Highest, Lowest'; },
+      inputs: function (d) { return d.a.join(', '); },
+      run: function (d) {
+        var Num = d.a[0], Hi = Num, Lo = Num, rows = [['', Num, Hi, Lo, '']];
+        for (var c = 2; c <= 5; c++) { Num = d.a[c - 1]; if (Num > Hi) Hi = Num; if (Num < Lo) Lo = Num; rows.push([c, Num, Hi, Lo, c === 5 ? Hi + ', ' + Lo : '']); }
+        return { cols: ['c', 'Num', 'Highest', 'Lowest', 'OUTPUT'], rows: rows };
+      } },
+    { id: 'rogue', title: 'Average with a stop value (WHILE)',
+      gen: function () { var a = [], n = R(3, 5); for (var i = 0; i < n; i++) a.push(R(1, 20)); a.push(-1); return { a: a }; },
+      code: function () { return 'Total ← 0\nCount ← 0\nINPUT Num\nWHILE Num <> -1 DO\n    Total ← Total + Num\n    Count ← Count + 1\n    INPUT Num\nENDWHILE\nAverage ← Total / Count\nOUTPUT Average'; },
+      inputs: function (d) { return d.a.join(', '); },
+      run: function (d) {
+        var T = 0, C = 0, k = 0, Num = d.a[k++], rows = [[Num, T, C, '', '']];
+        while (Num !== -1) { T += Num; C++; Num = d.a[k++]; rows.push([Num, T, C, '', '']); }
+        var av = Math.round(T / C * 100) / 100; rows.push(['', T, C, av, av]);
+        return { cols: ['Num', 'Total', 'Count', 'Average', 'OUTPUT'], rows: rows, note: 'Last row: after the loop. Round the average to 2 decimal places.' };
+      } },
+    { id: 'evenodd', title: 'Even numbers (MOD) and odd total',
+      gen: function () { var a = []; for (var i = 0; i < 5; i++) a.push(R(1, 30)); return { a: a }; },
+      code: function () { return 'Evens ← 0\nOddTotal ← 0\nFOR i ← 1 TO 5\n    INPUT Num\n    IF Num MOD 2 = 0 THEN\n        Evens ← Evens + 1\n    ELSE\n        OddTotal ← OddTotal + Num\n    ENDIF\nNEXT i\nOUTPUT Evens, OddTotal'; },
+      inputs: function (d) { return d.a.join(', '); },
+      run: function (d) {
+        var E = 0, O = 0, rows = [['', '', E, O, '']];
+        for (var i = 1; i <= 5; i++) { var n = d.a[i - 1]; if (n % 2 === 0) E++; else O += n; rows.push([i, n, E, O, i === 5 ? E + ', ' + O : '']); }
+        return { cols: ['i', 'Num', 'Evens', 'OddTotal', 'OUTPUT'], rows: rows };
+      } },
+    { id: 'case', title: 'Grades (CASE)',
+      gen: function () { var a = []; for (var i = 0; i < 4; i++) a.push(R(30, 99)); return { a: a }; },
+      code: function () { return 'ACount ← 0\nFOR j ← 1 TO 4\n    INPUT Mark\n    CASE OF Mark\n        80 TO 100 : Grade ← "A"\n                    ACount ← ACount + 1\n        60 TO 79  : Grade ← "B"\n        40 TO 59  : Grade ← "C"\n        OTHERWISE   Grade ← "U"\n    ENDCASE\n    OUTPUT Grade\nNEXT j'; },
+      inputs: function (d) { return d.a.join(', '); },
+      run: function (d) {
+        var A = 0, rows = [['', '', '', A, '']];
+        for (var j = 1; j <= 4; j++) { var m = d.a[j - 1], g; if (m >= 80) { g = 'A'; A++; } else if (m >= 60) g = 'B'; else if (m >= 40) g = 'C'; else g = 'U'; rows.push([j, m, g, A, g]); }
+        return { cols: ['j', 'Mark', 'Grade', 'ACount', 'OUTPUT'], rows: rows };
+      } },
+    { id: 'bin', title: 'Denary to binary (DIV and MOD)',
+      gen: function () { return { n: R(5, 30) }; },
+      code: function () { return 'INPUT Number\nBinary ← ""\nREPEAT\n    Bit ← Number MOD 2\n    Binary ← Bit & Binary\n    Number ← Number DIV 2\nUNTIL Number = 0\nOUTPUT Binary'; },
+      inputs: function (d) { return String(d.n); },
+      run: function (d) {
+        var N = d.n, Bn = '', rows = [[N, '', '', '']];
+        do { var b = N % 2; Bn = b + Bn; N = Math.floor(N / 2); rows.push([N, b, Bn, N === 0 ? Bn : '']); } while (N !== 0);
+        return { cols: ['Number', 'Bit', 'Binary', 'OUTPUT'], rows: rows, note: '& joins text. Bit & Binary puts the new bit on the LEFT.' };
+      } }
+  ];
+  function traceQ(id) {
+    var p = id ? TRACE.filter(function (t) { return t.id === id; })[0] : pick(TRACE), d = p.gen(), r = p.run(d);
+    r.rows = r.rows.map(function (row) { return row.map(function (c) { return String(c); }); });
+    return { id: p.id, title: p.title, code: p.code(d), inputs: p.inputs(d), cols: r.cols, rows: r.rows, note: r.note, data: d };
+  }
 
   return {
     R: R, pick: pick, pad: pad, norm: norm, stripZ: stripZ, grp: grp, HEX: HEX,
     denToBin: denToBin, binToDen: binToDen, denToHex: denToHex, hexToDen: hexToDen, binToHexGrid: binToHexGrid, hexToBin: hexToBin,
     countOnes: countOnes, parityBit: parityBit, isbnCheck: isbnCheck, mod11Check: mod11Check,
     G: G, GEN_TOPIC: GEN_TOPIC, tbl: tbl, ol: ol
+    , parseLogic: parseLogic, evalLogic: evalLogic, logicStr: logicStr, varsOf: varsOf, rowsFor: rowsFor, truthTable: truthTable,
+    subExprs: subExprs, sameTable: sameTable, randExpr: randExpr, circuitSVG: circuitSVG, OPS2: OPS2, TRACE: TRACE, traceQ: traceQ
     /*@@CORE-EXPORTS@@*/
   };
 })();
@@ -795,6 +995,23 @@ var BANK = [
   /*@@BANK-MORE@@*/
 ];
 
+// Fixed logic statements (checked against hand-written formulas in tests/test-core.js)
+var LOGIC_STATEMENTS = [
+  'NOT A OR (A AND NOT B)',
+  '(A AND B) OR C',
+  '(A OR B) AND NOT C',
+  'NOT (A AND B) OR C',
+  '(A XOR B) AND C',
+  '(A AND NOT B) OR (NOT A AND B)',
+  'NOT (A OR B) AND C',
+  '(A NAND B) OR (B AND C)',
+  '(A OR NOT B) AND (B OR C)',
+  'NOT A AND NOT B',
+  '(A NOR B) OR (A AND C)',
+  '(A AND B) XOR C',
+  'NOT (A XOR B)',
+  '(A OR B) AND (NOT A OR C)'
+];
 /*@@DATA-MORE@@*/
 </script>
 
@@ -1164,6 +1381,121 @@ var BANK = [
     } }, 'Mark my answer');
     el.appendChild(go);
   };
+
+  // ---------- truth tables ----------
+  function ttQuestion() {
+    var r = Math.random(), mode, ast, label = '';
+    if (r < 0.25) {
+      var op = Core.pick(['AND', 'OR', 'NOT', 'NAND', 'NOR', 'XOR']); mode = 'gate';
+      ast = op === 'NOT' ? { op: 'NOT', a: [{ v: 'A' }] } : { op: op, a: [{ v: 'A' }, { v: 'B' }] };
+      label = op;
+    } else if (r < 0.55) { mode = 'stmt'; ast = Math.random() < 0.5 ? Core.parseLogic(Core.pick(LOGIC_STATEMENTS)) : Core.randExpr(Core.pick([2, 3, 3])); }
+    else if (r < 0.85) { mode = 'circ'; ast = Core.randExpr(Core.pick([2, 3, 3])); }
+    else { mode = 'write'; ast = Core.randExpr(Core.pick([2, 3])); }
+    return { type: 'tt', topic: 'logic', focus: [], tt: { mode: mode, ast: ast, label: label } };
+  }
+  RENDER.tt = function (q, el, done) {
+    var t = q.tt, ast = t.ast, vars = Core.varsOf(ast), names = true;
+    if (t.mode === 'gate') el.appendChild(h('div', { cls: 'prompt' }, 'Complete the truth table for a <b>' + t.label + '</b> gate. <span class="marks">[' + (t.label === 'NOT' ? 1 : 2) + ']</span><br><span class="small mut">Tap a box to change it: 0 → 1.</span>'));
+    if (t.mode === 'stmt') el.appendChild(h('div', { cls: 'prompt' }, 'Complete the truth table for this logic statement:<div class="big" style="font-size:18px">X = ' + esc(Core.logicStr(ast, true)) + '</div><span class="small mut">Tap a box to change it. Working columns help you, but only X is marked.</span>'));
+    if (t.mode === 'circ' || t.mode === 'write') {
+      el.appendChild(h('div', { cls: 'prompt' }, t.mode === 'circ' ? 'Complete the truth table for this logic circuit. <span class="small mut">Tap a box to change it.</span>' : 'Write the logic statement for this circuit. Use AND, OR, NOT, NAND, NOR, XOR and brackets. <span class="marks">[2]</span>'));
+      var sw = h('div', { cls: 'svgwrap' }, Core.circuitSVG(ast, { names: names })); el.appendChild(sw);
+      var tg = h('label', { cls: 'small', style: 'display:flex;gap:8px;align-items:center;min-height:40px' }, '<input type="checkbox" checked style="width:22px;height:22px"> Show gate names (exam papers do not show them)');
+      tg.querySelector('input').addEventListener('change', function (e) { sw.innerHTML = Core.circuitSVG(ast, { names: e.target.checked }); });
+      el.appendChild(tg);
+    }
+    var fb = h('div');
+    if (t.mode === 'write') {
+      var inp = h('input', { type: 'text', autocapitalize: 'characters', autocomplete: 'off', spellcheck: 'false', placeholder: 'X = (A AND B) OR NOT C' });
+      var b = h('button', { style: 'width:100%;margin-top:10px', onclick: function () {
+        var user; try { user = Core.parseLogic(inp.value); } catch (e) { fb.innerHTML = '<div class="fb part">' + esc(e.message) + '. Check your brackets and words.</div>'; return; }
+        var ok = Core.sameTable(user, ast), exact = Core.logicStr(user, true) === Core.logicStr(ast, true);
+        b.disabled = true; inp.disabled = true;
+        fb.innerHTML = '<div class="fb ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✓ Correct' + (exact ? '!' : ' — it gives the same truth table.') : '✗ Not the same circuit.') + '</div><p>Model answer: <b class="mono">X = ' + esc(Core.logicStr(ast, true)) + '</b></p>' + ttHTML(ast, vars, true);
+        done(ok ? 2 : 0, 2);
+      } }, 'Check');
+      el.appendChild(inp); el.appendChild(b); el.appendChild(fb); return;
+    }
+    var subs = (vars.length === 3 || t.mode === 'stmt') ? Core.subExprs(ast).slice(0, -1).filter(function (n) { return !(n.op === 'NOT' && n.a[0].v); }) : [];
+    if (t.mode === 'gate') subs = [];
+    var rows = Core.rowsFor(vars), tbl = h('table', { cls: 'tt' }), letters = 'PQRSTU';
+    var hd = '<tr>' + vars.map(function (v) { return '<th>' + v + '</th>'; }).join('') + subs.map(function (s, i) { return '<th class="wk">' + letters[i] + '<br><span style="font-weight:400">' + esc(Core.logicStr(s, true)) + '</span></th>'; }).join('') + '<th>X</th></tr>';
+    tbl.innerHTML = hd;
+    var cells = [];
+    rows.forEach(function (env) {
+      var tr = h('tr');
+      vars.forEach(function (v) { tr.appendChild(h('td', { cls: 'in' }, String(env[v]))); });
+      subs.concat([ast]).forEach(function (node, k) {
+        var td = h('td'), btn = h('button', { cls: 'cell' + (k === subs.length ? '' : ' wk'), type: 'button' }, '');
+        btn.addEventListener('click', function () { btn.textContent = btn.textContent === '0' ? '1' : '0'; btn.classList.add('set'); });
+        td.appendChild(btn); tr.appendChild(td);
+        if (k === subs.length) cells.push({ td: td, btn: btn, exp: Core.evalLogic(ast, env) });
+        else btn._exp = Core.evalLogic(node, env);
+      });
+      tbl.appendChild(tr);
+    });
+    el.appendChild(h('div', { cls: 'tw' })).appendChild(tbl);
+    var marks = t.mode === 'gate' ? (t.label === 'NOT' ? 1 : 2) : rows.length === 8 ? 4 : 2;
+    var cb = h('button', { style: 'width:100%;margin-top:10px', onclick: function () {
+      if (cells.some(function (c) { return c.btn.textContent === ''; })) { fb.innerHTML = '<div class="fb part">Fill every box in column X first.</div>'; return; }
+      cb.disabled = true;
+      var right = 0;
+      cells.forEach(function (c) { var ok = +c.btn.textContent === c.exp; if (ok) right++; c.td.className = ok ? 'r' : 'w'; if (!ok) c.btn.textContent = c.btn.textContent + '→' + c.exp; c.btn.disabled = true; });
+      $$('button.wk', tbl).forEach(function (b2) { b2.disabled = true; if (b2.textContent === '') b2.textContent = String(b2._exp); else if (b2.textContent !== String(b2._exp)) { b2.textContent = b2.textContent + '→' + b2._exp; b2.parentNode.className = 'w'; } else b2.parentNode.className = 'r'; });
+      var e = Math.round(marks * right / cells.length * 2) / 2;
+      fb.innerHTML = '<div class="fb ' + (right === cells.length ? 'ok' : right ? 'part' : 'bad') + '">' + right + ' of ' + cells.length + ' rows correct → ' + e + ' / ' + marks + '</div>' + gateHelp(ast);
+      done(e, marks);
+    } }, 'Check');
+    el.appendChild(cb); el.appendChild(fb);
+  };
+  function ttHTML(ast, vars, full) {
+    var subs = full ? Core.subExprs(ast).slice(0, -1) : [];
+    var hd = vars.concat(subs.map(function (s) { return Core.logicStr(s, true); })).concat(['X']);
+    var rows = Core.rowsFor(vars).map(function (env) { return vars.map(function (v) { return env[v]; }).concat(subs.map(function (s) { return Core.evalLogic(s, env); })).concat([Core.evalLogic(ast, env)]); });
+    return Core.tbl(hd.map(esc), rows, 'tt');
+  }
+  function gateHelp(ast) {
+    var ops = []; (function walk(n) { if (!n.v) { if (ops.indexOf(n.op) < 0) ops.push(n.op); n.a.forEach(walk); } })(ast);
+    var R2 = { AND: 'AND: 1 only if both inputs are 1.', OR: 'OR: 1 if at least one input is 1.', NOT: 'NOT: turns 1 into 0 and 0 into 1.', NAND: 'NAND: opposite of AND. 0 only if both are 1.', NOR: 'NOR: opposite of OR. 1 only if both are 0.', XOR: 'XOR: 1 if the inputs are different.' };
+    return '<details class="work"><summary>Gate rules</summary><ul>' + ops.map(function (o) { return '<li>' + R2[o] + '</li>'; }).join('') + '</ul><p class="small">Tip: work out each bracket first in a working column, then the final gate.</p></details>';
+  }
+  window.__addSource('logic', 6, ttQuestion);
+
+  // ---------- trace tables ----------
+  function trQuestion() { return { type: 'trace', topic: 'trace', focus: [], tr: Core.traceQ() }; }
+  RENDER.trace = function (q, el, done) {
+    var t = q.tr;
+    el.appendChild(h('div', { cls: 'prompt' }, '<b>' + esc(t.title) + '</b><br>Complete the trace table for this algorithm. Input data: <span class="big" style="font-size:18px">' + esc(t.inputs) + '</span>'));
+    el.appendChild(h('pre', null, esc(t.code)));
+    el.appendChild(h('p', { cls: 'small mut' }, 'Row 1 = values after the start lines. Then one row for each pass of the loop. Write every variable in every row (leave a box empty if it has no value yet). Write OUTPUT only in the row where it happens.' + (t.note ? ' ' + esc(t.note) : '')));
+    var tbl = h('table', { cls: 'trace' }); tbl.innerHTML = '<tr>' + t.cols.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr>';
+    var ins = [];
+    t.rows.forEach(function (row) {
+      var tr = h('tr');
+      row.forEach(function (exp) { var td = h('td'), i = h('input', { type: 'text', autocomplete: 'off', autocapitalize: 'characters', spellcheck: 'false' }); td.appendChild(i); tr.appendChild(td); ins.push({ td: td, i: i, exp: exp }); });
+      tbl.appendChild(tr);
+    });
+    el.appendChild(h('div', { cls: 'tw' })).appendChild(tbl);
+    var fb = h('div');
+    var n = function (s) { return String(s).toUpperCase().replace(/["'\s]/g, ''); };
+    var cb = h('button', { style: 'width:100%;margin-top:10px', onclick: function () {
+      cb.disabled = true; var rowsOk = 0, rc = t.cols.length;
+      for (var r = 0; r < t.rows.length; r++) {
+        var all = true;
+        for (var c = 0; c < rc; c++) {
+          var x = ins[r * rc + c], ok = n(x.i.value) === n(x.exp) || (x.exp !== '' && !isNaN(x.exp) && x.i.value.trim() !== '' && +x.i.value === +x.exp);
+          x.td.className = ok ? 'r' : 'w'; x.i.disabled = true; if (!ok) { all = false; x.td.appendChild(h('span', { cls: 'exp' }, x.exp === '' ? '(empty)' : esc(x.exp))); }
+        }
+        if (all) rowsOk++;
+      }
+      var marks = Math.min(5, Math.max(3, t.rows.length - 1)), e = Math.round(marks * rowsOk / t.rows.length * 2) / 2;
+      fb.innerHTML = '<div class="fb ' + (rowsOk === t.rows.length ? 'ok' : rowsOk ? 'part' : 'bad') + '">' + rowsOk + ' of ' + t.rows.length + ' rows fully correct → ' + e + ' / ' + marks + '</div><p class="small">Green answers under a box show the correct value.</p>';
+      done(e, marks);
+    } }, 'Check');
+    el.appendChild(cb); el.appendChild(fb);
+  };
+  window.__addSource('trace', 8, trQuestion);
 
   /*@@APP-MORE@@*/
 
