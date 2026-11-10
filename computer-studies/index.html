@@ -1268,6 +1268,9 @@ OUTPUT Total</pre>
 <li>Use the scenario: if the question is about a school, write about the school.</li>
 </ul>
 </div></details>
+<div class="thead" data-theme="exam">Exam morning: model answers</div>
+
+<details class="topic" data-theme="exam" data-topic="models"><summary>Model answers to read (big topics first)</summary><div class="in" data-models="1"></div></details>
 <!--@@NOTES-MORE@@-->
 </template>
 
@@ -2148,8 +2151,11 @@ var PLAN = [
     { id: 'd5', text: 'Read all the red “Booklet is wrong” boxes', go: { notes: 'Booklet is wrong' } },
     { id: 'd6', text: 'Sleep early. Pack 2 pens, pencil, ruler, eraser, ID.', go: null } ] },
   { d: '2026-11-10', title: 'Tue 10 Nov · Exam day', tasks: [
-    { id: 'e1', text: 'Eat breakfast. Arrive early.', go: null },
-    { id: 'e2', text: 'In the exam: look at the marks [ ] — one point per mark.', go: null },
+    { id: 'e5', text: 'Read the 10-minute sheet', go: { note: 'sheet10' } },
+    { id: 'e6', text: 'Go through the reminder cards', go: { cards: true } },
+    { id: 'e7', text: '10-minute warm-up quiz', go: { warm: true } },
+    { id: 'e1', text: 'Eat breakfast. Pack 2 pens, pencil, ruler, eraser, ID. Arrive early.', go: null },
+    { id: 'e2', text: 'In the exam: 1½ minutes for each mark. Answer every question.', go: null },
     { id: 'e3', text: 'Copy numbers carefully. Check every conversion twice.', go: null },
     { id: 'e4', text: 'Describe/explain: say what it does and WHY. Use the scenario.', go: null } ] }
 ];
@@ -2344,6 +2350,7 @@ var REMINDERS = [
     else if (ph === 'morning') {
       out.unshift({ title: 'Go through your reminder cards', short: 'Reminder cards', why: REMINDERS.length + ' short cards: the booklet mistakes and your weak spots.', btn: 'Go to the cards', run: gotoCards });
       out.unshift({ title: 'Read the 10-minute sheet', short: '10-minute sheet', why: 'The facts that are asked most often, on one page. Read it slowly once.', btn: 'Open the sheet', run: function () { openNote('sheet10'); } });
+      out.splice(2, 0, { title: '10-minute warm-up quiz', short: 'Warm-up quiz', why: 'Quick questions: conversions, parity, gates.', btn: 'Start', run: quiz({ warm: true }, 12) });
       if (hrs <= 0.75) out.unshift({ title: 'Time to go in', short: '', why: 'Put your phone away. Take your pens, pencil, ruler and ID. Breathe slowly. Read every question twice. You are ready.' });
     }
     return out;
@@ -2382,14 +2389,16 @@ var REMINDERS = [
     else el.appendChild(h('p', { style: 'margin-bottom:0' }, 'Every topic is at 80% or more. Keep it there: do a mixed quiz.'));
     list.forEach(function (r) {
       var t = TOPIC[r.id], row = h('div', { cls: 'rrow' }), g = Math.max(1, Math.round(r.gain));
-      row.appendChild(h('div', null, '<div class="wname" style="margin:0">' + esc(t.name) + '</div><div class="small mut">' + (r.p == null ? 'not tried yet' : 'now ' + r.p + '%') + (r.gain ? ' · <span class="gain">up to +' + g + (g === 1 ? ' mark' : ' marks') + '</span>' : '') + '</div>'));
+      row.appendChild(h('div', null, '<div class="wname" style="margin:0">' + esc(t.name) + '</div><div class="small mut">' + (r.p == null ? 'not tried yet' : 'now ' + r.p + '%') + (r.gain ? '<br><span class="gain">up to +' + g + (g === 1 ? ' mark' : ' marks') + '</span>' : '') + '</div>'));
       var btns = h('div', { cls: 'btns' });
       btns.appendChild(h('button', { cls: 'small ghost', 'aria-label': 'Read the notes: ' + t.name, onclick: function () { openNote(t.id); } }, 'Notes'));
       btns.appendChild(h('button', { cls: 'small', 'aria-label': 'Quiz: ' + t.name, onclick: function () { startQuiz({ topic: t.id }, 8); } }, 'Quiz'));
       row.appendChild(btns); el.appendChild(row);
     });
     var links = h('div', { cls: 'row', style: 'margin-top:10px' });
-    links.appendChild(h('button', { cls: 'small ghost', id: 'sheetBtn', onclick: function () { openNote('sheet10'); } }, 'Open the 10-minute sheet'));
+    links.appendChild(h('button', { cls: 'small ghost', id: 'sheetBtn', onclick: function () { openNote('sheet10'); } }, '10-minute sheet'));
+    links.appendChild(h('button', { cls: 'small ghost', id: 'modelsBtn', onclick: function () { openNote('models'); } }, 'Model answers'));
+    links.appendChild(h('button', { cls: 'small ghost', id: 'warmBtn', onclick: function () { startQuiz({ warm: true }, 12); } }, 'Warm-up quiz'));
     el.appendChild(links);
     el.appendChild(h('p', { cls: 'small mut', style: 'margin-bottom:0' }, (enough ? 'This is an estimate from your quiz answers. It is not a promise. ' + (R.rows.some(function (r) { return r.p == null; }) ? 'Topics you have not tried are counted at ' + R.guess + '%.' : '') : 'First read the notes (5 minutes). Then do the quiz.')));
   }
@@ -2412,6 +2421,7 @@ var REMINDERS = [
       '<div class="mix" role="img" aria-label="Topics: ' + segs.map(function (s) { return s[1] + ' ' + s[2]; }).join(', ') + '">' + segs.filter(function (s) { return s[1]; }).map(function (s) { return '<span class="m-' + s[0] + '" style="flex:' + s[1] + '"></span>'; }).join('') + '</div>' +
       '<div class="legend">' + segs.map(function (s) { return '<span><i class="m-' + s[0] + '"></i>' + s[1] + ' ' + s[2] + '</span>'; }).join('') + '</div>' +
       '<p class="small mut" style="margin-bottom:0">' + (o.score == null ? 'Do a quiz to see your score.' : 'Score = your last 20 marks in each topic, weighted like the exam.') + '</p>';
+    if (mc) { var li = $('#scoreOut .facts li:last-child'); li.appendChild(document.createTextNode(' ')); li.appendChild(h('button', { cls: 'small ghost', id: 'fixBtn', style: 'min-height:32px;padding:2px 10px', onclick: function () { startQuiz({ mistakes: true }, Math.min(10, Math.max(5, mc))); } }, 'Fix them')); }
   }
 
   // ----- Reminder cards: question first, then the answer. Cards he knows are not shown again. -----
@@ -2509,6 +2519,9 @@ var REMINDERS = [
   }
   function planGo(t) {
     var g = t.go;
+    if (g.note) return openNote(g.note);
+    if (g.cards) return gotoCards();
+    if (g.warm) return startQuiz({ warm: true }, 12);
     if (g.notes) { showTab('notes'); var th = THEMES.filter(function (x) { return x.id === g.notes; })[0]; if (th) { $('#noteSearch').value = ''; var chip = $('#noteChips [data-th="' + g.notes + '"]'); if (chip) chip.click(); } else { $('#noteSearch').value = g.notes; renderNotes(); } return; }
     if (g.mock) { showTab('papers'); if (!P.mockRun) startMock(g.mock); return; }
     startQuiz(g, g.focus ? 8 : 10);
@@ -2662,6 +2675,7 @@ var REMINDERS = [
   function renderNotes() {
     var out = $('#notesOut'), q = $('#noteSearch').value.trim().toLowerCase(), words = q ? q.split(/\s+/) : [];
     out.innerHTML = ''; out.appendChild($('#notesSrc').content.cloneNode(true));
+    $$('[data-models]', out).forEach(function (box) { box.innerHTML = modelsHTML(); });
     var shown = 0;
     $$('.topic', out).forEach(function (t) {
       var okTheme = noteTheme === 'all' || t.dataset.theme === noteTheme;
@@ -2676,6 +2690,21 @@ var REMINDERS = [
     $$('.thead', out).forEach(function (hd) { var n = hd.nextElementSibling; if (!n || !n.classList.contains('topic')) hd.remove(); });
     $('#noteCount').textContent = words.length ? shown + ' topic(s) match' : '';
     if (!shown) out.innerHTML = '<p class="mut">Nothing found. Try another word.</p>';
+  }
+  // "Model answers to read": every written question in the quiz bank with its mark points, big topics first
+  var modelsCache = null;
+  function modelsHTML() {
+    if (modelsCache) return modelsCache;
+    var html = '<p class="small mut">Read the question. Say your answer. Then read the points. One point = one mark.</p><span class="label-model">Model answers, not the official memo</span>';
+    TOPICS.slice().sort(function (a, b) { return b.w - a.w; }).forEach(function (t) {
+      var qs = quizBank().filter(function (b) { return b.t === t.id && b.type !== 'mc' && b.m >= 2; });
+      if (!qs.length) return;
+      html += '<h4>' + esc(t.name) + '</h4>';
+      qs.forEach(function (b) {
+        html += '<p style="margin-bottom:2px"><b>' + cmdPre(b).replace(/<\/?b>/g, '') + b.q.replace(/<\/?b>/g, '') + '</b> <span class="marks">[' + b.m + ']</span>' + (b.p.length > b.m ? ' <span class="small mut">any ' + b.m + ' of these</span>' : '') + '</p><ul style="margin-top:2px">' + b.p.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
+      });
+    });
+    return (modelsCache = html);
   }
   function highlight(root, words) {
     var re = new RegExp('(' + words.map(function (w) { return w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }).join('|') + ')', 'gi');
@@ -2729,6 +2758,12 @@ var REMINDERS = [
       if (gens.length) { var gk = Core.pick(gens); return gk === 'tt' ? ttQuestion() : gk === 'trace' ? trQuestion() : genQ(gk); }
       return makeQuestion({ mixed: true }, used);
     }
+    if (sel.warm) {
+      var seq = ['bin2hex', 'den2bin', 'mc', 'parity', 'hex2den', 'tt', 'mc', 'checksum', 'bin2den', 'mc', 'isbn', 'mc'], kind = seq[(S ? S.i : 0) % seq.length];
+      if (kind === 'mc') { var big = quizBank().filter(function (b) { return b.type === 'mc' && TOPIC[b.t].w >= 3; }); return bankQ(pickBank(big, used)); }
+      if (kind === 'tt') { var op = Core.pick(['AND', 'OR', 'NAND', 'NOR', 'XOR']); return { type: 'tt', topic: 'logic', focus: [], tt: { mode: 'gate', ast: { op: op, a: [{ v: 'A' }, { v: 'B' }] }, label: op } }; }
+      return genQ(kind);
+    }
     if (sel.judge) { var jl = JUDGE.filter(function (j) { return !used['j:' + j.id]; }); if (!jl.length) jl = JUDGE; var j2 = Core.pick(jl); used['j:' + j2.id] = 1; return judgeQ(j2); }
     if (sel.focus) {
       var f = sel.focus;
@@ -2773,7 +2808,7 @@ var REMINDERS = [
     FOCUS.forEach(function (f) { c.appendChild(h('button', { cls: 'topicbtn', onclick: function () { startQuiz({ focus: f.id }, 8); } }, '<span>' + esc(f.name) + '</span><em>' + (pct(P.f[f.id]) == null ? 'new' : pct(P.f[f.id]) + '%') + '</em>')); });
     el.appendChild(c);
   }
-  function selName(sel) { return sel.mistakes ? 'My mistakes' : sel.judge ? 'Mark this answer' : sel.mixed ? 'Mixed' : sel.topic ? TOPIC[sel.topic].name : FOC[sel.focus].name; }
+  function selName(sel) { return sel.warm ? '10-minute warm-up' : sel.mistakes ? 'My mistakes' : sel.judge ? 'Mark this answer' : sel.mixed ? 'Mixed' : sel.topic ? TOPIC[sel.topic].name : FOC[sel.focus].name; }
   function startQuiz(sel, n) {
     S = { sel: sel, n: n, i: 0, e: 0, m: 0, used: {} };
     showTab('quiz'); $('#quizPick').classList.add('hidden'); $('#quizRun').classList.remove('hidden');
@@ -2782,7 +2817,7 @@ var REMINDERS = [
   window.__startQuiz = startQuiz;
   function endQuiz() {
     var run = $('#quizRun'), p = S.m ? Math.round(100 * S.e / S.m) : 0, ss = S.sel;
-    planAuto(function (g) { return (ss.topic && g.topic === ss.topic) || (ss.focus && g.focus === ss.focus) || (ss.mistakes && g.mistakes); });
+    planAuto(function (g) { return (ss.topic && g.topic === ss.topic) || (ss.focus && g.focus === ss.focus) || (ss.mistakes && g.mistakes) || (ss.warm && g.warm); });
     run.innerHTML = '';
     var c = h('div', { cls: 'card' }, '<h2>Finished!</h2><p>' + esc(selName(S.sel)) + '</p><p style="font-size:28px;font-weight:800;color:' + colour(p) + '">' + (Math.round(S.e * 10) / 10) + ' / ' + S.m + ' marks (' + p + '%)</p><p>' + (p >= 80 ? 'Great work! 🎉' : p >= 50 ? 'Good. Read the notes for this topic, then try again.' : 'Read the notes for this topic, then try again. You can do it.') + '</p>');
     var row = h('div', { cls: 'row' });

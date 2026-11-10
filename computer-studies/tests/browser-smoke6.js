@@ -79,6 +79,12 @@ function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p 
     if (name === 'eve') { const cd = await txt(p, '#cd'); if (!/^18 hours 00 min 00 sec$|^17 hours 59 min 5\d sec$/i.test(cd)) fail('eve countdown: ' + cd); }
     const tipsOpen = await p.$eval('#tipsCard', e => e.open);
     if (tipsOpen !== (name !== 'early')) fail(name + ': exam tips open = ' + tipsOpen);
+    if (name === 'morning') {
+      const goN = (await p.$$('#planOut button.small:not(.ghost)')).length; if (goN !== 3) fail('exam-day plan should have 3 Go buttons, has ' + goN);
+      const alt = await txt(p, '#nextCard .next-alt'); if (!/Reminder cards/.test(alt) || !/Warm-up quiz/.test(alt)) fail('morning alternatives: ' + alt);
+      await p.click('#planOut button.small:not(.ghost) >> nth=0'); if (!(await p.$eval('#notesOut .topic[data-topic=sheet10]', e => e.open))) fail('plan: sheet did not open'); await p.click('[data-tab=dash]');
+      await p.click('#planOut button.small:not(.ghost) >> nth=2'); if (!/10-minute warm-up/.test(await txt(p, '#quizRun'))) fail('plan: warm-up did not start'); await p.click('[data-tab=dash]');
+    }
     if (name === 'morning') { await p.click('#nextGo'); if (!(await p.$eval('#notesOut .topic[data-topic=sheet10]', e => e.open))) fail('the sheet did not open from the next step'); await ov(p, 'sheet'); await p.screenshot({ path: path.join(OUT, 'dash6-sheet.png') }); await p.click('[data-tab=dash]'); }
     if (name === 'early') { const cd = await txt(p, '#cd'); if (!/^2 days 2[23] hours/i.test(cd)) fail('early countdown: ' + cd); }
     await ov(p, 'phase ' + name);
@@ -112,7 +118,22 @@ function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p 
       if (!(await p.$eval('#notesOut .topic[data-topic=stor]', e => e.open))) fail('road: notes did not open');
       await p.click('[data-tab=dash]'); await p.click('#sheetBtn');
       if (!(await p.$eval('#notesOut .topic[data-topic=sheet10]', e => e.open))) fail('road: sheet did not open');
-      await p.click('[data-tab=dash]');
+      await p.click('[data-tab=dash]'); await p.click('#modelsBtn');
+      const mod = await p.$eval('#notesOut .topic[data-topic=models]', e => [e.open, e.querySelectorAll('ul').length, e.innerText.includes('not the official memo')]);
+      if (!mod[0] || mod[1] < 60 || !mod[2]) fail('model answers page: ' + mod.join());
+      await ov(p, 'models'); await p.screenshot({ path: path.join(OUT, 'dash6-models.png') });
+      await p.click('[data-tab=dash]'); await p.click('#warmBtn');           // warm-up quiz: 12 quick questions, all marked by the app
+      for (let i = 0; i < 12; i++) {
+        if (await p.$('#quizRun textarea')) fail('warm-up must not have written questions');
+        if (await p.$('#quizRun button.cell')) { for (const c of await p.$$('#quizRun button.cell')) await c.click(); await p.click('#quizRun button:has-text("Check")'); }
+        else if (await p.$('#quizRun .choices button:not([disabled])')) await p.click('#quizRun .choices button');
+        else { await p.fill('#quizRun .card input[type=text]', '1'); await p.click('#quizRun button:has-text("Check")'); if (await p.$('text=Try once more')) await p.click('#quizRun button:has-text("Check")'); }
+        await ov(p, 'warm ' + i);
+        const nb = await p.$('button:has-text("Next question"), button:has-text("See my score")'); if (!nb) { fail('warm-up stuck at ' + i); break; } await nb.click();
+      }
+      if (!/10-minute warm-up/.test(await txt(p, '#quizRun'))) fail('warm-up end screen: ' + await txt(p, '#quizRun'));
+      await p.evaluate(sd => { localStorage.setItem('cs6134-progress-v1', sd); }, JSON.stringify(SEED)); await p.reload(); await p.click('[data-tab=dash]');   // back to the seed data
+      if (!(await p.$('#fixBtn'))) fail('no "Fix them" button');
       const legend = await txt(p, '#scoreOut .legend'); if (!/4 not tried/.test(legend)) fail('legend: ' + legend);
       const today = await txt(p, '#goalOut'); if (!/22 of 30 questions/.test(today) || !/71% correct today/.test(today) || !/4 days in a row/.test(today)) fail('today: ' + today);
       if (await txt(p, '#todayDate') !== 'Mon 9 Nov') fail('today date: ' + await txt(p, '#todayDate'));
