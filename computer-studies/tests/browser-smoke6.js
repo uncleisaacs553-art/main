@@ -32,6 +32,13 @@ const SEED = {
   }
 };
 const W = { num: 3, hexuse: 1, err: 2, chk: 1, comp: 1, logic: 4, cpu: 3, intr: 1, algo: 3, trace: 3, test: 2, sheet: 3, db: 3, valid: 2, io: 4, stor: 4, net: 4, os: 2, sdlc: 2, apps: 2, sec: 4 };
+function expectedEstimate() {
+  const Wsum = Object.values(W).reduce((a, x) => a + x, 0); let sw = 0, s = 0;
+  for (const k in SEED.t) { sw += W[k]; s += W[k] * Math.round(100 * SEED.t[k].e / SEED.t[k].m); }
+  const guess = Math.min(50, Math.round(s / sw * 0.75)); let est = 0;
+  for (const k in W) est += (100 * W[k] / Wsum) * (SEED.t[k] ? Math.round(100 * SEED.t[k].e / SEED.t[k].m) : guess) / 100;
+  return Math.round(est);
+}
 function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p = Math.round(100 * SEED.t[k].e / SEED.t[k].m); sw += W[k]; s += W[k] * p; } return Math.round(s / sw); }
 
 (async () => {
@@ -58,8 +65,8 @@ function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p 
     ['eve', '2026-11-09T15:00:00', /tomorrow morning\. Fix your weak spots/, /Fix your mistakes/],
     ['night', '2026-11-09T23:20:00', /The exam is tomorrow at 09:00/, /Time to sleep/],
     ['night2', '2026-11-10T01:00:00', /The exam is today at 09:00/, /Time to sleep/],
-    ['morning', '2026-11-10T06:30:00', /this morning\. Read your reminder cards/, /Read your reminder cards/],
-    ['soon', '2026-11-10T08:30:00', /Almost time/, /Read your reminder cards/],
+    ['morning', '2026-11-10T06:30:00', /this morning\. Read your reminder cards/, /Read the 10-minute sheet/],
+    ['soon', '2026-11-10T08:30:00', /Almost time/, /Time to go in/],
     ['exam', '2026-11-10T09:30:00', /The exam has started/, /Good luck!/],
     ['after', '2026-11-10T12:00:00', /The exam is over/, null]
   ];
@@ -70,6 +77,9 @@ function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p 
     if (nextRe === null) { if (!hidden) fail(name + ': next card should be hidden'); }
     else { const nx = await txt(p, '#nextCard'); if (!nextRe.test(nx)) fail(`${name}: next card says "${nx}"`); }
     if (name === 'eve') { const cd = await txt(p, '#cd'); if (!/^18 hours 00 min 00 sec$|^17 hours 59 min 5\d sec$/i.test(cd)) fail('eve countdown: ' + cd); }
+    const tipsOpen = await p.$eval('#tipsCard', e => e.open);
+    if (tipsOpen !== (name !== 'early')) fail(name + ': exam tips open = ' + tipsOpen);
+    if (name === 'morning') { await p.click('#nextGo'); if (!(await p.$eval('#notesOut .topic[data-topic=sheet10]', e => e.open))) fail('the sheet did not open from the next step'); await ov(p, 'sheet'); await p.screenshot({ path: path.join(OUT, 'dash6-sheet.png') }); await p.click('[data-tab=dash]'); }
     if (name === 'early') { const cd = await txt(p, '#cd'); if (!/^2 days 2[23] hours/i.test(cd)) fail('early countdown: ' + cd); }
     await ov(p, 'phase ' + name);
     await p.context().close();
@@ -89,6 +99,20 @@ function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p 
       const facts = await txt(p, '.facts');
       if (!/17 of 21 topics tried/.test(facts)) fail('facts: ' + facts);
       if (!/5 mistakes to fix/.test(facts)) fail('mistakes: ' + facts);
+      // road to 60
+      const road = await txt(p, '#roadOut'), E = expectedEstimate();
+      if (!new RegExp('Estimated mark: ' + E + ' / 100').test(road)) fail(`road: expected estimate ${E}: ${road}`);
+      if (!(E < 60 ? new RegExp('about ' + (60 - E) + ' more to win') : /on the road to 60/).test(road)) fail('road tag: ' + road);
+      if (!/It is not a promise/.test(road)) fail('road: the estimate must say it is not a promise');
+      const rr = await p.$$eval('#roadOut .rrow .wname', x => x.map(e => e.textContent));
+      if (rr.length !== 4 || rr[0] !== 'Storage & memory') fail('road list: ' + rr.join(' | '));
+      const fw = await p.$eval('#roadOut .fill', e => e.getBoundingClientRect().width / e.parentNode.getBoundingClientRect().width);
+      if (Math.abs(fw - E / 100) > 0.01) fail('road bar width ' + fw);
+      await p.click('#roadOut .rrow >> nth=0 >> text=Notes');
+      if (!(await p.$eval('#notesOut .topic[data-topic=stor]', e => e.open))) fail('road: notes did not open');
+      await p.click('[data-tab=dash]'); await p.click('#sheetBtn');
+      if (!(await p.$eval('#notesOut .topic[data-topic=sheet10]', e => e.open))) fail('road: sheet did not open');
+      await p.click('[data-tab=dash]');
       const legend = await txt(p, '#scoreOut .legend'); if (!/4 not tried/.test(legend)) fail('legend: ' + legend);
       const today = await txt(p, '#goalOut'); if (!/22 of 30 questions/.test(today) || !/71% correct today/.test(today) || !/4 days in a row/.test(today)) fail('today: ' + today);
       if (await txt(p, '#todayDate') !== 'Mon 9 Nov') fail('today date: ' + await txt(p, '#todayDate'));
@@ -170,6 +194,7 @@ function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p 
     if (await txt(p, '.ring-c b') !== '–') fail('empty ring');
     if (await txt(p, '#stDone') !== '0') fail('empty done');
     if (!/Weak spot: Binary → hex grouping/.test(await txt(p, '#nextCard'))) fail('empty next: ' + await txt(p, '#nextCard'));
+    const road0 = await txt(p, '#roadOut'); if (!/Do a quiz first/.test(road0) || !/START WITH THE BIG TOPICS/i.test(road0) || /Estimated mark/.test(road0)) fail('empty road: ' + road0);
     if (!/Start Practice paper 1/.test(await txt(p, '#mockScores'))) fail('empty mock');
     await p.screenshot({ path: path.join(OUT, `dash6-empty-${w}.png`), fullPage: true });
     await p.click('#nextGo'); if (!(await p.$('#quizRun .card'))) fail('next button did not start a quiz');

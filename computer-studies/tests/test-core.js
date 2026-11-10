@@ -216,6 +216,28 @@ for (let i = 0; i < 200; i++) Core.TRACE.forEach(p => {
   eq(Core.parityBit('1011001', 'EVEN'), 0, 'card: parity bit 0'); eq(Core.denToBin(255, 8).bin, '11111111', 'card: 255');
   console.log('Reminder cards:', ctx.REMINDERS.length);
 }
+
+// ---- estimated exam mark ("Road to 60"): checked against a separate calculation ----
+{
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1)), W = ctx.TOPICS.reduce((a, x) => a + x.w, 0);
+  for (let i = 0; i < N; i++) {
+    const recs = {}, pcs = {};
+    ctx.TOPICS.forEach(tp => { if (Math.random() < 0.3) return; const m = rnd(1, 20), e = rnd(0, m); recs[tp.id] = { r: [[e, m]] }; pcs[tp.id] = Math.round(100 * e / m); });
+    const tried = ctx.TOPICS.filter(tp => tp.id in pcs), sw = tried.reduce((a, x) => a + x.w, 0);
+    const avg = sw ? tried.reduce((a, x) => a + x.w * pcs[x.id], 0) / sw : null, guess = avg === null ? null : Math.min(50, Math.round(avg * 0.75));
+    let est = 0; ctx.TOPICS.forEach(tp => { const cur = tp.id in pcs ? pcs[tp.id] : guess; if (cur !== null) est += (100 * tp.w / W) * cur / 100; });
+    const R = Core.examEstimate(ctx.TOPICS, recs);
+    eq(R.est, avg === null ? null : Math.round(est), 'estimate'); eq(R.guess, guess, 'guess for topics not tried');
+    eq(Math.abs(R.cover - sw / W) < 1e-9, true, 'cover'); eq(R.rows.length, ctx.TOPICS.length, 'one row per topic');
+    eq(Math.abs(R.rows.reduce((a, r) => a + r.marks, 0) - 100) < 1e-9, true, 'topic marks add up to 100');
+    for (let k = 1; k < R.rows.length; k++) eq(R.rows[k - 1].gain >= R.rows[k].gain, true, 'biggest gain first');
+    R.rows.forEach(r => { const cur = r.id in pcs ? pcs[r.id] : guess; eq(Math.abs(r.gain - (cur === null ? 0 : r.marks * Math.max(0, 80 - cur) / 100)) < 1e-9, true, 'gain of ' + r.id); });
+    if (R.est !== null) eq(R.est >= 0 && R.est <= 100, true, 'estimate is 0..100');
+  }
+  const all = {}; ctx.TOPICS.forEach(tp => { all[tp.id] = { r: [[1, 1]] }; });
+  eq(Core.examEstimate(ctx.TOPICS, all).est, 100, 'all topics 100% = 100 marks'); eq(Core.examEstimate(ctx.TOPICS, {}).est, null, 'no answers = no estimate');
+  eq(html.includes('data-topic="sheet10"'), true, 'the 10-minute sheet is in the notes');
+}
 /*@@TEST-MORE@@*/
 
 console.log(fails ? `\n${fails} FAILED of ${checks} checks` : `All ${checks} checks passed.`);

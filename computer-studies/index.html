@@ -64,7 +64,7 @@ button:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-
 #tab-dash .card{margin:0}
 #tab-dash h2{font-size:18px;margin:0}
 .dcol{display:contents}
-.o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}.o7{order:7}.o8{order:8}.o9{order:9}.o10{order:10}
+.o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}.o7{order:7}.o8{order:8}.o9{order:9}.o10{order:10}.o11{order:11}.o12{order:12}
 @media (min-width:900px){
   main.wide{max-width:1080px}
   #tab-dash.on{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
@@ -169,6 +169,27 @@ button:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-
 .wk-d{font-size:12px;line-height:18px;height:18px;color:var(--mut)}
 .wk-col.today .wk-d{color:var(--ink);font-weight:800}
 .wk-goal{position:absolute;left:0;right:0;height:0;border-top:2px dashed var(--mut);opacity:.7;pointer-events:none}
+/* road to 60 */
+.road-track{height:16px;border-radius:8px;margin-top:8px}
+.road-track .fill{border-radius:8px}
+.road-track .goal{top:-4px;bottom:-4px;width:3px;margin-left:-1.5px;opacity:.85}
+.road-scale{position:relative;height:18px;font:12px var(--mono);color:var(--mut);margin:5px 0 4px}
+.road-scale span{position:absolute;top:0;transform:translateX(-50%)}
+.road-scale span:first-child{left:0;transform:none}
+.road-scale span:last-child{left:100%;transform:translateX(-100%)}
+.rrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.rrow:last-of-type{border-bottom:0}
+.rrow .btns{display:flex;gap:6px}
+.rrow .gain{color:var(--ok);font-weight:700;white-space:nowrap}
+/* exam tips */
+details.card>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:18px;font-weight:700;min-height:32px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"＋";color:var(--acc);font-weight:400}
+details.card[open]>summary::after{content:"－"}
+.tips{margin:10px 0 0;padding-left:20px}
+.tips li{margin:0 0 8px}
+.tips li:last-child{margin-bottom:0}
+code{overflow-wrap:anywhere}
 /* mock papers */
 .mrow{padding:8px 0;border-bottom:1px solid var(--line)}
 .brow{display:grid;grid-template-columns:88px minmax(0,1fr) 62px;gap:8px;align-items:center;font-size:14px;padding:3px 0}
@@ -269,43 +290,61 @@ table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--
       <p class="hero-msg" id="heroMsg"></p>
     </div>
     <div class="card next o2" id="nextCard"></div>
-    <div class="card o5">
+    <div class="card o3" id="roadCard">
+      <div class="cardhead"><h2>Road to 60</h2><span class="small mut">target: 60 / 100</span></div>
+      <div id="roadOut"></div>
+    </div>
+    <div class="card o7">
       <div class="cardhead"><h2>Weak topics</h2><span class="small mut" id="weakCount"></span></div>
       <p class="mut small" style="margin-top:0">Below 80%. Fix these first.</p>
       <div id="weakList"></div>
     </div>
-    <div class="card o6" id="planCard">
+    <div class="card o8" id="planCard">
       <div class="cardhead"><h2>Today</h2><span class="small mut" id="todayDate"></span></div>
       <div id="goalOut"></div>
       <div id="planOut"></div>
     </div>
-    <div class="card o9" id="mockCard">
+    <div class="card o11" id="mockCard">
       <div class="cardhead"><h2>Mock papers</h2></div>
       <div id="mockScores"></div>
     </div>
   </div>
   <div class="dcol">
-    <div class="card o3">
+    <div class="card o6">
       <div class="cardhead"><h2>My score</h2></div>
       <div id="scoreOut"></div>
     </div>
-    <div class="card o4" id="remCard">
+    <details class="card o4" id="tipsCard">
+      <summary>In the exam: how to win marks</summary>
+      <ul class="tips">
+        <li><b>1½ minutes for each mark.</b> A [4] question = 6 minutes. If you are stuck, go on and come back later.</li>
+        <li><b>Answer every question.</b> An empty answer gets 0. A try can get marks.</li>
+        <li><b>[3] marks = 3 different points.</b> Write one point on each line.</li>
+        <li><b>Describe / Explain:</b> say what it does and <b>why</b>. A name alone gets 0. “Faster” or “cheaper” alone gets 0.</li>
+        <li><b>Use the scenario.</b> If the question is about a shop, write about the shop.</li>
+        <li><b>Numbers:</b> copy them digit by digit. Show your working (place values, the 8-4-2-1 grid). Check by working backwards.</li>
+        <li><b>Truth tables:</b> one column at a time. 3 inputs = 8 rows.</li>
+        <li><b>Trace tables:</b> one line of code at a time. Write a value every time it changes.</li>
+        <li><b>Last 10 minutes:</b> fill every empty answer. Check your numbers.</li>
+      </ul>
+    </details>
+    <div class="card o5" id="remCard">
       <div class="cardhead"><h2>Reminder cards</h2><span class="small mut" id="remPos"></span></div>
       <div class="rem" id="remBody" aria-live="polite"></div>
       <div class="rembtns" id="remBtns"></div>
     </div>
-    <div class="card o7">
+    <div class="card o9">
       <div class="cardhead"><h2>Score per topic</h2>
         <div class="seg" id="barSort" role="group" aria-label="Sort the topics"><button type="button" data-s="theme" class="on">By theme</button><button type="button" data-s="weak">Weakest first</button></div>
       </div>
       <p class="mut small" style="margin:0 0 4px">Your last 20 marks in each topic. The line on each bar is the 80% target. Tap a topic for more.</p>
       <div id="bars"></div>
     </div>
-    <div class="card o8">
+    <div class="card o10">
       <div class="cardhead"><h2>Last 7 days</h2></div>
       <div id="weekOut"></div>
     </div>
-    <div class="card o10">
+    <div class="card o12">
       <div class="cardhead"><h2>Save your progress</h2></div>
       <p class="small mut" style="margin-top:0">Progress is saved on this phone. Export it to keep a copy or move it to another device.</p>
       <div class="row">
@@ -352,6 +391,96 @@ table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--
      data-theme: 4A 4B 4C 3 5 12
 ==================================================================== -->
 <template id="notesSrc">
+
+<div class="thead" data-theme="exam">Exam morning</div>
+
+<details class="topic" data-theme="exam" data-topic="sheet10"><summary>10-minute sheet: the facts that win marks</summary><div class="in">
+<p class="small mut">Read this slowly once. These are the facts that are asked most often.</p>
+
+<h4>1. Numbers</h4>
+<ul>
+<li>Place values: <span class="mono">128 64 32 16 8 4 2 1</span>. 255 = <span class="mono">11111111</span> (8 bits).</li>
+<li>Binary → hex: make groups of 4 from the <b>right</b>. Add zeros on the <b>LEFT</b>. 10=A, 11=B, 12=C, 13=D, 14=E, 15=F.</li>
+<li>Hex → denary: <span class="mono">2F</span> = 2×16 + 15 = 47.</li>
+<li>Why hex? It is <b>shorter</b> than binary, so it is easier for people to read and they make fewer mistakes.</li>
+<li>Uses of hex: HTML colours (#FF0000), MAC addresses, memory addresses / assembly code, error codes.</li>
+<li>MAC address = identifies the <b>network card (NIC)</b> of a device.</li>
+</ul>
+
+<h4>2. Checking for errors</h4>
+<ul>
+<li><b>Parity bit</b> = only 0 or 1. Even parity: the total number of 1s must be even. Parity <b>misses two-bit errors</b>.</li>
+<li><b>Checksum</b>: add the bytes, MOD 256. It is sent with the data. The receiver works it out again and compares.</li>
+<li><b>ARQ</b>: the receiver sends an acknowledgement. No acknowledgement before the timeout → the data is sent again.</li>
+<li><b>Check digit</b>: finds <b>data entry</b> (typing) errors. ISBN-13: weights 1, 3, 1, 3… Check digit = 10 − (sum MOD 10).</li>
+<li><b>Lossy</b>: data is removed for ever; smaller file; quality is reduced (JPEG, MP3, MP4). <b>Lossless</b>: nothing is lost; the original comes back exactly (PNG, ZIP). AVI = video.</li>
+</ul>
+
+<h4>3. Logic gates</h4>
+<ul>
+<li>AND: 1 only if <b>both</b> are 1. OR: 1 if <b>at least one</b> is 1. NOT: the opposite.</li>
+<li>NAND = opposite of AND. NOR = opposite of OR. XOR: 1 if the inputs are <b>different</b>.</li>
+<li>2 inputs = 4 rows. 3 inputs = 8 rows (000 to 111). Do one column at a time. Do the brackets first.</li>
+</ul>
+
+<h4>4. The CPU</h4>
+<ul>
+<li><b>PC</b> = address of the next instruction. <b>MAR</b> = the ADDRESS. <b>MDR (MBR)</b> = the DATA or INSTRUCTION. <b>CIR</b> = the instruction being done now. <b>ACC</b> = the result from the ALU.</li>
+<li><b>Fetch</b>: PC → MAR. PC + 1. Instruction from memory → MDR. MDR → CIR.</li>
+<li><b>Decode</b>: the control unit interprets the instruction in the CIR. <b>Execute</b>: the instruction is carried out.</li>
+<li>ALU = calculations and logic (compare). Control unit = decodes and sends control signals.</li>
+<li><b>Interrupt</b> = a signal that something needs attention now (e.g. printer out of paper). <b>Buffer</b> = memory that holds data for a short time between two devices with different speeds. <b>Cache</b> = very fast memory for data used often.</li>
+</ul>
+
+<h4>5. Algorithms</h4>
+<ul>
+<li>FOR = a fixed number of times. WHILE = test at the start (can run 0 times). REPEAT … UNTIL = test at the end (runs at least once).</li>
+<li>MOD = remainder. DIV = whole-number part. 17 MOD 5 = 2. 17 DIV 5 = 3.</li>
+<li>Total: <code>Total ← Total + Num</code> (start at 0). Count: <code>Count ← Count + 1</code>.</li>
+<li>Pass: <code>IF Mark &gt;= 50</code>. Reject a bad mark: <code>Mark &lt; 0 OR Mark &gt; 100</code>.</li>
+<li>Test data for 0–100: <b>normal</b> 45; <b>extreme</b> 0 or 100 (on the boundary, accepted); <b>abnormal</b> −1 or 101 or "ten" (rejected).</li>
+<li>Errors: <b>syntax</b> (breaks the language rules, will not run); <b>logic</b> (runs, wrong answer); <b>run-time</b> (crashes, e.g. divide by zero).</li>
+<li>Trace table: one line of code at a time. Write a value every time it changes.</li>
+</ul>
+
+<h4>6. Spreadsheets and databases</h4>
+<ul>
+<li><code>=SUM(B2:B10)</code> <code>=AVERAGE(B2:B10)</code> <code>=MAX(B2:B10)</code> <code>=MIN(B2:B10)</code></li>
+<li><code>=IF(B2&gt;=50,"Pass","Fail")</code> <code>=COUNTIF(C2:C30,"Pass")</code></li>
+<li><code>=VLOOKUP(A2,$F$2:$G$6,2,FALSE)</code> = look for A2 in the first column of the table; give back the value from column 2.</li>
+<li><b>$B$1</b> = absolute: it does <b>not</b> change when the formula is copied. <b>B1</b> = relative: it changes.</li>
+<li>Record = one row. Field = one column. <b>Primary key</b> = a unique field. <b>Foreign key</b> = links two tables.</li>
+<li>Data types: text (also phone numbers), integer, real / currency, date, Boolean (yes/no).</li>
+<li><b>Validation</b> = is the data sensible? Range, type, presence, length, format, check digit.</li>
+<li><b>Verification</b> = was it copied correctly? Double entry, visual check.</li>
+</ul>
+
+<h4>7. Hardware, storage, networks</h4>
+<ul>
+<li><b>RAM</b>: volatile (loses data with no power), read and write, holds programs in use. <b>ROM</b>: non-volatile, read only, holds the start-up (boot) program.</li>
+<li>Primary = RAM, ROM. Secondary = hard disk, SSD. Off-line = USB flash drive, CD/DVD, memory card.</li>
+<li><b>SSD</b>: no moving parts, fast, uses little power. <b>Hard disk</b>: big and cheap per GB, but moving parts can break.</li>
+<li>Control system: sensor <b>measures</b> → ADC → microprocessor <b>compares</b> with the set value → signal to an actuator (heater on/off) → repeats.</li>
+<li>OMR = marks on forms. OCR = printed text. MICR = cheques. Barcode reader = shop till.</li>
+<li><b>LAN</b> = small area (a school). <b>WAN</b> = large area (the internet).</li>
+<li><b>Router</b>: joins networks, uses IP addresses. <b>Switch</b>: sends data only to the correct device. <b>Hub</b>: sends data to all devices. <b>Modem</b>: digital ↔ analogue for a phone line.</li>
+<li>Operating system: manages memory, files, input/output devices, multitasking, security; gives the user interface.</li>
+<li><b>GUI</b>: icons and menus, easy for beginners, uses more memory. <b>CLI</b>: type commands, must learn them, uses little memory.</li>
+</ul>
+
+<h4>8. Systems and society</h4>
+<ul>
+<li>Life cycle: <b>Analysis</b> (study the old system) → <b>Design</b> (plan on paper) → <b>Development and testing</b> (build it, test it) → <b>Implementation</b> (install, train staff, changeover) → <b>Documentation</b> (user guide, technical guide) → <b>Evaluation</b> (does it meet the requirements?).</li>
+<li>Changeover: <b>direct</b> (quick, risky: no backup); <b>parallel</b> (old and new together: safe, more work); <b>phased</b> (one part at a time); <b>pilot</b> (one branch first).</li>
+<li><b>Hacking</b> = access without permission. <b>Phishing</b> = fake e-mail asks for details. <b>Pharming</b> = sent to a fake website. <b>Virus</b> = program that copies itself and damages data.</li>
+<li>Protection: strong password; <b>firewall</b> (checks traffic, blocks unwanted access); anti-virus; <b>encryption</b> (scrambles data; cannot be read without the key); backups; biometrics.</li>
+<li><b>Health</b>: RSI (take breaks, wrist rest); eye strain (breaks, anti-glare screen); back pain (adjustable chair). <b>Safety</b>: tripping (cable ducts); fire (do not overload sockets); electric shock (no drinks).</li>
+<li>POS: scan the barcode → find the item in the stock file → price goes to the till → stock level − 1 → re-order automatically when low.</li>
+<li>Expert system: user interface, knowledge base, rule base, inference engine, explanation system.</li>
+</ul>
+
+<div class="key"><b>In the exam:</b> 1½ minutes for each mark. Answer every question. [3] marks = 3 different points. For “describe” and “explain”, say what it does and <b>why</b>, and use the scenario.</div>
+</div></details>
 
 <div class="thead" data-theme="4A">Theme 4A · Data representation</div>
 
@@ -1662,6 +1791,26 @@ var Core = (function () {
     if (a == null || b == null) return 0;
     return b - a >= 20 ? 1 : a - b >= 20 ? -1 : 0; // a clear change only: small changes are just chance
   }
+  // Estimated exam mark from the quiz results. Each topic's share of the paper = its weight.
+  // A topic that was not tried yet is counted lower than his average (75% of it, and never above 50%).
+  // gain = the marks he can still win in a topic if he reaches 80% there.
+  function examEstimate(topics, recs) {
+    var W = 0, sw = 0, s = 0, est = 0;
+    topics.forEach(function (t) { W += t.w; });
+    var rows = topics.map(function (t) {
+      var p = recs[t.id] ? pctOf(recs[t.id].r) : null;
+      if (p != null) { sw += t.w; s += t.w * p; }
+      return { id: t.id, w: t.w, p: p, marks: 100 * t.w / W };
+    });
+    var avg = sw ? s / sw : null, guess = avg == null ? null : Math.min(50, Math.round(avg * 0.75));
+    rows.forEach(function (r) {
+      r.cur = r.p != null ? r.p : guess;
+      if (r.cur != null) est += r.marks * r.cur / 100;
+      r.gain = r.cur == null ? 0 : r.marks * Math.max(0, 80 - r.cur) / 100;
+    });
+    rows.sort(function (a, b) { return (b.gain - a.gain) || (b.w - a.w); });
+    return { est: avg == null ? null : Math.round(est), cover: W ? sw / W : 0, guess: guess, rows: rows };
+  }
   // Days in a row with at least one question. keys[0] = today, keys[1] = yesterday, …
   // A today with no work yet does not break the row.
   function streakOf(days, keys) {
@@ -1677,7 +1826,7 @@ var Core = (function () {
     G: G, GEN_TOPIC: GEN_TOPIC, tbl: tbl, ol: ol
     , parseLogic: parseLogic, evalLogic: evalLogic, logicStr: logicStr, varsOf: varsOf, rowsFor: rowsFor, truthTable: truthTable,
     subExprs: subExprs, sameTable: sameTable, randExpr: randExpr, circuitSVG: circuitSVG, OPS2: OPS2, TRACE: TRACE, traceQ: traceQ
-    , quizPool: quizPool, seeded: seeded, pctOf: pctOf, overallScore: overallScore, trendOf: trendOf, streakOf: streakOf
+    , quizPool: quizPool, seeded: seeded, pctOf: pctOf, overallScore: overallScore, trendOf: trendOf, streakOf: streakOf, examEstimate: examEstimate
     /*@@CORE-EXPORTS@@*/
   };
 })();
@@ -2159,7 +2308,7 @@ var REMINDERS = [
 
   function renderDash() {
     $('#hdrCount').textContent = P.done + ' done';
-    renderNext(); renderScore(); renderRem(); renderWeak(); renderToday(); renderBars(); renderWeek(); renderMocks(); renderSaveWarn();
+    renderNext(); renderRoad(); renderScore(); renderRem(); renderWeak(); renderToday(); renderBars(); renderWeek(); renderMocks(); renderSaveWarn();
   }
   document.addEventListener('visibilitychange', function () { if (!document.hidden && $('#tab-dash').classList.contains('on')) renderDash(); });
 
@@ -2192,7 +2341,11 @@ var REMINDERS = [
     out.push({ pr: 20, title: 'Mixed quiz', short: 'Mixed quiz', why: 'All topics, weighted like the exam.', btn: 'Start (10 questions)', run: quiz({ mixed: true }, 10) });
     out.sort(function (a, b) { return b.pr - a.pr; });
     if (ph === 'night') out.unshift({ title: 'Time to sleep', short: 'Reminder cards', why: 'It is late. Sleep helps your brain remember. In the morning, read your reminder cards.', btn: '5 minutes of reminder cards, then sleep', run: gotoCards });
-    else if (ph === 'morning') out.unshift({ title: 'Read your reminder cards', short: 'Reminder cards', why: REMINDERS.length + ' short cards: the most important facts and your weak spots.', btn: 'Go to the cards', run: gotoCards });
+    else if (ph === 'morning') {
+      out.unshift({ title: 'Go through your reminder cards', short: 'Reminder cards', why: REMINDERS.length + ' short cards: the booklet mistakes and your weak spots.', btn: 'Go to the cards', run: gotoCards });
+      out.unshift({ title: 'Read the 10-minute sheet', short: '10-minute sheet', why: 'The facts that are asked most often, on one page. Read it slowly once.', btn: 'Open the sheet', run: function () { openNote('sheet10'); } });
+      if (hrs <= 0.75) out.unshift({ title: 'Time to go in', short: '', why: 'Put your phone away. Take your pens, pencil, ruler and ID. Breathe slowly. Read every question twice. You are ready.' });
+    }
     return out;
   }
   function renderNext() {
@@ -2203,13 +2356,42 @@ var REMINDERS = [
     el.appendChild(h('div', { cls: 'eyebrow' }, 'Do this next'));
     el.appendChild(h('div', { cls: 'next-title' }, esc(top.title)));
     el.appendChild(h('p', { cls: 'next-why' }, esc(top.why)));
-    el.appendChild(h('button', { cls: 'wide', id: 'nextGo', onclick: top.run }, esc(top.btn)));
+    if (top.run) el.appendChild(h('button', { cls: 'wide', id: 'nextGo', onclick: top.run }, esc(top.btn)));
     var alt = steps.slice(1, 3);
     if (alt.length) {
       var row = h('div', { cls: 'next-alt' }); row.appendChild(h('span', { cls: 'small mut' }, 'Or:'));
       alt.forEach(function (s) { row.appendChild(h('button', { cls: 'small ghost', onclick: s.run }, esc(s.short))); });
       el.appendChild(row);
     }
+  }
+
+  // ----- Road to 60: estimated mark + the topics where marks can be won fastest -----
+  var tipsSet = false;
+  function renderRoad() {
+    var R = Core.examEstimate(TOPICS, P.t), el = $('#roadOut'), html = '', enough = R.est != null && R.cover >= 0.4;
+    if (!tipsSet) { tipsSet = true; $('#tipsCard').open = phase() !== 'early'; } // open the exam tips when the exam is close
+    if (enough) {
+      var need = 60 - R.est, lv = need <= 0 ? 'ok' : need <= 15 ? 'warn' : 'bad';
+      html += '<div class="lv-' + lv + '"><div class="goalrow"><span>Estimated mark: <b>' + R.est + '</b> / 100</span><span class="tag ' + (need <= 0 ? 'ok' : '') + '">' + (need <= 0 ? '✓ on the road to 60' : 'about ' + need + ' more to win') + '</span></div>' +
+        '<div class="track road-track" role="img" aria-label="Estimated mark ' + R.est + ' out of 100. The target is 60."><span class="fill" style="width:' + R.est + '%"></span><span class="goal" style="left:60%"></span></div>' +
+        '<div class="road-scale" aria-hidden="true"><span>0</span><span style="left:60%">60</span><span>100</span></div></div>';
+    } else html += '<p style="margin-top:0">' + (R.est == null ? 'Do a quiz first. Then your estimated mark shows here.' : 'You have tried only a few topics. Try the big topics below. Then your estimated mark shows here.') + '</p>';
+    el.innerHTML = html;
+    var list = R.est == null ? TOPICS.slice().sort(function (a, b) { return b.w - a.w; }).slice(0, 4).map(function (t) { return { id: t.id, p: null, gain: 0 }; }) : R.rows.filter(function (r) { return r.gain >= 0.5; }).slice(0, 4);
+    if (list.length) el.appendChild(h('div', { cls: 'eyebrow', style: 'margin-top:8px' }, R.est == null ? 'Start with the big topics' : 'Win marks fastest here'));
+    else el.appendChild(h('p', { style: 'margin-bottom:0' }, 'Every topic is at 80% or more. Keep it there: do a mixed quiz.'));
+    list.forEach(function (r) {
+      var t = TOPIC[r.id], row = h('div', { cls: 'rrow' }), g = Math.max(1, Math.round(r.gain));
+      row.appendChild(h('div', null, '<div class="wname" style="margin:0">' + esc(t.name) + '</div><div class="small mut">' + (r.p == null ? 'not tried yet' : 'now ' + r.p + '%') + (r.gain ? ' · <span class="gain">up to +' + g + (g === 1 ? ' mark' : ' marks') + '</span>' : '') + '</div>'));
+      var btns = h('div', { cls: 'btns' });
+      btns.appendChild(h('button', { cls: 'small ghost', 'aria-label': 'Read the notes: ' + t.name, onclick: function () { openNote(t.id); } }, 'Notes'));
+      btns.appendChild(h('button', { cls: 'small', 'aria-label': 'Quiz: ' + t.name, onclick: function () { startQuiz({ topic: t.id }, 8); } }, 'Quiz'));
+      row.appendChild(btns); el.appendChild(row);
+    });
+    var links = h('div', { cls: 'row', style: 'margin-top:10px' });
+    links.appendChild(h('button', { cls: 'small ghost', id: 'sheetBtn', onclick: function () { openNote('sheet10'); } }, 'Open the 10-minute sheet'));
+    el.appendChild(links);
+    el.appendChild(h('p', { cls: 'small mut', style: 'margin-bottom:0' }, (enough ? 'This is an estimate from your quiz answers. It is not a promise. ' + (R.rows.some(function (r) { return r.p == null; }) ? 'Topics you have not tried are counted at ' + R.guess + '%.' : '') : 'First read the notes (5 minutes). Then do the quiz.')));
   }
 
   // ----- My score: ring + how many topics are green / amber / red / not tried -----
