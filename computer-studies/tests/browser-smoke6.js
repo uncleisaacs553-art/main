@@ -65,7 +65,7 @@ function expectedScore() { let sw = 0, s = 0; for (const k in SEED.t) { const p 
     ['eve', '2026-11-09T15:00:00', /tomorrow morning\. Fix your weak spots/, /Fix your mistakes/],
     ['night', '2026-11-09T23:20:00', /The exam is tomorrow at 09:00/, /Time to sleep/],
     ['night2', '2026-11-10T01:00:00', /The exam is today at 09:00/, /Time to sleep/],
-    ['morning', '2026-11-10T06:30:00', /this morning\. Read your reminder cards/, /Read the 10-minute sheet/],
+    ['morning', '2026-11-10T06:30:00', /this morning\. Read the 10-minute sheet/, /Read the 10-minute sheet/],
     ['soon', '2026-11-10T08:30:00', /Almost time/, /Time to go in/],
     ['exam', '2026-11-10T09:30:00', /The exam has started/, /Good luck!/],
     ['after', '2026-11-10T12:00:00', /The exam is over/, null]

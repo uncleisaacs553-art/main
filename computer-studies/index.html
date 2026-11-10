@@ -2291,7 +2291,7 @@ var REMINDERS = [
     if (ph === 'early') return daysToExam() + ' days to go. Follow today’s plan.';
     if (ph === 'eve') return 'The exam is tomorrow morning. Fix your weak spots today. Sleep early tonight.';
     if (ph === 'night') return 'The exam is ' + (daysToExam() >= 1 ? 'tomorrow' : 'today') + ' at 09:00. Be there early.';
-    if (ph === 'morning') return ms > 36e5 ? 'The exam is this morning. Read your reminder cards. Eat breakfast. Arrive early.' : 'Almost time. Breathe. Read every question twice.';
+    if (ph === 'morning') return ms > 36e5 ? 'The exam is this morning. Read the 10-minute sheet. Eat breakfast. Arrive early.' : 'Almost time. Breathe. Read every question twice.';
     if (ph === 'exam') return 'The exam has started. Read every question twice. One point per mark.';
     return 'The exam is over. Well done for all your hard work.';
   }
