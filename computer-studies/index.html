@@ -10,27 +10,34 @@
   --bg:#f4f6fa;--card:#fff;--ink:#14202e;--mut:#556273;--line:#d9dee7;
   --acc:#1f5fbf;--acc2:#e8f0fc;--ok:#1b7f47;--okbg:#e6f6ec;--bad:#c22b2b;--badbg:#fdecec;
   --warn:#9a5c00;--warnbg:#fff4e0;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --onacc:#fff;--hdr:#1f5fbf;--okf:#2f9e5e;--warnf:#e39a12;--badf:#d94a4a;--track:#e4e8ef;
+  --hero:#10254a;--hero2:#1b3c70;--heroink:#f4f7ff;--heromut:#b3c4e2;--herochip:rgba(255,255,255,.09);--heroline:rgba(255,255,255,.16);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
   --bg:#0f141b;--card:#18202b;--ink:#e8edf3;--mut:#9aa7b7;--line:#2c3746;
   --acc:#6ea3ff;--acc2:#1c2a40;--ok:#4cc184;--okbg:#14301f;--bad:#ff7b7b;--badbg:#3a1a1a;
   --warn:#ffc163;--warnbg:#3a2a10;
+  --onacc:#0b1626;--hdr:#14233d;--okf:#3fb877;--warnf:#f0b040;--badf:#f06a6a;--track:#2a3547;
+  --hero:#0f1c33;--hero2:#1a2f55;--heroink:#f4f7ff;--heromut:#a5b8d9;--herochip:rgba(255,255,255,.07);--heroline:rgba(255,255,255,.13);
 }}
 :root[data-theme="dark"]{color-scheme:dark;
   --bg:#0f141b;--card:#18202b;--ink:#e8edf3;--mut:#9aa7b7;--line:#2c3746;
   --acc:#6ea3ff;--acc2:#1c2a40;--ok:#4cc184;--okbg:#14301f;--bad:#ff7b7b;--badbg:#3a1a1a;
   --warn:#ffc163;--warnbg:#3a2a10;
+  --onacc:#0b1626;--hdr:#14233d;--okf:#3fb877;--warnf:#f0b040;--badf:#f06a6a;--track:#2a3547;
+  --hero:#0f1c33;--hero2:#1a2f55;--heroink:#f4f7ff;--heromut:#a5b8d9;--herochip:rgba(255,255,255,.07);--heroline:rgba(255,255,255,.13);
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--acc);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--hdr);color:#fff;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:8px}
 header.top h1{font-size:18px;margin:0;font-weight:700}
 header.top small{opacity:.9;font-size:13px}
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);z-index:10;background:var(--hdr)}
 main{max-width:900px;margin:0 auto;padding:14px 16px 96px}
 nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
 nav.tabs button{border:0;background:none;color:var(--mut);font:600 13px system-ui,sans-serif;min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer}
-nav.tabs button span{font-size:22px;line-height:1}
+nav.tabs button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 nav.tabs button.on{color:var(--acc);background:var(--acc2)}
 @media (min-width:900px){nav.tabs{top:52px;bottom:auto;left:50%;transform:translateX(-50%);max-width:900px;border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px}main{padding-top:80px;padding-bottom:40px}.timer{top:118px}}
 section.tab{display:none}section.tab.on{display:block}
@@ -38,7 +45,7 @@ section.tab{display:none}section.tab.on{display:block}
 h2{font-size:21px;margin:4px 0 10px}h3{font-size:18px;margin:16px 0 8px}h4{font-size:16px;margin:14px 0 6px}
 p{margin:8px 0}
 .mut{color:var(--mut)}.small{font-size:14px}
-button,.btn{font:600 16px system-ui,sans-serif;min-height:48px;padding:10px 16px;border-radius:12px;border:1px solid var(--acc);background:var(--acc);color:#fff;cursor:pointer;touch-action:manipulation}
+button,.btn{font:600 16px system-ui,sans-serif;min-height:48px;padding:10px 16px;border-radius:12px;border:1px solid var(--acc);background:var(--acc);color:var(--onacc);cursor:pointer;touch-action:manipulation}
 button.ghost,.btn.ghost{background:transparent;color:var(--acc)}
 button.small{min-height:40px;padding:6px 12px;font-size:14px}
 button:disabled{opacity:.45;cursor:default}
@@ -48,29 +55,129 @@ button:disabled{opacity:.45;cursor:default}
 input[type=text],input[type=search],textarea{font:18px var(--mono);width:100%;min-height:52px;padding:10px 12px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink)}
 textarea{font:17px/1.45 system-ui,sans-serif;min-height:130px}
 input:focus,textarea:focus{outline:none;border-color:var(--acc)}
-/* countdown */
-.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center}
-.cd div{background:var(--acc2);border-radius:12px;padding:8px 2px}
-.cd b{display:block;font-size:28px;font-variant-numeric:tabular-nums}
-.cd small{font-size:12px;color:var(--mut)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.stat{background:var(--acc2);border-radius:12px;padding:10px;text-align:center}
-.stat b{font-size:24px;display:block}
-/* bars */
-.bar{display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:2px 8px;align-items:center;margin:8px 0;font-size:14px}
-.bar .lbl{grid-column:1/3;display:flex;justify-content:space-between;gap:6px}
-.bar .track{height:14px;background:var(--line);border-radius:7px;overflow:hidden;grid-column:1/2}
-.bar .fill{height:100%;border-radius:7px}
-.bar .pc{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
-.thm{font-weight:700;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-top:14px}
+/* ===== dashboard ===== */
+[hidden]{display:none!important}
+button:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.wide{width:100%}
+#tab-dash.on{display:flex;flex-direction:column;gap:14px}
+#tab-dash .card{margin:0}
+#tab-dash h2{font-size:18px;margin:0}
+.dcol{display:contents}
+.o1{order:1}.o2{order:2}.o3{order:3}.o4{order:4}.o5{order:5}.o6{order:6}.o7{order:7}.o8{order:8}.o9{order:9}.o10{order:10}
+@media (min-width:900px){
+  main.wide{max-width:1080px}
+  #tab-dash.on{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+  .dcol{display:flex;flex-direction:column;gap:14px;min-width:0}
+  #tab-dash .dcol>*{order:0}
+}
+.cardhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px 10px;margin-bottom:8px}
+.thm{display:flex;justify-content:space-between;gap:8px;font-weight:700;font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.06em;margin-top:14px}
 .weak{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
 .weak:last-child{border-bottom:0}
 .weak button{white-space:nowrap;flex:0 0 auto}
 .tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--warnbg);color:var(--warn)}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.bad{background:var(--badbg);color:var(--bad)}.tag.info{background:var(--acc2);color:var(--acc)}
+/* exam card + countdown */
+.hero{background:linear-gradient(155deg,var(--hero2),var(--hero));color:var(--heroink);border:1px solid var(--heroline);border-radius:16px;padding:16px}
+.hero .eyebrow{color:var(--heromut)}
+.hero-date{font-size:24px;font-weight:800;line-height:1.2;margin:4px 0 2px}
+.hero-meta{font:14px var(--mono);color:var(--heromut)}
+.cd{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;margin:14px 0 12px}
+.cd.three{grid-template-columns:repeat(3,1fr)}
+.cd.one{grid-template-columns:1fr}
+.cd div{background:var(--herochip);border:1px solid var(--heroline);border-radius:12px;padding:10px 2px 8px}
+.cd b{display:block;font:800 30px/1.1 var(--mono);font-variant-numeric:tabular-nums}
+.cd.three b{font-size:38px}
+.cd small{display:block;margin-top:2px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--heromut)}
+.hero-msg{margin:0;font-size:15px;line-height:1.45}
+/* do this next */
+.next{border:2px solid var(--acc)}
+.next-title{font-size:20px;font-weight:800;line-height:1.25;margin:2px 0 4px}
+.next-why{margin:0 0 12px;color:var(--mut);font-size:15px}
+.next-alt{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:10px}
+/* my score */
+.score{display:grid;grid-template-columns:116px minmax(0,1fr);gap:16px;align-items:center}
+.ring{position:relative;width:116px;height:116px}
+.ring svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
+.ring .rt{fill:none;stroke:var(--track);stroke-width:11}
+.ring .rv{fill:none;stroke-width:11;stroke-linecap:round;stroke:var(--mut)}
+.ring.lv-ok .rv{stroke:var(--okf)}.ring.lv-warn .rv{stroke:var(--warnf)}.ring.lv-bad .rv{stroke:var(--badf)}
+.ring .rg{stroke:var(--ink);stroke-width:2.5;stroke-linecap:round}
+.ring-c{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
+.ring-c b{font:800 27px/1 var(--mono)}
+.ring-c small{font-size:11px;color:var(--mut)}
+.facts{list-style:none;margin:0;padding:0;font-size:15px;line-height:1.35}
+.facts li{margin:0 0 5px}
+.facts li:last-child{margin-bottom:0}
+.facts b{font-family:var(--mono);font-size:16px}
+.mix{display:flex;gap:2px;height:12px;margin:14px 0 8px}
+.mix span{border-radius:3px;min-width:4px}
+.m-ok{background:var(--okf)}.m-warn{background:var(--warnf)}.m-bad{background:var(--badf)}.m-none{background:var(--track)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--mut);margin:0 0 6px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* reminder cards */
+.rem{background:var(--acc2);border-radius:12px;padding:12px 14px;min-height:128px}
+.rem-q{font-size:18px;font-weight:700;line-height:1.3;margin:8px 0 0}
+.rem-a{font-size:16px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--mut)}
+.rem .tag.info{background:var(--card)}
+.rembtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.rembtns .half{flex:1 1 0}
+/* today */
+.goalrow{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:6px;margin-bottom:6px}
+.goalrow b{font:800 20px var(--mono)}
+.goalbar{height:14px;background:var(--track);border-radius:7px;overflow:hidden}
+.goalbar span{display:block;height:100%;background:var(--acc);border-radius:7px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{min-height:40px;padding:6px 12px;border:0;border-radius:0;background:transparent;color:var(--ink);font-size:14px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button.on{background:var(--acc);color:var(--onacc)}
+/* weak topics */
+.wrow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.wrow:last-of-type{border-bottom:0}
+.wname{font-weight:600;line-height:1.3;margin:2px 0 4px}
+.wmeta{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--mut)}
+.mini{flex:0 0 72px;height:8px;background:var(--track);border-radius:4px;overflow:hidden}
+.mini span{display:block;height:100%;border-radius:4px;background:var(--mut)}
+.lv-ok .mini span{background:var(--okf)}.lv-warn .mini span{background:var(--warnf)}.lv-bad .mini span{background:var(--badf)}
+.wrow button{white-space:nowrap}
+/* score per topic (bar chart) */
+.trow{border-bottom:1px solid var(--line)}
+.trow:last-child{border-bottom:0}
+.trow-btn{display:block;width:100%;min-height:52px;padding:9px 0;background:none;border:0;border-radius:6px;color:var(--ink);text-align:left;font-weight:400}
+.trow-in{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;align-items:baseline}
+.trow-name{font-size:15px;font-weight:600;line-height:1.25}
+.bigt{font-size:11px;font-weight:700;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:0 6px;white-space:nowrap}
+.trow-pc{font:700 15px var(--mono);white-space:nowrap;color:var(--mut)}
+.lv-ok .trow-pc{color:var(--ok)}.lv-warn .trow-pc{color:var(--warn)}.lv-bad .trow-pc{color:var(--bad)}
+.lv-none .trow-pc{font:600 13px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.tr{font-size:11px}.tr.up{color:var(--ok)}.tr.down{color:var(--bad)}
+.track{display:block;grid-column:1/3;position:relative;height:12px;background:var(--track);border-radius:6px}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--mut)}
+.lv-ok .fill{background:var(--okf)}.lv-warn .fill{background:var(--warnf)}.lv-bad .fill{background:var(--badf)}
+.goal{position:absolute;left:80%;top:-3px;bottom:-3px;width:2px;margin-left:-1px;border-radius:1px;background:var(--ink);opacity:.5}
+.trow-more{padding:0 0 12px}
+.strip{display:flex;flex-wrap:wrap;gap:3px;margin:6px 0}
+.strip i{display:block;width:12px;height:12px;border-radius:3px}
+.s2{background:var(--okf)}.s1{background:var(--warnf)}.s0{background:var(--badf)}
+/* last 7 days */
+.week{position:relative;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;align-items:end;height:148px;margin-top:4px}
+.wk-col{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:4px;height:100%;min-width:0}
+.wk-n{position:relative;z-index:1;font:700 13px/18px var(--mono);height:18px;padding:0 3px;border-radius:3px;background:var(--card)}
+.wk-bar{display:block;width:100%;max-width:34px;border-radius:6px 6px 2px 2px;background:var(--acc)}
+.wk-col.zero .wk-bar{background:var(--track)}
+.wk-d{font-size:12px;line-height:18px;height:18px;color:var(--mut)}
+.wk-col.today .wk-d{color:var(--ink);font-weight:800}
+.wk-goal{position:absolute;left:0;right:0;height:0;border-top:2px dashed var(--mut);opacity:.7;pointer-events:none}
+/* mock papers */
+.mrow{padding:8px 0;border-bottom:1px solid var(--line)}
+.brow{display:grid;grid-template-columns:88px minmax(0,1fr) 62px;gap:8px;align-items:center;font-size:14px;padding:3px 0}
+.brow .track{grid-column:auto;height:10px}
+.brow .trow-pc{font-size:13px;text-align:right}
 /* notes */
 .chips{display:flex;gap:8px;overflow-x:auto;padding:4px 0 8px;-webkit-overflow-scrolling:touch}
 .chip{flex:0 0 auto;min-height:44px;padding:8px 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 15px system-ui,sans-serif}
-.chip.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.chip.on{background:var(--acc);border-color:var(--acc);color:var(--onacc)}
 .notes .topic{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 12px}
 .notes .topic>summary{list-style:none;cursor:pointer;padding:14px 16px;font-weight:700;font-size:18px;min-height:52px;display:flex;justify-content:space-between;gap:8px}
 .notes .topic>summary::-webkit-details-marker{display:none}
@@ -136,7 +243,7 @@ table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--
 .label-model{display:inline-block;font-size:12px;font-weight:800;color:var(--warn);background:var(--warnbg);border-radius:6px;padding:2px 8px;margin:4px 0}
 .mq{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
 .hidden{display:none!important}
-.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px}
 .modal-box{background:var(--card);color:var(--ink);border-radius:16px;padding:18px;max-width:420px;width:100%;box-shadow:0 10px 40px rgba(0,0,0,.3)}
 </style>
 </head>
@@ -144,61 +251,79 @@ table.trace .exp{display:block;font-size:13px;color:var(--ok);font-family:var(--
 <header class="top"><h1>CS Paper 1 · 6134/1</h1><small id="hdrCount"></small></header>
 
 <nav class="tabs" id="tabs">
-  <button data-tab="dash" class="on"><span>🏠</span>Dashboard</button>
-  <button data-tab="notes"><span>📘</span>Notes</button>
-  <button data-tab="quiz"><span>✏️</span>Quiz</button>
-  <button data-tab="papers"><span>📄</span>Past papers</button>
+  <button data-tab="dash" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/><path d="M10 19.5v-5h4v5"/></svg>Dashboard</button>
+  <button data-tab="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 3.5 5v13c3.5-.5 6.5 0 8.5 1.5 2-1.5 5-2 8.5-1.5V5c-3.5-.5-6.5 0-8.5 1.5z"/><path d="M12 6.5v13"/></svg>Notes</button>
+  <button data-tab="quiz"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20l1-4.5L16.5 4a2.1 2.1 0 0 1 3 3L8 18.5 4 20z"/><path d="M14.5 6l3 3"/></svg>Quiz</button>
+  <button data-tab="papers"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h5M10 16h5"/></svg>Past papers</button>
 </nav>
 
 <main>
 <!-- ============ DASHBOARD ============ -->
 <section class="tab on" id="tab-dash">
-  <div class="card">
-    <h2>Exam: Tue 10 Nov 2026, 09:00</h2>
-    <p class="mut small">Paper 1 · 2 h 30 min · 100 marks</p>
-    <div class="cd" id="cd"></div>
-  </div>
-  <div class="card">
-    <div class="stats">
-      <div class="stat"><b id="stDone">0</b><span class="small mut">questions done</span></div>
-      <div class="stat"><b id="stPct">–</b><span class="small mut">score (last 20 per topic)</span></div>
+  <div class="dcol">
+    <div class="hero o1">
+      <div class="eyebrow">NSSCO · Computer Studies · Paper 1</div>
+      <div class="hero-date">Tue 10 Nov 2026 · 09:00</div>
+      <div class="hero-meta">6134/1 · 2 h 30 min · 100 marks</div>
+      <div class="cd" id="cd" role="timer" aria-label="Time left until the exam"></div>
+      <p class="hero-msg" id="heroMsg"></p>
+    </div>
+    <div class="card next o2" id="nextCard"></div>
+    <div class="card o5">
+      <div class="cardhead"><h2>Weak topics</h2><span class="small mut" id="weakCount"></span></div>
+      <p class="mut small" style="margin-top:0">Below 80%. Fix these first.</p>
+      <div id="weakList"></div>
+    </div>
+    <div class="card o6" id="planCard">
+      <div class="cardhead"><h2>Today</h2><span class="small mut" id="todayDate"></span></div>
+      <div id="goalOut"></div>
+      <div id="planOut"></div>
+    </div>
+    <div class="card o9" id="mockCard">
+      <div class="cardhead"><h2>Mock papers</h2></div>
+      <div id="mockScores"></div>
     </div>
   </div>
-  <div class="card" id="planCard">
-    <h2>Today's plan</h2>
-    <div id="planOut"></div>
-  </div>
-  <div class="card">
-    <h2>Weak topics</h2>
-    <p class="mut small">Below 80%. Fix these first. Tap “Re-test now”.</p>
-    <div id="weakList"></div>
-  </div>
-  <div class="card">
-    <h2>Score per topic</h2>
-    <p class="mut small">Last 20 marks in each topic. Green = 80% or more.</p>
-    <div id="bars"></div>
-  </div>
-  <div class="card" id="mockCard">
-    <h2>Mock papers</h2>
-    <div id="mockScores" class="small"></div>
-  </div>
-  <div class="card">
-    <h2>Save your progress</h2>
-    <p class="small mut">Progress is saved on this phone. Export it to keep a copy or move it to another device.</p>
-    <div class="row">
-      <button id="btnExport">Export progress</button>
-      <button class="ghost" id="btnImport">Import progress</button>
-      <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+  <div class="dcol">
+    <div class="card o3">
+      <div class="cardhead"><h2>My score</h2></div>
+      <div id="scoreOut"></div>
     </div>
-    <div id="ioBox" class="hidden" style="margin-top:10px">
-      <p class="small mut" id="ioMsg"></p>
-      <textarea id="ioText" spellcheck="false" style="font:13px var(--mono)"></textarea>
-      <div class="row" style="margin-top:8px">
-        <button class="small" id="btnIoApply">Load this text</button>
-        <button class="small ghost" id="btnIoClose">Close</button>
+    <div class="card o4" id="remCard">
+      <div class="cardhead"><h2>Reminder cards</h2><span class="small mut" id="remPos"></span></div>
+      <div class="rem" id="remBody" aria-live="polite"></div>
+      <div class="rembtns" id="remBtns"></div>
+    </div>
+    <div class="card o7">
+      <div class="cardhead"><h2>Score per topic</h2>
+        <div class="seg" id="barSort" role="group" aria-label="Sort the topics"><button type="button" data-s="theme" class="on">By theme</button><button type="button" data-s="weak">Weakest first</button></div>
       </div>
+      <p class="mut small" style="margin:0 0 4px">Your last 20 marks in each topic. The line on each bar is the 80% target. Tap a topic for more.</p>
+      <div id="bars"></div>
     </div>
-    <p class="small" id="saveWarn"></p>
+    <div class="card o8">
+      <div class="cardhead"><h2>Last 7 days</h2></div>
+      <div id="weekOut"></div>
+    </div>
+    <div class="card o10">
+      <div class="cardhead"><h2>Save your progress</h2></div>
+      <p class="small mut" style="margin-top:0">Progress is saved on this phone. Export it to keep a copy or move it to another device.</p>
+      <div class="row">
+        <button id="btnExport">Export progress</button>
+        <button class="ghost" id="btnImport">Import progress</button>
+        <input type="file" id="importFile" accept=".json,application/json" class="hidden">
+      </div>
+      <div id="ioBox" class="hidden" style="margin-top:10px">
+        <p class="small mut" id="ioMsg"></p>
+        <textarea id="ioText" spellcheck="false" style="font:13px var(--mono)"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="small" id="btnIoApply">Load this text</button>
+          <button class="small ghost" id="btnIoCopy">Copy text</button>
+          <button class="small ghost" id="btnIoClose">Close</button>
+        </div>
+      </div>
+      <p class="small" id="saveWarn" style="margin-bottom:0"></p>
+    </div>
   </div>
 </section>
 
@@ -1518,6 +1643,33 @@ var Core = (function () {
     try { return fn(); } finally { Math.random = orig; }
   }
 
+  // ================= DASHBOARD MATHS (pure, tested) =================
+  function pctOf(r) { var e = 0, m = 0; (r || []).forEach(function (x) { e += x[0]; m += x[1]; }); return m ? Math.round(100 * e / m) : null; }
+  // Score weighted like the exam: only topics that were tried, each weighted by w.
+  function overallScore(topics, recs) {
+    var sw = 0, s = 0, tried = 0, green = 0, amber = 0, red = 0;
+    topics.forEach(function (t) {
+      var p = recs[t.id] ? pctOf(recs[t.id].r) : null; if (p == null) return;
+      tried++; if (p >= 80) green++; else if (p >= 50) amber++; else red++;
+      sw += t.w; s += t.w * p;
+    });
+    return { score: sw ? Math.round(s / sw) : null, tried: tried, green: green, amber: amber, red: red, none: topics.length - tried, total: topics.length };
+  }
+  // +1 = getting better, -1 = getting worse, 0 = the same or too few answers
+  function trendOf(r) {
+    if (!r || r.length < 8) return 0;
+    var hf = Math.floor(r.length / 2), a = pctOf(r.slice(0, hf)), b = pctOf(r.slice(hf));
+    if (a == null || b == null) return 0;
+    return b - a >= 20 ? 1 : a - b >= 20 ? -1 : 0; // a clear change only: small changes are just chance
+  }
+  // Days in a row with at least one question. keys[0] = today, keys[1] = yesterday, …
+  // A today with no work yet does not break the row.
+  function streakOf(days, keys) {
+    var n = 0;
+    for (var i = 0; i < keys.length; i++) { var d = days[keys[i]]; if (d && d.n) n++; else if (i === 0) continue; else break; }
+    return n;
+  }
+
   return {
     R: R, pick: pick, pad: pad, norm: norm, stripZ: stripZ, grp: grp, HEX: HEX,
     denToBin: denToBin, binToDen: binToDen, denToHex: denToHex, hexToDen: hexToDen, binToHexGrid: binToHexGrid, hexToBin: hexToBin,
@@ -1525,7 +1677,7 @@ var Core = (function () {
     G: G, GEN_TOPIC: GEN_TOPIC, tbl: tbl, ol: ol
     , parseLogic: parseLogic, evalLogic: evalLogic, logicStr: logicStr, varsOf: varsOf, rowsFor: rowsFor, truthTable: truthTable,
     subExprs: subExprs, sameTable: sameTable, randExpr: randExpr, circuitSVG: circuitSVG, OPS2: OPS2, TRACE: TRACE, traceQ: traceQ
-    , quizPool: quizPool, seeded: seeded
+    , quizPool: quizPool, seeded: seeded, pctOf: pctOf, overallScore: overallScore, trendOf: trendOf, streakOf: streakOf
     /*@@CORE-EXPORTS@@*/
   };
 })();
@@ -1570,12 +1722,12 @@ var TOPICS = [
 ];
 // Seeded weak areas (shown first in "Re-test now"). Cleared after 8+ marks at 80%+.
 var FOCUS = [
-  { id: 'hexgrid', name: 'Binary → hex grouping (padding zeros go on the LEFT)' },
-  { id: 'parity', name: 'Parity: parity bit vs count of 1s vs parity type' },
-  { id: 'describe', name: 'Describe/explain answers that only name things' },
-  { id: 'valver', name: 'Validation vs verification' },
-  { id: 'sdlcst', name: 'Life cycle: design vs development vs implementation' },
-  { id: 'copy', name: 'Copying numbers from the question correctly' }
+  { id: 'hexgrid', short: 'Binary → hex grouping', name: 'Binary → hex grouping (padding zeros go on the LEFT)' },
+  { id: 'parity', short: 'The parity bit', name: 'Parity: parity bit vs count of 1s vs parity type' },
+  { id: 'describe', short: 'Describe / explain answers', name: 'Describe/explain answers that only name things' },
+  { id: 'valver', short: 'Validation vs verification', name: 'Validation vs verification' },
+  { id: 'sdlcst', short: 'Life cycle stages', name: 'Life cycle: design vs development vs implementation' },
+  { id: 'copy', short: 'Copying numbers', name: 'Copying numbers from the question correctly' }
 ];
 
 // Written / multiple-choice bank.
@@ -1852,6 +2004,40 @@ var PLAN = [
     { id: 'e3', text: 'Copy numbers carefully. Check every conversion twice.', go: null },
     { id: 'e4', text: 'Describe/explain: say what it does and WHY. Use the scenario.', go: null } ] }
 ];
+
+// Reminder cards on the Dashboard: question first, then the answer.
+// k: book = a booklet correction · weak = a known weak spot · rule = exam technique · fact = key fact
+// note: the Notes topic that explains it
+var REMINDERS = [
+  { id: 'r1', k: 'book', note: 'cpu', q: 'What does the MAR hold? What does the MDR hold?', a: '<b>MAR = the ADDRESS.</b> <b>MDR = the DATA or INSTRUCTION.</b> MBR is another name for the MDR.' },
+  { id: 'r2', k: 'book', note: 'cpu', q: 'What happens in the DECODE stage?', a: 'The <b>control unit interprets</b> the instruction in the <b>CIR</b> (opcode and operand). It is <b>not</b> “translate to binary”.' },
+  { id: 'r3', k: 'weak', note: 'num', q: 'Binary → hex: where do the padding zeros go?', a: 'On the <b>LEFT</b>. Make groups of 4 from the right. <span class="mono">1101011 → 0110 1011 → 6B</span>' },
+  { id: 'r4', k: 'weak', note: 'err', q: 'Even parity. The data 1011001 has four 1s. What is the parity bit?', a: '<b>0</b>. The parity bit is only 0 or 1. It is not the count (4) and not the type (even).' },
+  { id: 'r5', k: 'book', note: 'err', q: 'Which error does a parity check miss?', a: '<b>Two bits changed</b> (any even number of bits). A <b>checksum</b> can catch it.' },
+  { id: 'r6', k: 'book', note: 'chk', q: 'What are check digits for?', a: 'Finding <b>data entry</b> errors (typing or scanning a code). Not transmission errors.' },
+  { id: 'r7', k: 'book', note: 'chk', q: 'ISBN-13: the weighted sum is 159. What is the check digit?', a: '159 MOD 10 = 9. Check digit = 10 − 9 = <b>1</b>. The 9 is only the remainder.' },
+  { id: 'r8', k: 'book', note: 'num', q: 'How many bits is denary 255 in binary?', a: '<b>8 bits</b>: <span class="mono">11111111</span>. Not 9 bits.' },
+  { id: 'r9', k: 'book', note: 'comp', q: 'Is AVI audio or video? Does JPEG lose quality?', a: '<b>AVI = video.</b> <b>JPEG is lossy</b>, so quality IS reduced. Normal WMA is lossy too.' },
+  { id: 'r10', k: 'book', note: 'hexuse', q: 'What does a MAC address identify?', a: 'The <b>network card (NIC)</b> of a device on a network. The maker sets it. It does not change.' },
+  { id: 'r11', k: 'book', note: 'test', q: 'Marks must be 0 to 100. Give extreme data and abnormal data.', a: '<b>Extreme</b> = ON the boundary, accepted: 0 or 100. <b>Abnormal</b> = outside, rejected: −1 or 101.' },
+  { id: 'r12', k: 'book', note: 'algo', q: 'The pass mark is 50. Write the IF line. Then write the test that rejects a bad mark.', a: '<span class="mono">IF Mark &gt;= 50 THEN</span> (not &lt;= 50).<br>Reject: <span class="mono">Mark &lt; 0 OR Mark &gt; 100</span>' },
+  { id: 'r13', k: 'weak', note: 'valid', q: 'Typing a password twice: validation or verification?', a: '<b>Verification</b> (double entry). Validation = is the data sensible? Verification = was it copied correctly?' },
+  { id: 'r14', k: 'weak', note: 'sdlc', q: 'Training the staff: design, development or implementation?', a: '<b>Implementation.</b> Design = plan on paper. Development = build and test. Implementation = start using it.' },
+  { id: 'r15', k: 'rule', note: 'howto', q: 'A “Describe” or “Explain” question has [3] marks. What must you write?', a: '<b>3 different points.</b> Say what it does and WHY. Naming only = 0. “Faster / cheaper / easier” alone = 0. Use the scenario.' },
+  { id: 'r16', k: 'weak', note: null, q: 'You must use a number from the question. What do you do first?', a: 'Copy it. Then <b>check it digit by digit</b> before you start.' },
+  { id: 'r17', k: 'fact', note: 'io', q: 'What does a sensor do in a control system?', a: 'It only <b>measures</b>. The <b>microprocessor</b> compares the reading with the set value and decides.' },
+  { id: 'r18', k: 'fact', note: 'stor', q: 'RAM or ROM: which one is volatile?', a: '<b>RAM.</b> It loses its data when the power is off. ROM keeps the start-up (boot) program.' },
+  { id: 'r19', k: 'fact', note: 'cpu', q: 'FETCH: what are the four steps?', a: '1. PC → MAR (the address).<br>2. PC goes up by 1.<br>3. The instruction goes from memory → MDR.<br>4. MDR → CIR.' },
+  { id: 'r20', k: 'fact', note: 'logic', q: 'NAND, NOR, XOR: when is the output 1?', a: '<b>NAND</b>: 1 except when both inputs are 1.<br><b>NOR</b>: 1 only when both inputs are 0.<br><b>XOR</b>: 1 when the inputs are different.' },
+  { id: 'r21', k: 'fact', note: 'algo', q: '17 MOD 5 = ?   17 DIV 5 = ?', a: 'MOD = the remainder = <b>2</b>. DIV = the whole-number part = <b>3</b>.' },
+  { id: 'r22', k: 'fact', note: 'net', q: 'Hub or switch: which one sends data only to the correct device?', a: 'The <b>switch</b> (it uses MAC addresses). A hub sends the data to ALL devices.' },
+  { id: 'r23', k: 'fact', note: 'net', q: 'What does a router do?', a: 'It <b>connects networks</b> (e.g. a LAN to the internet). It sends data packets to the correct network using <b>IP addresses</b>.' },
+  { id: 'r24', k: 'fact', note: 'stor', q: 'Explain why a laptop uses an SSD, not a hard disk. [2]', a: 'It has <b>no moving parts</b>, <b>so</b> it is not damaged when the laptop is moved or dropped. (A point + the reason = 2 marks.)' },
+  { id: 'r25', k: 'fact', note: 'db', q: 'What is a primary key?', a: 'A field that is <b>unique</b> for every record, e.g. LearnerID. (A foreign key links to the primary key of another table.)' },
+  { id: 'r26', k: 'fact', note: 'sheet', q: 'Why do we write $B$1 in a spreadsheet formula?', a: 'It is an <b>absolute reference</b>. It does <b>not change</b> when the formula is copied. Use it for one fixed cell, e.g. the VAT rate.' },
+  { id: 'r27', k: 'fact', note: 'sec', q: 'A fake e-mail asks for your bank details. Phishing or pharming?', a: '<b>Phishing.</b> Pharming = code sends you to a fake website, even when you type the right address.' },
+  { id: 'r28', k: 'fact', note: 'sec', q: 'How does encryption protect data?', a: 'It <b>scrambles</b> the data with a key. If the data is stolen, it <b>cannot be understood</b>. (It does not stop the theft.)' }
+];
 /*@@DATA-MORE@@*/
 </script>
 
@@ -1883,7 +2069,7 @@ var PLAN = [
 
   // ---------- storage ----------
   var memoryOnly = false;
-  function blank() { return { v: 1, created: Date.now(), done: 0, t: {}, f: {}, seen: {}, mocks: [], miss: {}, missGen: {}, plan: {} }; }
+  function blank() { return { v: 1, created: Date.now(), done: 0, t: {}, f: {}, seen: {}, mocks: [], miss: {}, missGen: {}, plan: {}, days: {}, goal: 30, rem: {} }; }
   function load() {
     try { var s = localStorage.getItem(KEY); if (s) { var p = JSON.parse(s); if (p && p.v === 1) return fix(p); } }
     catch (e) { memoryOnly = true; }
@@ -1898,8 +2084,9 @@ var PLAN = [
     o.r.push([+e.toFixed(2), m]); if (o.r.length > 20) o.r.shift();
     o.e += e; o.m += m; o.n++;
   }
-  function record(q, e, m) {
+  function record(q, e, m, secs) {
     P.done++;
+    var day = dayRec(); day.n++; day.e = +(day.e + e).toFixed(2); day.m += m; day.s += secs || 0;
     rec(P.t, q.topic, e, m);
     (q.focus || []).forEach(function (f) { rec(P.f, f, e, m); });
     if (q.bankId) P.seen[q.bankId] = (P.seen[q.bankId] || 0) + 1;
@@ -1914,7 +2101,8 @@ var PLAN = [
 
   // ---------- tabs ----------
   function showTab(id) {
-    $$('#tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === id); });
+    $$('#tabs button').forEach(function (b) { var on = b.dataset.tab === id; b.classList.toggle('on', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    $('main').classList.toggle('wide', id === 'dash');
     $$('section.tab').forEach(function (s) { s.classList.toggle('on', s.id === 'tab-' + id); });
     if (id === 'dash') renderDash();
     if (id === 'papers') renderPapers();
@@ -1924,51 +2112,198 @@ var PLAN = [
   $('#tabs').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) showTab(b.dataset.tab); });
 
   // ---------- dashboard ----------
+  var DAY_MS = 864e5, EXAM_LEN = 150 * 60000;
+  var WD = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  // Namibia time is UTC+2 all year. Read these dates with the getUTC… functions.
+  function namDate(off) { return new Date(Date.now() + 2 * 3600e3 + (off || 0) * DAY_MS); }
+  function todayNam(off) { return namDate(off).toISOString().slice(0, 10); }
+  var EXAM_DAY = new Date(EXAM.getTime() + 2 * 3600e3).toISOString().slice(0, 10);
+  function daysToExam() { return Math.round((Date.parse(EXAM_DAY) - Date.parse(todayNam())) / DAY_MS); }
+  function dayRec() { var k = todayNam(); return P.days[k] || (P.days[k] = { n: 0, e: 0, m: 0, s: 0 }); }
+  function level(p) { return p == null ? 'none' : p >= 80 ? 'ok' : p >= 50 ? 'warn' : 'bad'; }
+  function colour(p) { return p == null ? 'var(--line)' : p >= 80 ? 'var(--ok)' : p >= 50 ? 'var(--warn)' : 'var(--bad)'; }
+  function fmtHM(ms) { var m = Math.max(0, Math.round(ms / 60000)), hh = Math.floor(m / 60); return hh ? hh + ' h ' + (m % 60) + ' min' : m + ' min'; }
+  function plural(n, w) { return n + ' ' + w + (n === 1 ? '' : 's'); }
+  // early = 2+ days left · eve = the day before · night = late, just before the exam · morning = exam morning
+  function phase() {
+    var ms = EXAM - Date.now(); if (ms <= 0) return ms < -EXAM_LEN ? 'after' : 'exam';
+    var left = daysToExam(), hour = namDate().getUTCHours();
+    if (left >= 2) return 'early';
+    if (left === 1) return hour >= 21 ? 'night' : 'eve';
+    return hour < 4 ? 'night' : 'morning';
+  }
+  function heroMessage(ph, ms) {
+    if (ph === 'early') return daysToExam() + ' days to go. Follow today’s plan.';
+    if (ph === 'eve') return 'The exam is tomorrow morning. Fix your weak spots today. Sleep early tonight.';
+    if (ph === 'night') return 'The exam is ' + (daysToExam() >= 1 ? 'tomorrow' : 'today') + ' at 09:00. Be there early.';
+    if (ph === 'morning') return ms > 36e5 ? 'The exam is this morning. Read your reminder cards. Eat breakfast. Arrive early.' : 'Almost time. Breathe. Read every question twice.';
+    if (ph === 'exam') return 'The exam has started. Read every question twice. One point per mark.';
+    return 'The exam is over. Well done for all your hard work.';
+  }
+  var lastPhase = null;
   function tick() {
-    var ms = EXAM - Date.now(), el = $('#cd');
-    if (ms <= 0) { el.innerHTML = '<div style="grid-column:1/5"><b>Good luck!</b><small>The exam has started</small></div>'; return; }
-    var d = Math.floor(ms / 864e5), hh = Math.floor(ms / 36e5) % 24, mm = Math.floor(ms / 6e4) % 60, ss = Math.floor(ms / 1e3) % 60;
-    el.innerHTML = [[d, 'days'], [hh, 'hours'], [mm, 'min'], [ss, 'sec']].map(function (x) { return '<div><b>' + x[0] + '</b><small>' + x[1] + '</small></div>'; }).join('');
+    var ms = EXAM - Date.now(), el = $('#cd'), ph = phase(), html;
+    if (ms <= 0) { el.className = 'cd one'; html = '<div><b>' + (ph === 'after' ? 'Well done!' : 'Good luck!') + '</b></div>'; }
+    else {
+      var d = Math.floor(ms / DAY_MS), hh = Math.floor(ms / 36e5) % 24, mm = Math.floor(ms / 6e4) % 60, ss = Math.floor(ms / 1e3) % 60, two = function (x) { return ('0' + x).slice(-2); };
+      var parts = d > 0 ? [[d, d === 1 ? 'day' : 'days'], [hh, 'hours'], [two(mm), 'min'], [two(ss), 'sec']] : [[hh, hh === 1 ? 'hour' : 'hours'], [two(mm), 'min'], [two(ss), 'sec']];
+      el.className = 'cd' + (d > 0 ? '' : ' three');
+      html = parts.map(function (x) { return '<div><b>' + x[0] + '</b><small>' + x[1] + '</small></div>'; }).join('');
+    }
+    el.innerHTML = html;
+    $('#heroMsg').textContent = heroMessage(ph, ms);
+    if (lastPhase && lastPhase !== ph && $('#tab-dash').classList.contains('on')) renderDash(); // the advice changes with the time of day
+    lastPhase = ph;
   }
   setInterval(tick, 1000); tick();
 
-  function colour(p) { return p == null ? 'var(--line)' : p >= 80 ? 'var(--ok)' : p >= 50 ? 'var(--warn)' : 'var(--bad)'; }
-  function weakItems() {
-    var list = [];
-    FOCUS.forEach(function (f) { if (!focusCleared(f.id)) list.push({ kind: 'f', id: f.id, name: f.name, p: pct(P.f[f.id]), seed: true }); });
-    TOPICS.forEach(function (t) { var p = pct(P.t[t.id]); if (p != null && p < 80) list.push({ kind: 't', id: t.id, name: t.name, p: p }); });
-    return list;
-  }
   function renderDash() {
-    $('#stDone').textContent = P.done;
-    var e = 0, m = 0; for (var k in P.t) P.t[k].r.forEach(function (x) { e += x[0]; m += x[1]; });
-    $('#stPct').textContent = m ? Math.round(100 * e / m) + '%' : '–';
     $('#hdrCount').textContent = P.done + ' done';
-    renderPlan();
-    var wl = $('#weakList'); wl.innerHTML = '';
-    var items = weakItems();
-    if (!items.length) wl.innerHTML = '<p>No weak topics now. Well done! Try a mock paper.</p>';
-    items.forEach(function (it) {
-      var row = h('div', { cls: 'weak' });
-      row.appendChild(h('div', null, (it.seed ? '<span class="tag">Known weak spot</span><br>' : '') + esc(it.name) + '<br><span class="small mut">' + (it.p == null ? 'not tested yet' : it.p + '%') + '</span>'));
+    renderNext(); renderScore(); renderRem(); renderWeak(); renderToday(); renderBars(); renderWeek(); renderMocks(); renderSaveWarn();
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && $('#tab-dash').classList.contains('on')) renderDash(); });
+
+  // ----- "Do this next": one clear step, chosen from the learner's own results -----
+  function nextMockId() { for (var k = 1; k <= PRACTICE_N; k++) if (!P.mocks.some(function (m) { return m.pid === 'x' + k; })) return 'x' + k; return 'x1'; }
+  function gotoCards() {
+    var c = $('#remCard'); if (!c) return;
+    window.scrollTo(0, Math.max(0, c.getBoundingClientRect().top + window.pageYOffset - (window.innerWidth >= 900 ? 130 : 64)));
+    var b = $('#remBtns [data-main]'); if (b) b.focus({ preventScroll: true });
+  }
+  function nextSteps(ph) {
+    var hrs = (EXAM - Date.now()) / 36e5, out = [], M = P.mockRun, mc = mistakeCount();
+    function quiz(sel, n) { return function () { startQuiz(sel, n); }; }
+    if (M) out.push({ pr: 900, title: M.done ? 'Finish marking your mock paper' : 'Continue your mock paper', short: 'Open my mock paper', why: M.done ? 'Tick the points you made. Then save your total.' : 'Time left: ' + fmtHM(M.start + EXAM_LEN - Date.now()) + '. Your answers are saved.', btn: 'Open the mock paper', run: function () { showTab('papers'); } });
+    if (mc) out.push({ pr: (hrs <= 36 ? 86 : 60) + Math.min(mc, 10), title: 'Fix your mistakes', short: 'Fix ' + plural(mc, 'mistake'), why: 'You got ' + plural(mc, 'question') + ' wrong. Try ' + (mc === 1 ? 'it' : 'them') + ' again.', btn: 'Start', run: quiz({ mistakes: true }, Math.min(10, Math.max(5, mc))) });
+    FOCUS.forEach(function (f) {
+      if (focusCleared(f.id)) return;
+      var p = pct(P.f[f.id]);
+      out.push({ pr: p == null ? 84 : 80 - p * 0.3, title: 'Weak spot: ' + f.short, short: f.short, why: p == null ? 'A known weak spot. Not tested yet.' : p >= 80 ? 'A known weak spot. ' + p + '% so far. Do a few more to be sure.' : 'A known weak spot. You have ' + p + '%. You need 80%.', btn: 'Start (8 questions)', run: quiz({ focus: f.id }, 8) });
+    });
+    TOPICS.forEach(function (t) {
+      var p = pct(P.t[t.id]), big = t.w >= 3 ? ' It is a big exam topic.' : '';
+      if (p == null) out.push({ pr: 30 + t.w * 8, title: 'Try: ' + t.name, short: t.name, why: 'Not tried yet.' + big, btn: 'Start (10 questions)', run: quiz({ topic: t.id }, 10) });
+      else if (p < 80) out.push({ pr: 40 + t.w * (80 - p) / 6, title: 'Re-test: ' + t.name, short: t.name, why: 'You have ' + p + '% here.' + big + ' You need 80%.', btn: 'Start (8 questions)', run: quiz({ topic: t.id }, 8) });
+    });
+    if (!M) {
+      var pid = nextMockId(), again = P.mocks.some(function (m) { return m.pid === pid; });
+      out.push({ pr: hrs < 14 ? 5 : P.mocks.length ? 44 : 68, title: (again ? 'Do again: ' : 'Do ') + 'Practice paper ' + pid.slice(1), short: 'Practice paper ' + pid.slice(1), why: 'A full paper: 100 marks in 2 h 30 min.', btn: 'Open the paper', run: function () { showTab('papers'); startMock(pid); } });
+    }
+    out.push({ pr: 20, title: 'Mixed quiz', short: 'Mixed quiz', why: 'All topics, weighted like the exam.', btn: 'Start (10 questions)', run: quiz({ mixed: true }, 10) });
+    out.sort(function (a, b) { return b.pr - a.pr; });
+    if (ph === 'night') out.unshift({ title: 'Time to sleep', short: 'Reminder cards', why: 'It is late. Sleep helps your brain remember. In the morning, read your reminder cards.', btn: '5 minutes of reminder cards, then sleep', run: gotoCards });
+    else if (ph === 'morning') out.unshift({ title: 'Read your reminder cards', short: 'Reminder cards', why: REMINDERS.length + ' short cards: the most important facts and your weak spots.', btn: 'Go to the cards', run: gotoCards });
+    return out;
+  }
+  function renderNext() {
+    var el = $('#nextCard'), ph = phase(); el.innerHTML = '';
+    el.hidden = ph === 'after'; if (ph === 'after') return;
+    if (ph === 'exam') { el.innerHTML = '<div class="eyebrow">Now</div><div class="next-title">Good luck!</div><p class="next-why" style="margin-bottom:0">Read every question twice. Look at the marks [ ]. Write one point for each mark.</p>'; return; }
+    var steps = nextSteps(ph), top = steps[0];
+    el.appendChild(h('div', { cls: 'eyebrow' }, 'Do this next'));
+    el.appendChild(h('div', { cls: 'next-title' }, esc(top.title)));
+    el.appendChild(h('p', { cls: 'next-why' }, esc(top.why)));
+    el.appendChild(h('button', { cls: 'wide', id: 'nextGo', onclick: top.run }, esc(top.btn)));
+    var alt = steps.slice(1, 3);
+    if (alt.length) {
+      var row = h('div', { cls: 'next-alt' }); row.appendChild(h('span', { cls: 'small mut' }, 'Or:'));
+      alt.forEach(function (s) { row.appendChild(h('button', { cls: 'small ghost', onclick: s.run }, esc(s.short))); });
+      el.appendChild(row);
+    }
+  }
+
+  // ----- My score: ring + how many topics are green / amber / red / not tried -----
+  function renderScore() {
+    var o = Core.overallScore(TOPICS, P.t), lv = level(o.score), C = 2 * Math.PI * 50, a = 0.8 * 2 * Math.PI, mc = mistakeCount();
+    var gx = function (r) { return (60 + r * Math.cos(a)).toFixed(1); }, gy = function (r) { return (60 + r * Math.sin(a)).toFixed(1); };
+    var segs = [['ok', o.green, 'at 80% or more'], ['warn', o.amber, 'at 50–79%'], ['bad', o.red, 'under 50%'], ['none', o.none, 'not tried']];
+    $('#scoreOut').innerHTML = '<div class="score">' +
+      '<div class="ring lv-' + lv + '" role="img" aria-label="' + (o.score == null ? 'No score yet' : 'Score ' + o.score + ' percent. The target is 80 percent.') + '">' +
+        '<svg viewBox="0 0 120 120" aria-hidden="true"><circle class="rt" cx="60" cy="60" r="50"/>' +
+        (o.score ? '<circle class="rv" cx="60" cy="60" r="50" stroke-dasharray="' + (C * o.score / 100).toFixed(1) + ' ' + C.toFixed(1) + '"/>' : '') +
+        '<line class="rg" x1="' + gx(42) + '" y1="' + gy(42) + '" x2="' + gx(58) + '" y2="' + gy(58) + '"/></svg>' +
+        '<div class="ring-c"><b>' + (o.score == null ? '–' : o.score + '%') + '</b><small>' + (o.score == null ? 'no score yet' : 'target 80%') + '</small></div></div>' +
+      '<ul class="facts"><li><b id="stDone">' + P.done + '</b> questions done</li>' +
+        '<li><b>' + o.tried + '</b> of ' + o.total + ' topics tried</li>' +
+        '<li><b>' + o.green + '</b> of ' + o.total + ' topics at 80% or more</li>' +
+        '<li>' + (mc ? '<b>' + mc + '</b> ' + (mc === 1 ? 'mistake' : 'mistakes') + ' to fix' : 'No mistakes to fix') + '</li></ul></div>' +
+      '<div class="mix" role="img" aria-label="Topics: ' + segs.map(function (s) { return s[1] + ' ' + s[2]; }).join(', ') + '">' + segs.filter(function (s) { return s[1]; }).map(function (s) { return '<span class="m-' + s[0] + '" style="flex:' + s[1] + '"></span>'; }).join('') + '</div>' +
+      '<div class="legend">' + segs.map(function (s) { return '<span><i class="m-' + s[0] + '"></i>' + s[1] + ' ' + s[2] + '</span>'; }).join('') + '</div>' +
+      '<p class="small mut" style="margin-bottom:0">' + (o.score == null ? 'Do a quiz to see your score.' : 'Score = your last 20 marks in each topic, weighted like the exam.') + '</p>';
+  }
+
+  // ----- Reminder cards: question first, then the answer. Cards he knows are not shown again. -----
+  var REM_TAG = { book: ['bad', 'Booklet is wrong'], weak: ['', 'Your weak spot'], rule: ['info', 'Exam rule'], fact: ['info', 'Key fact'] };
+  var remIdx = -1, remOpen = false;
+  function remNext(from) { for (var i = 1; i <= REMINDERS.length; i++) { var k = (from + i) % REMINDERS.length; if (!P.rem[REMINDERS[k].id]) return k; } return -1; }
+  function renderRem() {
+    var btns = $('#remBtns'), body = $('#remBody'), n = REMINDERS.length;
+    var known = REMINDERS.filter(function (r) { return P.rem[r.id]; }).length;
+    function focusMain() { var b = $('#remBtns [data-main]'); if (b) b.focus({ preventScroll: true }); }
+    function show(k) { remIdx = k; remOpen = false; renderRem(); focusMain(); }
+    $('#remPos').textContent = known + ' of ' + n + ' known';
+    btns.innerHTML = '';
+    if (remIdx < 0 || !REMINDERS[remIdx]) remIdx = remNext(-1); // the first card he does not know yet
+    if (remIdx < 0) {
+      body.innerHTML = '<span class="tag ok">✓ All done</span><div class="rem-q">You know all ' + n + ' cards.</div><div class="rem-a">Well done. Go through them once more on the morning of the exam.</div>';
+      btns.appendChild(h('button', { cls: 'small half', 'data-main': '1', onclick: function () { P.rem = {}; save(); show(0); } }, 'Start again'));
+      return;
+    }
+    var r = REMINDERS[remIdx], tg = REM_TAG[r.k] || REM_TAG.fact;
+    body.innerHTML = '<span class="tag ' + tg[0] + '">' + tg[1] + '</span><div class="rem-q">' + r.q + '</div>' + (remOpen ? '<div class="rem-a">' + r.a + '</div>' : '');
+    if (!remOpen) {
+      btns.appendChild(h('button', { cls: 'small ghost', onclick: function () { show((remIdx - 1 + n) % n); } }, '‹ Back'));
+      btns.appendChild(h('button', { cls: 'small half', 'data-main': '1', onclick: function () { remOpen = true; renderRem(); focusMain(); } }, 'Show the answer'));
+    } else {
+      btns.appendChild(h('button', { cls: 'small ghost half', onclick: function () { delete P.rem[r.id]; save(); show(remNext(remIdx)); } }, '✗ I forgot'));
+      btns.appendChild(h('button', { cls: 'small half', 'data-main': '1', onclick: function () { P.rem[r.id] = 1; save(); show(remNext(remIdx)); } }, '✓ I knew it'));
+      if (r.note) btns.appendChild(h('button', { cls: 'small ghost', style: 'flex:1 1 100%', onclick: function () { openNote(r.note); } }, 'Read the note'));
+    }
+  }
+
+  // ----- Weak topics -----
+  var weakAll = false;
+  function weakItems() {
+    var list = [], tl = [];
+    FOCUS.forEach(function (f) {
+      if (focusCleared(f.id)) return;
+      var o = P.f[f.id], m = 0; if (o) o.r.forEach(function (x) { m += x[1]; });
+      list.push({ kind: 'f', id: f.id, name: f.name, p: pct(o), seed: true, m: Math.round(m * 10) / 10 });
+    });
+    TOPICS.forEach(function (t) { var p = pct(P.t[t.id]); if (p != null && p < 80) tl.push({ kind: 't', id: t.id, name: t.name, p: p, w: t.w }); });
+    tl.sort(function (a, b) { return b.w * (80 - b.p) - a.w * (80 - a.p); }); // biggest loss of exam marks first
+    return list.concat(tl);
+  }
+  function renderWeak() {
+    var wl = $('#weakList'), items = weakItems(); wl.innerHTML = '';
+    $('#weakCount').textContent = items.length ? items.length + ' to fix' : '';
+    if (!items.length) wl.innerHTML = '<p style="margin-bottom:0">No weak topics now. Well done!</p>';
+    (weakAll ? items : items.slice(0, 8)).forEach(function (it) {
+      var row = h('div', { cls: 'wrow lv-' + level(it.p) });
+      var meta = it.p == null ? 'not tested yet' : it.p + '%' + (it.seed && it.m < 8 ? ' · ' + it.m + ' of 8 marks tested' : it.kind === 't' && it.w >= 3 ? ' · big exam topic' : '');
+      row.appendChild(h('div', null, (it.seed ? '<span class="tag">Known weak spot</span>' : '') + '<div class="wname">' + esc(it.name) + '</div><div class="wmeta"><span class="mini"><span style="width:' + (it.p || 0) + '%"></span></span><span>' + meta + '</span></div>'));
       row.appendChild(h('button', { cls: 'small', onclick: function () { startQuiz(it.kind === 'f' ? { focus: it.id } : { topic: it.id }, 8); } }, 'Re-test now'));
       wl.appendChild(row);
     });
+    if (items.length > 8) wl.appendChild(h('button', { cls: 'small ghost', style: 'margin-top:8px', onclick: function () { weakAll = !weakAll; renderWeak(); } }, weakAll ? 'Show fewer' : 'Show all ' + items.length));
     var cleared = FOCUS.filter(function (f) { return focusCleared(f.id); });
-    if (cleared.length) wl.appendChild(h('p', { cls: 'small mut' }, 'Fixed ✓: ' + cleared.map(function (f) { return esc(f.name); }).join('; ')));
-    var bars = $('#bars'); bars.innerHTML = '';
-    THEMES.forEach(function (th) {
-      bars.appendChild(h('div', { cls: 'thm' }, esc(th.name)));
-      TOPICS.filter(function (t) { return t.th === th.id; }).forEach(function (t) {
-        var p = pct(P.t[t.id]), n = P.t[t.id] ? P.t[t.id].n : 0;
-        bars.appendChild(h('div', { cls: 'bar' }, '<div class="lbl"><span>' + esc(t.name) + '</span><span class="mut">' + n + ' q</span></div><div class="track"><div class="fill" style="width:' + (p || 0) + '%;background:' + colour(p) + '"></div></div><div class="pc" style="color:' + colour(p) + '">' + (p == null ? '–' : p + '%') + '</div>'));
-      });
-    });
-    var ms = $('#mockScores');
-    ms.innerHTML = P.mocks.length ? '<div class="tw"><table><tr><th>Paper</th><th>Date</th><th>Score</th></tr>' + P.mocks.slice().reverse().map(function (x) { return '<tr><td>' + esc(x.name) + '</td><td>' + new Date(x.date).toLocaleDateString() + '</td><td><b>' + x.score + '/' + x.max + '</b> (' + Math.round(100 * x.score / x.max) + '%)</td></tr>'; }).join('') + '</table></div>' : '<p class="mut">No mock paper done yet. Go to Past papers → Mock mode.</p>';
-    renderSaveWarn();
+    if (cleared.length) wl.appendChild(h('p', { cls: 'small', style: 'color:var(--ok);margin-bottom:0' }, '✓ Fixed: ' + cleared.map(function (f) { return esc(f.short); }).join(' · ')));
   }
-  function todayNam() { return new Date(Date.now() + 2 * 3600e3).toISOString().slice(0, 10); }
+
+  // ----- Today: daily goal + the plan -----
+  function renderToday() {
+    var nd = namDate(), d = P.days[todayNam()] || { n: 0, e: 0, m: 0, s: 0 }, goal = P.goal || 30, keys = [];
+    for (var i = 0; i < 60; i++) keys.push(todayNam(-i));
+    var st = Core.streakOf(P.days, keys), g = $('#goalOut');
+    $('#todayDate').textContent = WD[nd.getUTCDay()] + ' ' + nd.getUTCDate() + ' ' + MON[nd.getUTCMonth()];
+    g.innerHTML = '<div class="goalrow"><span><b>' + d.n + '</b> of ' + goal + ' questions' + (d.n >= goal ? ' <span class="tag ok">✓ goal done</span>' : '') + '</span>' + (st >= 2 ? '<span class="tag info">' + st + ' days in a row</span>' : '') + '</div>' +
+      '<div class="goalbar" role="img" aria-label="' + d.n + ' of ' + goal + ' questions done today"><span style="width:' + Math.min(100, Math.round(100 * d.n / goal)) + '%"></span></div>' +
+      '<p class="small mut">' + (d.m ? Math.round(100 * d.e / d.m) + '% correct today' + (d.s >= 60 ? ' · ' + fmtHM(d.s * 1000) + ' of work' : '') : 'No questions yet today.') + '</p>';
+    var seg = h('div', { cls: 'seg', role: 'group', 'aria-label': 'Daily goal' });
+    [20, 30, 50].forEach(function (n) { seg.appendChild(h('button', { type: 'button', cls: n === goal ? 'on' : '', 'aria-pressed': n === goal ? 'true' : 'false', onclick: function () { P.goal = n; save(); renderToday(); renderWeek(); } }, String(n))); });
+    var gr = h('div', { cls: 'row small' }, '<span class="mut">Daily goal:</span>'); gr.appendChild(seg); g.appendChild(gr);
+    renderPlan();
+  }
   var planShowAll = false;
   function renderPlan() {
     var out = $('#planOut'); if (!out) return; out.innerHTML = '';
@@ -1976,7 +2311,7 @@ var PLAN = [
     if (idx < 0) idx = today < PLAN[0].d ? 0 : PLAN.length - 1;
     PLAN.forEach(function (day, di) {
       if (!planShowAll && di !== idx) return;
-      out.appendChild(h('div', { cls: 'thm' }, esc(day.title) + (di === idx ? ' · today' : '')));
+      out.appendChild(h('div', { cls: 'thm' }, esc(day.title) + (di === idx && planShowAll ? ' · today' : '')));
       day.tasks.forEach(function (t) {
         var done = !!P.plan[t.id], row = h('div', { cls: 'weak' });
         var lab = h('label', { style: 'display:flex;gap:10px;align-items:center;cursor:pointer;flex:1' });
@@ -1996,7 +2331,108 @@ var PLAN = [
     if (g.mock) { showTab('papers'); if (!P.mockRun) startMock(g.mock); return; }
     startQuiz(g, g.focus ? 8 : 10);
   }
+  // tick a plan task by itself when the learner does that quiz or mock
+  function planAuto(match) {
+    var ch = false;
+    PLAN.forEach(function (d) { d.tasks.forEach(function (t) { if (t.go && !P.plan[t.id] && match(t.go)) { P.plan[t.id] = Date.now(); ch = true; } }); });
+    if (ch) save();
+  }
+
+  // ----- Score per topic (bar chart) -----
+  var barSort = 'theme';
+  $('#barSort').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { barSort = b.dataset.s; renderBars(); } });
+  function topicMore(t) {
+    var o = P.t[t.id], el = h('div', { cls: 'trow-more' });
+    if (o && o.r.length) {
+      var full = 0, part = 0, zero = 0;
+      var strip = o.r.map(function (x) { var k = x[0] >= x[1] - 1e-9 ? 2 : x[0] > 0 ? 1 : 0; if (k === 2) full++; else if (k === 1) part++; else zero++; return '<i class="s' + k + '"></i>'; }).join('');
+      el.innerHTML = '<div class="small mut">Your last ' + plural(o.r.length, 'answer') + ' (old → new):</div><div class="strip" aria-hidden="true">' + strip + '</div><div class="small">' + full + ' full marks · ' + part + ' part marks · ' + zero + ' no marks</div>';
+    } else el.innerHTML = '<div class="small mut">You have not tried this topic yet.</div>';
+    var row = h('div', { cls: 'row', style: 'margin-top:8px' });
+    row.appendChild(h('button', { cls: 'small', onclick: function () { startQuiz({ topic: t.id }, 10); } }, 'Quiz this topic'));
+    row.appendChild(h('button', { cls: 'small ghost', onclick: function () { openNote(t.id); } }, 'Read the notes'));
+    el.appendChild(row); return el;
+  }
+  function topicRow(t) {
+    var o = P.t[t.id], p = pct(o), tr = o ? Core.trendOf(o.r) : 0, row = h('div', { cls: 'trow lv-' + level(p), 'data-t': t.id }), more = null;
+    var btn = h('button', { cls: 'trow-btn', type: 'button', 'aria-expanded': 'false' },
+      '<span class="trow-in"><span class="trow-name">' + esc(t.name) + (t.w >= 4 ? ' <span class="bigt">big topic</span>' : '') + '</span>' +
+      '<span class="trow-pc">' + (tr > 0 ? '<span class="tr up">▲</span> ' : tr < 0 ? '<span class="tr down">▼</span> ' : '') + (p == null ? 'not tried' : p + '%') + '</span>' +
+      '<span class="track"><span class="fill" style="width:' + (p || 0) + '%"></span><span class="goal"></span></span></span>');
+    btn.setAttribute('aria-label', t.name + ': ' + (p == null ? 'not tried' : p + ' percent' + (tr > 0 ? ', getting better' : tr < 0 ? ', getting worse' : '')) + '. Tap for more.');
+    btn.addEventListener('click', function () {
+      if (!more) { more = topicMore(t); row.appendChild(more); } else more.hidden = !more.hidden;
+      btn.setAttribute('aria-expanded', more.hidden ? 'false' : 'true');
+    });
+    row.appendChild(btn); return row;
+  }
+  function renderBars() {
+    var bars = $('#bars'); bars.innerHTML = '';
+    $$('#barSort button').forEach(function (b) { var on = b.dataset.s === barSort; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    if (barSort === 'weak') {
+      TOPICS.slice().sort(function (a, b) {
+        var pa = pct(P.t[a.id]), pb = pct(P.t[b.id]);
+        if ((pa == null) !== (pb == null)) return pa == null ? 1 : -1; // topics with a score first
+        if (pa == null) return b.w - a.w;                              // not tried: big topics first
+        return (pa - pb) || (b.w - a.w);
+      }).forEach(function (t) { bars.appendChild(topicRow(t)); });
+    } else THEMES.forEach(function (th) {
+      var ts = TOPICS.filter(function (t) { return t.th === th.id; }), o = Core.overallScore(ts, P.t);
+      bars.appendChild(h('div', { cls: 'thm' }, '<span>' + esc(th.name) + '</span><span>' + (o.score == null ? '' : o.score + '%') + '</span>'));
+      ts.forEach(function (t) { bars.appendChild(topicRow(t)); });
+    });
+    bars.appendChild(h('p', { cls: 'small mut', style: 'margin:10px 0 0' }, '▲ getting better · ▼ getting worse (new answers compared with older ones)'));
+  }
+
+  // ----- Last 7 days -----
+  function renderWeek() {
+    var goal = P.goal || 30, days = [], max = goal, tn = 0, te = 0, tm = 0, ts = 0, Z = 100;
+    for (var i = 6; i >= 0; i--) {
+      var nd = namDate(-i), d = P.days[nd.toISOString().slice(0, 10)] || { n: 0, e: 0, m: 0, s: 0 };
+      days.push({ d: d, wd: WD[nd.getUTCDay()], today: i === 0 });
+      max = Math.max(max, d.n); tn += d.n; te += d.e; tm += d.m; ts += d.s || 0;
+    }
+    $('#weekOut').innerHTML = '<div class="week" role="img" aria-label="Questions done on each of the last 7 days: ' + days.map(function (x) { return (x.today ? 'today' : x.wd) + ' ' + x.d.n; }).join(', ') + '. Daily goal ' + goal + '.">' +
+      '<div class="wk-goal" style="bottom:' + (22 + Math.round(Z * goal / max)) + 'px"></div>' +
+      days.map(function (x) { return '<div class="wk-col' + (x.today ? ' today' : '') + (x.d.n ? '' : ' zero') + '"><span class="wk-n">' + (x.d.n || '') + '</span><span class="wk-bar" style="height:' + Math.max(3, Math.round(Z * x.d.n / max)) + 'px"></span><span class="wk-d">' + (x.today ? 'Today' : x.wd) + '</span></div>'; }).join('') + '</div>' +
+      '<p class="small mut" style="margin-bottom:0">' + (tn ? '<b>' + tn + '</b> questions in 7 days' + (tm ? ' · ' + Math.round(100 * te / tm) + '% correct' : '') + (ts >= 60 ? ' · ' + fmtHM(ts * 1000) : '') + '. ' : 'Your work for each day will show here. ') + 'Dashed line = daily goal (' + goal + ').</p>';
+  }
+
+  // ----- Mock papers -----
+  function renderMocks() {
+    var ms = $('#mockScores'), list = P.mocks.slice().reverse(); ms.innerHTML = '';
+    if (!list.length) ms.innerHTML = '<p class="mut small" style="margin-top:0">No mock paper done yet. A mock is one full paper: 100 marks in 2 h 30 min.</p>';
+    else {
+      var best = Math.max.apply(null, P.mocks.map(function (x) { return x.score / x.max; }));
+      list.slice(0, 5).forEach(function (x) {
+        var p = Math.round(100 * x.score / x.max), dt = new Date(x.date + 2 * 3600e3);
+        ms.appendChild(h('div', { cls: 'mrow lv-' + level(p) }, '<div class="trow-in"><span class="trow-name">' + esc(x.name) + ' <span class="mut small" style="font-weight:400">' + dt.getUTCDate() + ' ' + MON[dt.getUTCMonth()] + '</span>' + (P.mocks.length > 1 && x.score / x.max === best ? ' <span class="tag ok">best</span>' : '') + '</span><span class="trow-pc">' + x.score + '/' + x.max + (x.max === 100 ? '' : ' (' + p + '%)') + '</span><span class="track"><span class="fill" style="width:' + p + '%"></span></span></div>'));
+      });
+      var last = list[0];
+      if (last.th) {
+        var box = h('div', null, '<div class="small mut" style="margin:10px 0 2px">Your last mock, by theme (marks):</div>');
+        THEMES.forEach(function (th) {
+          var v = last.th[th.id]; if (!v || !v[1]) return;
+          var p = Math.round(100 * v[0] / v[1]);
+          box.appendChild(h('div', { cls: 'brow lv-' + level(p) }, '<span>' + (th.id === '12' ? 'Themes 1–2' : 'Theme ' + esc(th.id)) + '</span><span class="track"><span class="fill" style="width:' + p + '%"></span></span><span class="trow-pc">' + (Math.round(v[0] * 10) / 10) + '/' + v[1] + '</span>'));
+        });
+        ms.appendChild(box);
+      }
+    }
+    var pid = nextMockId();
+    ms.appendChild(h('button', { cls: 'small' + (list.length ? ' ghost' : ''), style: 'margin-top:10px', onclick: function () { showTab('papers'); if (!P.mockRun) startMock(pid); } }, P.mockRun ? 'Open my mock paper' : 'Start Practice paper ' + pid.slice(1)));
+  }
   function renderSaveWarn() { var w = $('#saveWarn'); if (w) w.innerHTML = memoryOnly ? '<span style="color:var(--bad)">⚠ This browser is not saving. Use “Export progress” before you close it.</span>' : ''; }
+
+  // open the Notes tab at one topic
+  function openNote(id) {
+    showTab('notes'); noteTheme = 'all'; $('#noteSearch').value = '';
+    $$('#noteChips .chip').forEach(function (b) { b.classList.toggle('on', b.dataset.th === 'all'); });
+    renderNotes();
+    var t = $('#notesOut .topic[data-topic="' + id + '"]'); if (!t) return;
+    t.open = true;
+    setTimeout(function () { window.scrollTo(0, Math.max(0, t.getBoundingClientRect().top + window.pageYOffset - (window.innerWidth >= 900 ? 130 : 64))); }, 0);
+  }
 
   // export / import
   $('#btnExport').addEventListener('click', function () {
@@ -2019,6 +2455,11 @@ var PLAN = [
   });
   $('#btnIoApply').addEventListener('click', function () { applyImport($('#ioText').value); });
   $('#btnIoClose').addEventListener('click', function () { $('#ioBox').classList.add('hidden'); });
+  $('#btnIoCopy').addEventListener('click', function () {
+    var ta = $('#ioText'), ok = function () { $('#ioMsg').textContent = 'Copied ✓ Paste it somewhere safe (e.g. a WhatsApp message to yourself).'; };
+    var fallback = function () { ta.focus(); ta.select(); try { if (document.execCommand('copy')) ok(); } catch (e) { } };
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(ok, fallback); else fallback();
+  });
   function applyImport(txt) {
     try {
       var p = JSON.parse(txt);
@@ -2134,7 +2575,7 @@ var PLAN = [
     var el = $('#quizPick'); el.innerHTML = '';
     el.appendChild(h('div', { cls: 'card' }, '<h2>Quiz</h2><p class="small mut">Pick a topic. 10 questions. Your score is saved.</p>'));
     var c = h('div', { cls: 'card' });
-    c.appendChild(h('button', { cls: 'topicbtn', style: 'background:var(--acc);color:#fff', onclick: function () { startQuiz({ mixed: true }, 10); } }, '🔀 Mixed (all topics, weighted like the exam)'));
+    c.appendChild(h('button', { cls: 'topicbtn', style: 'background:var(--acc);color:var(--onacc)', onclick: function () { startQuiz({ mixed: true }, 10); } }, '🔀 Mixed (all topics, weighted like the exam)'));
     var mc0 = mistakeCount();
     var mb = h('button', { cls: 'topicbtn', onclick: function () { startQuiz({ mistakes: true }, Math.min(10, Math.max(5, mistakeCount()))); } }, '<span>🔁 My mistakes</span><em>' + (mc0 ? mc0 + ' to fix' : 'none yet') + '</em>'); if (!mc0) mb.disabled = true; c.appendChild(mb);
     c.appendChild(h('button', { cls: 'topicbtn', onclick: function () { startQuiz({ judge: true }, 8); } }, '<span>⚖️ Mark this answer (be the examiner)</span><em>' + JUDGE.length + ' answers</em>'));
@@ -2158,7 +2599,8 @@ var PLAN = [
   }
   window.__startQuiz = startQuiz;
   function endQuiz() {
-    var run = $('#quizRun'), p = S.m ? Math.round(100 * S.e / S.m) : 0;
+    var run = $('#quizRun'), p = S.m ? Math.round(100 * S.e / S.m) : 0, ss = S.sel;
+    planAuto(function (g) { return (ss.topic && g.topic === ss.topic) || (ss.focus && g.focus === ss.focus) || (ss.mistakes && g.mistakes); });
     run.innerHTML = '';
     var c = h('div', { cls: 'card' }, '<h2>Finished!</h2><p>' + esc(selName(S.sel)) + '</p><p style="font-size:28px;font-weight:800;color:' + colour(p) + '">' + (Math.round(S.e * 10) / 10) + ' / ' + S.m + ' marks (' + p + '%)</p><p>' + (p >= 80 ? 'Great work! 🎉' : p >= 50 ? 'Good. Read the notes for this topic, then try again.' : 'Read the notes for this topic, then try again. You can do it.') + '</p>');
     var row = h('div', { cls: 'row' });
@@ -2181,8 +2623,9 @@ var PLAN = [
     var card = h('div', { cls: 'card' }); run.appendChild(card);
     if (!S.sel.topic && q.topic) card.appendChild(h('div', { cls: 'small mut' }, esc(TOPIC[q.topic].name)));
     var body = h('div'); card.appendChild(body);
+    var t0 = Date.now();
     var done = function (e, m) {
-      S.i++; S.e += e; S.m += m; record(q, e, m);
+      S.i++; S.e += e; S.m += m; record(q, e, m, Math.min(300, Math.round((Date.now() - t0) / 1000)));
       var nb = h('button', { style: 'width:100%;margin-top:10px', onclick: nextQ }, S.i >= S.n ? 'See my score →' : 'Next question →');
       card.appendChild(nb); nb.focus({ preventScroll: true });
     };
@@ -2609,8 +3052,13 @@ var PLAN = [
     el.appendChild(h('button', { style: 'width:100%', onclick: function () {
       var s = upd();
       ask('Save your total: ' + s + ' / ' + paper.max + '?', 'Save', function () {
-      P.mocks.push({ pid: paper.id, name: paper.name, score: s, max: paper.max, date: Date.now() });
+      var th = {};
+      paper.qs.forEach(function (q, i) { var k = TOPIC[q.topic].th, v = th[k] || (th[k] = [0, 0]); v[0] = +(v[0] + (scores[i] || 0)).toFixed(2); v[1] += q.m; });
+      P.mocks.push({ pid: paper.id, name: paper.name, score: s, max: paper.max, date: Date.now(), th: th });
       paper.qs.forEach(function (q, i) { rec(P.t, q.topic, scores[i] || 0, q.m); });
+      var day = dayRec(); day.n += paper.qs.length; day.e = +(day.e + s).toFixed(2); day.m += paper.max; day.s += Math.min(9000, Math.max(0, Math.round(((M.end || Date.now()) - M.start) / 1000)));
+      P.done += paper.qs.length;
+      planAuto(function (g) { return g.mock === paper.id; });
       P.mockRun = null; save();
       window.__renderPapers(el); window.scrollTo(0, 0);
       tell('Saved: ' + s + ' / ' + paper.max + ' (' + Math.round(100 * s / paper.max) + '%). See the Dashboard.');

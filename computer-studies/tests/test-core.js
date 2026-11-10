@@ -12,7 +12,7 @@ function block(id) {
 const ctx = { module: { exports: {} }, console };
 vm.createContext(ctx);
 vm.runInContext(block('core'), ctx);
-vm.runInContext(block('data') + ';this.LOGIC_STATEMENTS=LOGIC_STATEMENTS;this.BANK=BANK;this.TOPICS=TOPICS;this.FOCUS=FOCUS;this.PAPERS=typeof PAPERS!=="undefined"?PAPERS:[];this.JUDGE=JUDGE;this.PLAN=PLAN;', ctx);
+vm.runInContext(block('data') + ';this.LOGIC_STATEMENTS=LOGIC_STATEMENTS;this.BANK=BANK;this.TOPICS=TOPICS;this.FOCUS=FOCUS;this.PAPERS=typeof PAPERS!=="undefined"?PAPERS:[];this.JUDGE=JUDGE;this.PLAN=PLAN;this.REMINDERS=REMINDERS;', ctx);
 const Core = ctx.module.exports;
 let fails = 0, checks = 0;
 function eq(a, b, msg) { checks++; if (a !== b) { fails++; if (fails < 30) console.log('FAIL', msg, 'got', a, 'expected', b); } }
@@ -166,6 +166,55 @@ for (let i = 0; i < 200; i++) Core.TRACE.forEach(p => {
     });
   });
   console.log('Mark-this-answer items:', ctx.JUDGE.length);
+}
+
+// ---- dashboard maths: checked against a separate calculation, 1000 random cases ----
+{
+  const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  for (let i = 0; i < N; i++) {
+    const recs = {}; let sw = 0, s = 0, tried = 0, green = 0, amber = 0, red = 0;
+    ctx.TOPICS.forEach(tp => {
+      if (Math.random() < 0.25) return;                         // not tried
+      const r = Array.from({ length: rnd(1, 20) }, () => { const m = rnd(1, 5); return [rnd(0, m * 2) / 2, m]; });
+      recs[tp.id] = { r };
+      const e = r.reduce((a, x) => a + x[0], 0), m = r.reduce((a, x) => a + x[1], 0), p = Math.round(100 * e / m);
+      tried++; if (p >= 80) green++; else if (p >= 50) amber++; else red++;
+      sw += tp.w; s += tp.w * p;
+    });
+    const o = Core.overallScore(ctx.TOPICS, recs);
+    eq(o.score, sw ? Math.round(s / sw) : null, 'overall score'); eq(o.tried, tried, 'tried'); eq(o.green, green, 'green');
+    eq(o.amber, amber, 'amber'); eq(o.red, red, 'red'); eq(o.none, ctx.TOPICS.length - tried, 'none'); eq(o.green + o.amber + o.red + o.none, o.total, 'sums to total');
+    // trend: split the list in two halves by hand
+    const r = Array.from({ length: rnd(0, 20) }, () => [rnd(0, 1), 1]);
+    let want = 0;
+    if (r.length >= 8) { const h = Math.floor(r.length / 2), pc = a => Math.round(100 * a.filter(x => x[0]).length / a.length), a = pc(r.slice(0, h)), b = pc(r.slice(h)); want = b - a >= 20 ? 1 : a - b >= 20 ? -1 : 0; }
+    eq(Core.trendOf(r), want, 'trend ' + JSON.stringify(r));
+    // streak: walk back day by day
+    const keys = Array.from({ length: 10 }, (_, k) => 'd' + k), days = {}; keys.forEach(k => { if (Math.random() < 0.7) days[k] = { n: rnd(0, 3) }; });
+    let st = 0; for (let k = 0; k < keys.length; k++) { const has = days[keys[k]] && days[keys[k]].n > 0; if (has) st++; else if (k === 0) continue; else break; }
+    eq(Core.streakOf(days, keys), st, 'streak');
+  }
+  eq(Core.overallScore(ctx.TOPICS, {}).score, null, 'no score when nothing is tried');
+  eq(Core.trendOf([[0, 1], [0, 1], [0, 1], [0, 1], [1, 1], [1, 1], [1, 1], [1, 1]]), 1, 'trend up'); eq(Core.trendOf([[1, 1], [1, 1], [1, 1], [1, 1], [0, 1], [0, 1], [0, 1], [0, 1]]), -1, 'trend down');
+  eq(Core.trendOf([[1, 1], [0, 1], [1, 1], [0, 1], [1, 1], [0, 1], [1, 1], [0, 1], [1, 1], [1, 1]]), 0, 'same in both halves (60% and 60%) = no arrow'); eq(Core.trendOf([[1, 1], [1, 1], [1, 1], [0, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [0, 1]]), 0, 'same in both halves (80% and 80%) = no arrow'); eq(Core.trendOf([[0, 1], [1, 1], [1, 1]]), 0, 'too few answers = no arrow');
+  eq(Core.streakOf({ a: { n: 0 }, b: { n: 2 }, c: { n: 1 } }, ['a', 'b', 'c', 'd']), 2, 'streak: empty today does not break it');
+  eq(Core.streakOf({ a: { n: 1 }, c: { n: 1 } }, ['a', 'b', 'c']), 1, 'streak: a gap breaks it');
+}
+// ---- reminder cards ----
+{
+  const ids = new Set(), topics = new Set(ctx.TOPICS.map(x => x.id).concat(['howto']));
+  ctx.REMINDERS.forEach(r => {
+    eq(ids.has(r.id), false, 'reminder unique ' + r.id); ids.add(r.id);
+    eq(['book', 'weak', 'rule', 'fact'].includes(r.k), true, 'reminder kind ' + r.id);
+    eq(r.note === null || topics.has(r.note), true, 'reminder note ' + r.id);
+    eq(typeof r.q === 'string' && r.q.length > 5 && typeof r.a === 'string' && r.a.length > 5, true, 'reminder text ' + r.id);
+    if (r.note) eq(html.includes('data-topic="' + r.note + '"'), true, 'note exists for ' + r.id);
+  });
+  ctx.FOCUS.forEach(f => eq(typeof f.short === 'string' && f.short.length > 3, true, 'focus short name ' + f.id));
+  // facts used on the cards
+  eq(17 % 5, 2, 'card: 17 MOD 5'); eq(Math.floor(17 / 5), 3, 'card: 17 DIV 5'); eq(Core.binToHexGrid('1101011').hex, '6B', 'card: 6B');
+  eq(Core.parityBit('1011001', 'EVEN'), 0, 'card: parity bit 0'); eq(Core.denToBin(255, 8).bin, '11111111', 'card: 255');
+  console.log('Reminder cards:', ctx.REMINDERS.length);
 }
 /*@@TEST-MORE@@*/
 
