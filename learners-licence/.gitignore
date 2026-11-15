@@ -1,0 +1,6 @@
+# Derived from the manual and the practice papers; kept out of this public repository
+assets/
+data/
+dist/
+build/questions.py
+__pycache__/
